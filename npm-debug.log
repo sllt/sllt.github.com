@@ -1,0 +1,123 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/bin/node', '/usr/bin/npm', 'install' ]
+2 info using npm@1.4.28
+3 info using node@v0.10.32
+4 verbose node symlink /usr/bin/node
+5 verbose readDependencies using package.json deps
+6 verbose install where, deps [ '/home/long/code/blog',
+6 verbose install   [ 'hexo-renderer-ejs',
+6 verbose install     'hexo-renderer-stylus',
+6 verbose install     'hexo-renderer-marked' ] ]
+7 info preinstall hexo-site@2.6.0
+8 verbose readDependencies using package.json deps
+9 verbose cache add [ 'hexo-renderer-marked@*', null ]
+10 verbose cache add name=undefined spec="hexo-renderer-marked@*" args=["hexo-renderer-marked@*",null]
+11 verbose parsed url { protocol: null,
+11 verbose parsed url   slashes: null,
+11 verbose parsed url   auth: null,
+11 verbose parsed url   host: null,
+11 verbose parsed url   port: null,
+11 verbose parsed url   hostname: null,
+11 verbose parsed url   hash: null,
+11 verbose parsed url   search: null,
+11 verbose parsed url   query: null,
+11 verbose parsed url   pathname: 'hexo-renderer-marked@*',
+11 verbose parsed url   path: 'hexo-renderer-marked@*',
+11 verbose parsed url   href: 'hexo-renderer-marked@*' }
+12 verbose cache add [ 'hexo-renderer-ejs@*', null ]
+13 verbose cache add name=undefined spec="hexo-renderer-ejs@*" args=["hexo-renderer-ejs@*",null]
+14 verbose parsed url { protocol: null,
+14 verbose parsed url   slashes: null,
+14 verbose parsed url   auth: null,
+14 verbose parsed url   host: null,
+14 verbose parsed url   port: null,
+14 verbose parsed url   hostname: null,
+14 verbose parsed url   hash: null,
+14 verbose parsed url   search: null,
+14 verbose parsed url   query: null,
+14 verbose parsed url   pathname: 'hexo-renderer-ejs@*',
+14 verbose parsed url   path: 'hexo-renderer-ejs@*',
+14 verbose parsed url   href: 'hexo-renderer-ejs@*' }
+15 verbose cache add [ 'hexo-renderer-stylus@*', null ]
+16 verbose cache add name=undefined spec="hexo-renderer-stylus@*" args=["hexo-renderer-stylus@*",null]
+17 verbose parsed url { protocol: null,
+17 verbose parsed url   slashes: null,
+17 verbose parsed url   auth: null,
+17 verbose parsed url   host: null,
+17 verbose parsed url   port: null,
+17 verbose parsed url   hostname: null,
+17 verbose parsed url   hash: null,
+17 verbose parsed url   search: null,
+17 verbose parsed url   query: null,
+17 verbose parsed url   pathname: 'hexo-renderer-stylus@*',
+17 verbose parsed url   path: 'hexo-renderer-stylus@*',
+17 verbose parsed url   href: 'hexo-renderer-stylus@*' }
+18 verbose cache add name="hexo-renderer-marked" spec="*" args=["hexo-renderer-marked","*"]
+19 verbose parsed url { protocol: null,
+19 verbose parsed url   slashes: null,
+19 verbose parsed url   auth: null,
+19 verbose parsed url   host: null,
+19 verbose parsed url   port: null,
+19 verbose parsed url   hostname: null,
+19 verbose parsed url   hash: null,
+19 verbose parsed url   search: null,
+19 verbose parsed url   query: null,
+19 verbose parsed url   pathname: '*',
+19 verbose parsed url   path: '*',
+19 verbose parsed url   href: '*' }
+20 verbose addNamed [ 'hexo-renderer-marked', '*' ]
+21 verbose addNamed [ null, '*' ]
+22 verbose cache add name="hexo-renderer-ejs" spec="*" args=["hexo-renderer-ejs","*"]
+23 verbose parsed url { protocol: null,
+23 verbose parsed url   slashes: null,
+23 verbose parsed url   auth: null,
+23 verbose parsed url   host: null,
+23 verbose parsed url   port: null,
+23 verbose parsed url   hostname: null,
+23 verbose parsed url   hash: null,
+23 verbose parsed url   search: null,
+23 verbose parsed url   query: null,
+23 verbose parsed url   pathname: '*',
+23 verbose parsed url   path: '*',
+23 verbose parsed url   href: '*' }
+24 verbose addNamed [ 'hexo-renderer-ejs', '*' ]
+25 verbose addNamed [ null, '*' ]
+26 verbose cache add name="hexo-renderer-stylus" spec="*" args=["hexo-renderer-stylus","*"]
+27 verbose parsed url { protocol: null,
+27 verbose parsed url   slashes: null,
+27 verbose parsed url   auth: null,
+27 verbose parsed url   host: null,
+27 verbose parsed url   port: null,
+27 verbose parsed url   hostname: null,
+27 verbose parsed url   hash: null,
+27 verbose parsed url   search: null,
+27 verbose parsed url   query: null,
+27 verbose parsed url   pathname: '*',
+27 verbose parsed url   path: '*',
+27 verbose parsed url   href: '*' }
+28 verbose addNamed [ 'hexo-renderer-stylus', '*' ]
+29 verbose addNamed [ null, '*' ]
+30 silly lockFile 377509ff-hexo-renderer-marked hexo-renderer-marked@*
+31 verbose lock hexo-renderer-marked@* /home/long/.npm/377509ff-hexo-renderer-marked.lock
+32 silly lockFile b3653f8d-hexo-renderer-ejs hexo-renderer-ejs@*
+33 verbose lock hexo-renderer-ejs@* /home/long/.npm/b3653f8d-hexo-renderer-ejs.lock
+34 silly lockFile c34a33e1-hexo-renderer-stylus hexo-renderer-stylus@*
+35 verbose lock hexo-renderer-stylus@* /home/long/.npm/c34a33e1-hexo-renderer-stylus.lock
+36 silly lockFile b3653f8d-hexo-renderer-ejs hexo-renderer-ejs@*
+37 error Error: Attempt to unlock hexo-renderer-ejs@*, which hasn't been locked
+37 error     at unlock (/usr/lib/node_modules/npm/lib/utils/locker.js:44:11)
+37 error     at cb (/usr/lib/node_modules/npm/lib/cache/add-named.js:32:5)
+37 error     at /usr/lib/node_modules/npm/lib/cache/add-named.js:41:20
+37 error     at /usr/lib/node_modules/npm/lib/utils/locker.js:30:7
+37 error     at cb (/usr/lib/node_modules/npm/node_modules/lockfile/lockfile.js:149:38)
+37 error     at /usr/lib/node_modules/npm/node_modules/lockfile/lockfile.js:177:38
+37 error     at Object.oncomplete (fs.js:107:15)
+38 error If you need help, you may report this *entire* log,
+38 error including the npm and node versions, at:
+38 error     <http://github.com/npm/npm/issues>
+39 error System Linux 3.2.0-68-generic-pae
+40 error command "/usr/bin/node" "/usr/bin/npm" "install"
+41 error cwd /home/long/code/blog
+42 error node -v v0.10.32
+43 error npm -v 1.4.28
+44 verbose exit [ 1, true ]
