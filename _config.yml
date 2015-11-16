@@ -4,11 +4,11 @@
 
 # Site
 title: Snowy
-subtitle: 做有思想的程序员！
+subtitle: 
 description:
 author: sllt
 email: shenlongml@gmail.com
-language: zh-CN
+language: zh-Hans
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
@@ -23,7 +23,11 @@ code_dir: downloads/code
 # Directory
 source_dir: source
 public_dir: public
-
+duoshuo_shortname: sllt
+# feed
+feed:
+  type: atom
+  path: atom.xml
 # Writing
 new_post_name: :title.md # File name of new posts
 default_layout: post
@@ -80,7 +84,7 @@ disqus_shortname:
 # Extensions
 ## Plugins: https://github.com/tommy351/hexo/wiki/Plugins
 ## Themes: https://github.com/tommy351/hexo/wiki/Themes
-theme: kael
+theme: next
 exclude_generator:
 plugins:
   - hexo-generator-feed
@@ -88,6 +92,6 @@ plugins:
 # Deployment
 ## Docs: http://hexo.io/docs/deployment.html
 deploy:
-  type: github
+  type: git
   repository: git@github.com:sllt/sllt.github.com.git
   branch: master
