@@ -3,8 +3,6 @@ date: 2015-08-17 14:35:52
 tags: rails
 ---
 
-## 使用faye + sidekiq制作实时消息队列
-
 install faye and sidekiq
 
 ```ruby
