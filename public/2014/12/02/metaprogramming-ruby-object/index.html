@@ -1,317 +1,593 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
 
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
 <head>
-  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" >
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-  <title>ruby元编程-对象模型 | Snowy</title>
-  <meta name="description" content="做有思想的程序员！" />
-  <meta name="HandheldFriendly" content="True" />
-  <meta name="MobileOptimized" content="320" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" type="text/css" href="/css/component.css" />
-  <link rel="stylesheet" type="text/css" href="/css/screen.css" />
-  <meta name="generator" content="Snowy">
-  <script src="http://static.duoshuo.com/embed.js"></script>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
   
   
   
 
   
+    
+    
+  
 
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="ruby," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Snowy" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.2" />
+
+
+
+
+
+
+<meta name="description" content="ruby中的对象在ruby中任何东西都是对象，甚至是nil、类等都是对象。比如下面的例子：12345678&amp;gt;&amp;gt; 1.methods=&amp;gt; [:to_s, :inspect, :-@, :+, :-, :*, :/, :div, :%, :modulo, :divmod, :fdiv, :**, :abs, :magnitude, :==, :===, :&amp;lt;=&amp;gt;, :&amp;g">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ruby元编程-对象模型">
+<meta property="og:url" content="http://blog.sllt.me/2014/12/02/metaprogramming-ruby-object/index.html">
+<meta property="og:site_name" content="Snowy">
+<meta property="og:description" content="ruby中的对象在ruby中任何东西都是对象，甚至是nil、类等都是对象。比如下面的例子：12345678&amp;gt;&amp;gt; 1.methods=&amp;gt; [:to_s, :inspect, :-@, :+, :-, :*, :/, :div, :%, :modulo, :divmod, :fdiv, :**, :abs, :magnitude, :==, :===, :&amp;lt;=&amp;gt;, :&amp;g">
+<meta property="og:updated_time" content="2016-10-21T05:44:06.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ruby元编程-对象模型">
+<meta name="twitter:description" content="ruby中的对象在ruby中任何东西都是对象，甚至是nil、类等都是对象。比如下面的例子：12345678&amp;gt;&amp;gt; 1.methods=&amp;gt; [:to_s, :inspect, :-@, :+, :-, :*, :/, :div, :%, :modulo, :divmod, :fdiv, :**, :abs, :magnitude, :==, :===, :&amp;lt;=&amp;gt;, :&amp;g">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"always"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://blog.sllt.me/2014/12/02/metaprogramming-ruby-object/"/>
+
+
+  <title> ruby元编程-对象模型 | Snowy </title>
 </head>
-<body>
-<div class="container">
-    <div class="mp-pusher" id="mp-pusher">
-        <i id="scroll-up" class="fa fa-angle-up"></i>
-        <nav id="mp-menu" class="mp-menu">
-            <div class="mp-level">
-                <a data-pjax class="back-home" style="font-size: 20px" href="/"><h2 ><i class="fa fa-home"></i>
-                        Home</h2></a>
-                <ul class="first-level">
-                    <li>
-                        <a class="fa fa-archive" href="#"><i class="fa fa-angle-left">
-                            </i>&nbsp;&nbsp;Archive</a>
-                        <div class="mp-level page-list">
-                            <h2 ><i class="fa fa-archive"></i>
-                                Archive</h2>
-                            <a class="mp-back" href="#">back</a>
-                            <form id="search-form" action="">
-                                <input type="text" class="search search-archive" placeholder="Search.."/>
-                            </form>
-                            <ul>
-                                <div class="mp-scroll">
-                                
-                                <li class="search-archive-li mp-pjax">
-                                    <a href="/2014/12/02/metaprogramming-ruby-object/">ruby元编程-对象模型</a>
-                                </li>
-                                
-                                <li class="search-archive-li mp-pjax">
-                                    <a href="/2014/11/13/use-markdown-in-rails/">在Rails中实现markdown解析</a>
-                                </li>
-                                
-                                <li class="search-archive-li mp-pjax">
-                                    <a href="/2014/10/11/java-hash/">Hash表的实现</a>
-                                </li>
-                                
-                                <li class="search-archive-li mp-pjax">
-                                    <a href="/2014/10/07/java-set/">HashSet的实现</a>
-                                </li>
-                                
-                                <li class="search-archive-li mp-pjax">
-                                    <a href="/2014/07/29/golang-sort/">经典排序算法的golang实现</a>
-                                </li>
-                                
-                                <li class="search-archive-li mp-pjax">
-                                    <a href="/2014/05/23/first-blog/">从今天开始认真写东西啊混蛋</a>
-                                </li>
-                                
-                                </div>
-                            </ul>
-                        </div>
-                    </li>
-                    <li>
-                        <a class="fa fa-copy" href="#"><i class="fa fa-angle-left">
-                            </i>&nbsp;&nbsp;Categories</a>
 
-                        <div class="mp-level page-list">
-                            <h2 ><i class="fa fa-copy"></i>
-                                Categories</h2>
-                            <a class="mp-back" href="#">back</a>
-                            <form id="search-form" action="">
-                                <input type="text" class="search search-category" placeholder="Search.."/>
-                            </form>
-                            <ul>
-                                <div class="mp-scroll">
-                                
-                                </div>
-                            </ul>
-                        </div>
-                    </li>
-                    <li>
-                        <a class="fa fa-tags" href="#"><i class="fa fa-angle-left">
-                            </i>&nbsp;&nbsp;Tags</a>
-                        <div class="mp-level page-list">
-                            <h2 ><i class="fa fa-tags"></i>
-                                Tags</h2>
-                            <a class="mp-back" href="#">back</a>
-                            <form id="search-form" action="">
-                                <input type="text" class="search search-tag" placeholder="Search.."/>
-                            </form>
-                            <ul>
-                                <div class="mp-scroll">
-                                
-                                <li class="search-tag-li mp-pjax">
-                                    <a href="/tags/java/">&nbsp;&nbsp;&nbsp;java</a>
-                                    <small>2</small>
-                                </li>
-                                
-                                <li class="search-tag-li mp-pjax">
-                                    <a href="/tags/rails/">&nbsp;&nbsp;&nbsp;rails</a>
-                                    <small>1</small>
-                                </li>
-                                
-                                <li class="search-tag-li mp-pjax">
-                                    <a href="/tags/ruby/">&nbsp;&nbsp;&nbsp;ruby</a>
-                                    <small>1</small>
-                                </li>
-                                
-                                <li class="search-tag-li mp-pjax">
-                                    <a href="/tags/废话/">&nbsp;&nbsp;&nbsp;废话</a>
-                                    <small>1</small>
-                                </li>
-                                
-                                <li class="search-tag-li mp-pjax">
-                                    <a href="/tags/算法/">&nbsp;&nbsp;&nbsp;算法</a>
-                                    <small>1</small>
-                                </li>
-                                
-                                </div>
-                            </ul>
-                        </div>
-                    </li>
-                    
-                    <li><a class="fa fa-github" href="http://github.com/sllt">&nbsp;&nbsp;&nbsp;Github</a></li>
+<body itemscope itemtype="//schema.org/WebPage" lang="zh-Hans">
 
-                </ul>
-
-            </div>
-        </nav>
-        <div id="pjax">
-            <div class="pjax-hidden" style="display: none">
-                
-                    <a  data-pjax href="/2014/12/02/metaprogramming-ruby-object/">ruby元编程-对象模型</a>
-                
-                    <a  data-pjax href="/2014/11/13/use-markdown-in-rails/">在Rails中实现markdown解析</a>
-                
-                    <a  data-pjax href="/2014/10/11/java-hash/">Hash表的实现</a>
-                
-                    <a  data-pjax href="/2014/10/07/java-set/">HashSet的实现</a>
-                
-                    <a  data-pjax href="/2014/07/29/golang-sort/">经典排序算法的golang实现</a>
-                
-                    <a  data-pjax href="/2014/05/23/first-blog/">从今天开始认真写东西啊混蛋</a>
-                
-                
-                
-                    <a data-pjax href="/tags/java/">&nbsp;&nbsp;java</a>
-                
-                    <a data-pjax href="/tags/rails/">&nbsp;&nbsp;rails</a>
-                
-                    <a data-pjax href="/tags/ruby/">&nbsp;&nbsp;ruby</a>
-                
-                    <a data-pjax href="/tags/废话/">&nbsp;&nbsp;废话</a>
-                
-                    <a data-pjax href="/tags/算法/">&nbsp;&nbsp;算法</a>
-                
-                <a data-pjax class="fa fa-user" href="/about">&nbsp;&nbsp;&nbsp;About me</a>
-            </div>
-            <nav class="nexus">
-                <li  style="border-left: 1px solid #c6d0da;">
-                    <a id="trigger" href="#"><i class="fa fa-bars"></i></a>
-                </li>
-                <li ><a id="nexus-back" data-pjax href="/">Snowy</a></li>
-                
-                <div id="nav-container">
-                    <div class="post-navbar" style="line-height: 63px;display:none">
-                        <li id="navbar-title"><a href="#">ruby元编程-对象模型</a></li>
-                        <li id="navbar-toc" style="border-left: none">
-                            <a style="padding-right: 15px">
-                                <span id="toc-content" >Introduction</span><i class="fa fa-chevron-down" ></i>
-                            </a>
-                            <div class="hidden-box">
-                                <ul id="toc"></ul>
-                            </div>
-                        </li>
-                    </div>
-                </div>
-                
-            </nav>
-
-            <div class="scroller">
-            <div class="scroller-inner">
-
-
-<!-- -->
-<!--<body class="post-template">-->
-<!---->
   
 
-<main class="content" role="main">
-    <article class="post" >
-    <span class="post-meta">
-                  <div class="tag-tile">
-                      
-                      
-                      <a data-pjax href='/tags/ruby/' style='color:#D5D5D5'>ruby</a>
-                      
-                      
-                  </div>
-                <h1 class="post-title" style="margin: 14px 0;color:#50585D">ruby元编程-对象模型</h1>
 
-                    <div class="post-meta">
-                        Post on<span class="fa fa-clock-o"></span>
-                        <time datetime="2014-12-02T04:46:45.000Z"
-                              itemprop="datePublished">12月 2 2014</time>
-                    </div>
-    </span>
 
-        <section class="post-content">
-            <h1 id="ruby中的对象">ruby中的对象</h1>
-<p>在ruby中任何东西都是对象，甚至是nil、类等都是对象。<br>比如下面的例子：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="input"><span class="prompt">&gt;&gt;</span> <span class="number">1</span>.methods</span></div><div class="line"><span class="output"><span class="status">=&gt;</span> [<span class="symbol">:to_s</span>, <span class="symbol">:inspect</span>, <span class="symbol">:-@</span>, <span class="symbol">:+</span>, <span class="symbol">:-</span>, <span class="symbol">:*</span>, <span class="symbol">:/</span>, <span class="symbol">:div</span>, <span class="symbol">:%</span>, <span class="symbol">:modulo</span>, <span class="symbol">:divmod</span>, <span class="symbol">:fdiv</span>, <span class="symbol">:**</span>, <span class="symbol">:abs</span>, <span class="symbol">:magnitude</span>, <span class="symbol">:==</span>, <span class="symbol">:===</span>, <span class="symbol">:&lt;=&gt;</span>, <span class="symbol">:&gt;</span>, <span class="symbol">:&gt;=</span>, <span class="symbol">:&lt;</span>, <span class="symbol">:&lt;=</span>, <span class="symbol">:~</span>, <span class="symbol">:&</span>, <span class="symbol">:|</span>, <span class="symbol">:^</span>, <span class="symbol">:[]</span>, <span class="symbol">:&lt;&lt;</span>, <span class="symbol">:&gt;&gt;</span>, <span class="symbol">:to_f</span>, <span class="symbol">:size</span>, <span class="symbol">:bit_length</span>, <span class="symbol">:zero?</span>, <span class="symbol">:odd?</span>, <span class="symbol">:even?</span>, <span class="symbol">:succ</span>, <span class="symbol">:integer?</span>, <span class="symbol">:upto</span>, <span class="symbol">:downto</span>, <span class="symbol">:times</span>, <span class="symbol">:next</span>, <span class="symbol">:pred</span>, <span class="symbol">:chr</span>, <span class="symbol">:ord</span>, <span class="symbol">:to_i</span>, <span class="symbol">:to_int</span>, <span class="symbol">:floor</span>, <span class="symbol">:ceil</span>, <span class="symbol">:truncate</span>, <span class="symbol">:round</span>, <span class="symbol">:gcd</span>, <span class="symbol">:lcm</span>, <span class="symbol">:gcdlcm</span>, <span class="symbol">:numerator</span>, <span class="symbol">:denominator</span>, <span class="symbol">:to_r</span>, <span class="symbol">:rationalize</span>, <span class="symbol">:singleton_method_added</span>, <span class="symbol">:coerce</span>, <span class="symbol">:i</span>, <span class="symbol">:+@</span>, <span class="symbol">:eql?</span>, ......]</span></div><div class="line"><span class="input"><span class="prompt">&gt;&gt;</span> <span class="number">1</span>.class</span></div><div class="line"><span class="output"><span class="status">=&gt;</span> <span class="constant">Fixnum</span></span></div><div class="line"><span class="input"><span class="prompt">&gt;&gt;</span> <span class="constant">Fixnum</span>.class</span></div><div class="line"><span class="output"><span class="status">=&gt;</span> <span class="constant">Class</span></span></div><div class="line"><span class="input"><span class="prompt">&gt;&gt;</span> <span class="constant">Class</span>.class</span></div><div class="line"><span class="output"><span class="status">=&gt;</span> <span class="constant">Class</span></span></div></pre></td></tr></table></figure>
 
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="//schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Snowy</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="//schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                ruby元编程-对象模型
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2014-12-02T12:46:45+08:00" content="2014-12-02">
+              2014-12-02
+            </time>
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="ruby中的对象"><a href="#ruby中的对象" class="headerlink" title="ruby中的对象"></a>ruby中的对象</h1><p>在ruby中任何东西都是对象，甚至是nil、类等都是对象。<br>比如下面的例子：<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> <span class="number">1</span>.methods</div><div class="line">=&gt; [<span class="symbol">:to_s</span>, <span class="symbol">:inspect</span>, <span class="symbol">:-@</span>, <span class="symbol">:+</span>, <span class="symbol">:-</span>, <span class="symbol">:*</span>, <span class="symbol">:/</span>, <span class="symbol">:div</span>, <span class="symbol">:%</span>, <span class="symbol">:modulo</span>, <span class="symbol">:divmod</span>, <span class="symbol">:fdiv</span>, <span class="symbol">:**</span>, <span class="symbol">:abs</span>, <span class="symbol">:magnitude</span>, <span class="symbol">:==</span>, <span class="symbol">:===</span>, <span class="symbol">:&lt;=&gt;</span>, <span class="symbol">:&gt;</span>, <span class="symbol">:&gt;=</span>, <span class="symbol">:&lt;</span>, <span class="symbol">:&lt;=</span>, <span class="symbol">:~</span>, <span class="symbol">:&amp;</span>, <span class="symbol">:|</span>, <span class="symbol">:^</span>, <span class="symbol">:[]</span>, <span class="symbol">:&lt;&lt;</span>, <span class="symbol">:&gt;&gt;</span>, <span class="symbol">:to_f</span>, <span class="symbol">:size</span>, <span class="symbol">:bit_length</span>, <span class="symbol">:zero?</span>, <span class="symbol">:odd?</span>, <span class="symbol">:even?</span>, <span class="symbol">:succ</span>, <span class="symbol">:integer?</span>, <span class="symbol">:upto</span>, <span class="symbol">:downto</span>, <span class="symbol">:times</span>, <span class="symbol">:next</span>, <span class="symbol">:pred</span>, <span class="symbol">:chr</span>, <span class="symbol">:ord</span>, <span class="symbol">:to_i</span>, <span class="symbol">:to_int</span>, <span class="symbol">:floor</span>, <span class="symbol">:ceil</span>, <span class="symbol">:truncate</span>, <span class="symbol">:round</span>, <span class="symbol">:gcd</span>, <span class="symbol">:lcm</span>, <span class="symbol">:gcdlcm</span>, <span class="symbol">:numerator</span>, <span class="symbol">:denominator</span>, <span class="symbol">:to_r</span>, <span class="symbol">:rationalize</span>, <span class="symbol">:singleton_method_added</span>, <span class="symbol">:coerce</span>, <span class="symbol">:i</span>, <span class="symbol">:+@</span>, <span class="symbol">:eql?</span>, ......]</div><div class="line"><span class="meta">&gt;&gt;</span> <span class="number">1</span>.class</div><div class="line">=&gt; Fixnum</div><div class="line"><span class="meta">&gt;&gt;</span> Fixnum.class</div><div class="line">=&gt; Class</div><div class="line"><span class="meta">&gt;&gt;</span> Class.class</div><div class="line">=&gt; Class</div></pre></td></tr></table></figure></p>
 <p>在ruby中对象是由一组实例变量和一个类的引用组成的，对象的方法存在于对象所在的类中。</p>
-<h1 id="猴子补丁">猴子补丁</h1>
-<p>所谓猴子补丁就是不改变源代码而对功能进行追加和变更。</p>
-<h3 id="开放类">开放类</h3>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="input"><span class="prompt">class Foo</span></span></div><div class="line">    def hello</div><div class="line">        "hello world !"</div><div class="line">    end</div><div class="line">end</div><div class="line">class Foo</div><div class="line">    def plus(arg1,arg2)</div><div class="line">        arg1 + arg2</div><div class="line">    end</div><div class="line">end</div><div class="line">&gt;&gt; foo = <span class="constant">Foo</span>.new</div><div class="line"><span class="output"><span class="status">=&gt;</span> <span class="value">#&lt;Foo:0xb8c2b574&gt;</span></span></div><div class="line"><span class="input"><span class="prompt">&gt;&gt;</span> foo.hello</span></div><div class="line"><span class="output"><span class="status">=&gt;</span> <span class="string">"hello world !"</span></span></div><div class="line"><span class="input"><span class="prompt">&gt;&gt;</span> foo.plus(<span class="number">3</span>,<span class="number">4</span>)</span></div><div class="line"><span class="output"><span class="status">=&gt;</span> <span class="number">7</span></span></div></pre></td></tr></table></figure>
-
+<h1 id="猴子补丁"><a href="#猴子补丁" class="headerlink" title="猴子补丁"></a>猴子补丁</h1><p>所谓猴子补丁就是不改变源代码而对功能进行追加和变更。</p>
+<h3 id="开放类"><a href="#开放类" class="headerlink" title="开放类"></a>开放类</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Foo</span></span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">hello</span></span></div><div class="line">        <span class="string">"hello world !"</span></div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Foo</span></span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">plus</span><span class="params">(arg1,arg2)</span></span></div><div class="line">        arg1 + arg2</div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"><span class="meta">&gt;&gt;</span> foo = Foo.new</div><div class="line">=&gt; #&lt;Foo:0xb8c2b574&gt;</div><div class="line"><span class="meta">&gt;&gt;</span> foo.hello</div><div class="line">=&gt; <span class="string">"hello world !"</span></div><div class="line"><span class="meta">&gt;&gt;</span> foo.plus(<span class="number">3</span>,<span class="number">4</span>)</div><div class="line">=&gt; <span class="number">7</span></div></pre></td></tr></table></figure>
 <p>第二个class Foo中并不是新建了一个Foo类，而是重新打开了Foo类，给其新增了一个叫plus的方法。在ruby中所有的类都是开放类，你可以自由的开发String、Fixnum等基本的数据类型给它增加功能.</p>
-<h1 id="ruby中的类">ruby中的类</h1>
-<p>上文说类也是一个对象，那么什么是类呢？所谓类就是一个Class类的实例加一组实例方法和一个对其父类的引用。既然这样，就可以这样定义一个类，虽然结果也会产生一个类：</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hello = <span class="keyword">Class</span>.<span class="keyword">new</span></div></pre></td></tr></table></figure>
-
-<p>一般情况下，类这么定义：</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Hello</span></span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
-
-<p>其区别在于Hello是个常量（在ruby中，任何以大写字母开头的引用即为常量）而已。那么，class 包裹起来的一块东西又是什么呢？其只不过是个作用域。</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Hello</span></span></div><div class="line">    puts <span class="string">"hello world"</span></div><div class="line">    <span class="number">123</span></div><div class="line">    <span class="function"><span class="keyword">def</span> </span>say</div><div class="line">        <span class="string">"hello sllt"</span></div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
-
-<h1 id="self">self</h1>
-<p>每一行代码都会在一个对象中执行，这个对象就是当前对象（self)。</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyClass</span></span></div><div class="line">    <span class="keyword">self</span></div><div class="line"><span class="keyword">end</span></div><div class="line"><span class="output"><span class="status"></span></span></div><div class="line">=&gt; <span class="constant">MyClass</span></div><div class="line"><span class="input"><span class="prompt"></span></span></div><div class="line">class MyClass</div><div class="line">    def say</div><div class="line">        "hello"</div><div class="line">    end</div><div class="line">    def put_self</div><div class="line">        self</div><div class="line">        say</div><div class="line">    end</div><div class="line">end</div><div class="line"></div><div class="line">&gt;&gt; m = <span class="constant">MyClass</span>.new</div><div class="line"><span class="input"><span class="prompt">&gt;&gt;</span> m.put_self</span></div><div class="line"><span class="output"><span class="status">=&gt;</span> <span class="value">#&lt;MyClass:0xb93de870&gt;</span> <span class="string">"hello"</span></span></div></pre></td></tr></table></figure>
-
+<h1 id="ruby中的类"><a href="#ruby中的类" class="headerlink" title="ruby中的类"></a>ruby中的类</h1><p>上文说类也是一个对象，那么什么是类呢？所谓类就是一个Class类的实例加一组实例方法和一个对其父类的引用。既然这样，就可以这样定义一个类，虽然结果也会产生一个类：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hello = Class.new</div></pre></td></tr></table></figure></p>
+<p>一般情况下，类这么定义：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">class Hello</div><div class="line">end</div></pre></td></tr></table></figure></p>
+<p>其区别在于Hello是个常量（在ruby中，任何以大写字母开头的引用即为常量）而已。那么，class 包裹起来的一块东西又是什么呢？其只不过是个作用域。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Hello</span></span></div><div class="line">    puts <span class="string">"hello world"</span></div><div class="line">    <span class="number">123</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">say</span></span></div><div class="line">        <span class="string">"hello sllt"</span></div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure></p>
+<h1 id="self"><a href="#self" class="headerlink" title="self"></a>self</h1><p>每一行代码都会在一个对象中执行，这个对象就是当前对象（self)。<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyClass</span></span></div><div class="line">    <span class="keyword">self</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line">=&gt; MyClass</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyClass</span></span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">say</span></span></div><div class="line">        <span class="string">"hello"</span></div><div class="line">    <span class="keyword">end</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">put_self</span></span></div><div class="line">        <span class="keyword">self</span></div><div class="line">        say</div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="meta">&gt;&gt;</span> m = MyClass.new</div><div class="line"><span class="meta">&gt;&gt;</span> m.put_self</div><div class="line">=&gt; #&lt;MyClass:0xb93de870&gt; <span class="string">"hello"</span></div></pre></td></tr></table></figure></p>
 <p>通过上面代码可以看出：</p>
 <ul>
 <li>当定义一个模块和类时，其自身扮演self的角色。</li>
 <li>当调用一个方法时，接收者会扮演self的角色。</li>
 </ul>
 
-        </section>
-        <hr/>
-        <nav class="pagination" style="width:auto" role="pagination">
-            
-            <a style="cursor:default" class="newer-posts" href="#">This is the First Post</a>
-            
-            <a class="share-button" data-original-title title>Share this Post</a>
-            
-            <a data-pjax class="older-posts" href="/2014/11/13/use-markdown-in-rails/">Next Post →</a>
-            
-        </nav>
-        <br/>
-        <br/>
-        <section id="comment">
-            <div id="comment-box"></div>
-        </section>
-
-
-    </article>
-</main>
-
-
-  
-<footer class="site-footer">
-    
-    <div class="inner">
-        <section class="copyright"><a href="/"></a> &copy; Snowy 2014</section>
-        <section class="poweredby">Published with <a target="_blank" href="http://hexo.io/">Hexo   </a> and Theme by <a target="_blank" href="https://github.com/yuche/hexo-theme-kael">Kael</a></section>
+      
     </div>
-</footer>
-</div>
-</div><!-- /scroller -->
 
-</div><!-- /pusher -->
-</div><!-- /container -->
-</div>
+    <div>
+      
+        
 
-<!-- Easter eggs -->
+      
+    </div>
 
-<div class="egg animated">
-    <a id="close-button" href="#">X</a>
-    <div class="block">
-        <div class="loading">
-            <span class="ball1"></span>
-            <span class="ball2"></span>
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ruby/" rel="tag">#ruby</a>
+          
         </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2014/11/13/use-markdown-in-rails/" rel="next" title="在Rails中实现markdown解析">
+                <i class="fa fa-chevron-left"></i> 在Rails中实现markdown解析
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/01/08/push-notifications-for-ios-with-houston-and-sidekiq/" rel="prev" title="使用Houston+Sidekiq做ios消息推送">
+                使用Houston+Sidekiq做ios消息推送 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
     </div>
-</div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
   
-<script src="//cdn.staticfile.org/jquery/1.11.0/jquery.min.js"></script>
-<script>
-    if (!window.jQuery) {
-        var script = document.createElement('script');
-        script.src = "/js/jquery.min.js";
-        document.body.appendChild(script);
-    }
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="//schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/avatar.jpg"
+               alt="sllt" />
+          <p class="site-author-name" itemprop="name">sllt</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">13</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ruby中的对象"><span class="nav-number">1.</span> <span class="nav-text">ruby中的对象</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#猴子补丁"><span class="nav-number">2.</span> <span class="nav-text">猴子补丁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#开放类"><span class="nav-number">2.0.1.</span> <span class="nav-text">开放类</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ruby中的类"><span class="nav-number">3.</span> <span class="nav-text">ruby中的类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#self"><span class="nav-number">4.</span> <span class="nav-text">self</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">sllt</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
 </script>
-<script type="text/javascript" src="/js/lib.js"></script>
-<script type="text/javascript" src="/js/main.js"></script>
 
 
 
 
 
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.2"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
 
 
 </body>

@@ -1,196 +1,1120 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title><![CDATA[Snowy]]></title>
-  <subtitle><![CDATA[做有思想的程序员！]]></subtitle>
+  <title>Snowy</title>
+  
   <link href="/atom.xml" rel="self"/>
+  
   <link href="http://blog.snowy.in/"/>
-  <updated>2015-01-08T06:20:57.246Z</updated>
+  <updated>2016-04-24T07:39:58.000Z</updated>
   <id>http://blog.snowy.in/</id>
   
   <author>
-    <name><![CDATA[sllt]]></name>
-    <email><![CDATA[shenlongml@gmail.com]]></email>
+    <name>sllt</name>
+    <email>shenlongml@gmail.com</email>
   </author>
   
-  <generator uri="http://zespia.tw/hexo/">Hexo</generator>
+  <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title><![CDATA[ruby元编程-对象模型]]></title>
-    <link href="http://blog.snowy.in/2014/12/02/metaprogramming-ruby-object/"/>
-    <id>http://blog.snowy.in/2014/12/02/metaprogramming-ruby-object/</id>
-    <published>2014-12-02T04:46:45.000Z</published>
-    <updated>2015-01-08T06:14:47.000Z</updated>
-    <content type="html"><![CDATA[<h1 id="ruby中的对象">ruby中的对象</h1>
-<p>在ruby中任何东西都是对象，甚至是nil、类等都是对象。<br>比如下面的例子：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="input"><span class="prompt">&gt;&gt;</span> <span class="number">1</span>.methods</span></div><div class="line"><span class="output"><span class="status">=&gt;</span> [<span class="symbol">:to_s</span>, <span class="symbol">:inspect</span>, <span class="symbol">:-@</span>, <span class="symbol">:+</span>, <span class="symbol">:-</span>, <span class="symbol">:*</span>, <span class="symbol">:/</span>, <span class="symbol">:div</span>, <span class="symbol">:%</span>, <span class="symbol">:modulo</span>, <span class="symbol">:divmod</span>, <span class="symbol">:fdiv</span>, <span class="symbol">:**</span>, <span class="symbol">:abs</span>, <span class="symbol">:magnitude</span>, <span class="symbol">:==</span>, <span class="symbol">:===</span>, <span class="symbol">:&lt;=&gt;</span>, <span class="symbol">:&gt;</span>, <span class="symbol">:&gt;=</span>, <span class="symbol">:&lt;</span>, <span class="symbol">:&lt;=</span>, <span class="symbol">:~</span>, <span class="symbol">:&</span>, <span class="symbol">:|</span>, <span class="symbol">:^</span>, <span class="symbol">:[]</span>, <span class="symbol">:&lt;&lt;</span>, <span class="symbol">:&gt;&gt;</span>, <span class="symbol">:to_f</span>, <span class="symbol">:size</span>, <span class="symbol">:bit_length</span>, <span class="symbol">:zero?</span>, <span class="symbol">:odd?</span>, <span class="symbol">:even?</span>, <span class="symbol">:succ</span>, <span class="symbol">:integer?</span>, <span class="symbol">:upto</span>, <span class="symbol">:downto</span>, <span class="symbol">:times</span>, <span class="symbol">:next</span>, <span class="symbol">:pred</span>, <span class="symbol">:chr</span>, <span class="symbol">:ord</span>, <span class="symbol">:to_i</span>, <span class="symbol">:to_int</span>, <span class="symbol">:floor</span>, <span class="symbol">:ceil</span>, <span class="symbol">:truncate</span>, <span class="symbol">:round</span>, <span class="symbol">:gcd</span>, <span class="symbol">:lcm</span>, <span class="symbol">:gcdlcm</span>, <span class="symbol">:numerator</span>, <span class="symbol">:denominator</span>, <span class="symbol">:to_r</span>, <span class="symbol">:rationalize</span>, <span class="symbol">:singleton_method_added</span>, <span class="symbol">:coerce</span>, <span class="symbol">:i</span>, <span class="symbol">:+@</span>, <span class="symbol">:eql?</span>, ......]</span></div><div class="line"><span class="input"><span class="prompt">&gt;&gt;</span> <span class="number">1</span>.class</span></div><div class="line"><span class="output"><span class="status">=&gt;</span> <span class="constant">Fixnum</span></span></div><div class="line"><span class="input"><span class="prompt">&gt;&gt;</span> <span class="constant">Fixnum</span>.class</span></div><div class="line"><span class="output"><span class="status">=&gt;</span> <span class="constant">Class</span></span></div><div class="line"><span class="input"><span class="prompt">&gt;&gt;</span> <span class="constant">Class</span>.class</span></div><div class="line"><span class="output"><span class="status">=&gt;</span> <span class="constant">Class</span></span></div></pre></td></tr></table></figure>
+    <title>使用Python模拟Lambda演算</title>
+    <link href="http://blog.snowy.in/2016/04/24/lambda-calculus/"/>
+    <id>http://blog.snowy.in/2016/04/24/lambda-calculus/</id>
+    <published>2016-04-24T07:34:47.000Z</published>
+    <updated>2016-04-24T07:39:58.000Z</updated>
+    
+    <content type="html"><![CDATA[
+我们将从下面这段程序开始：
 
-<p>在ruby中对象是由一组实例变量和一个类的引用组成的，对象的方法存在于对象所在的类中。</p>
-<h1 id="猴子补丁">猴子补丁</h1>
-<p>所谓猴子补丁就是不改变源代码而对功能进行追加和变更。</p>
-<h3 id="开放类">开放类</h3>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="input"><span class="prompt">class Foo</span></span></div><div class="line">    def hello</div><div class="line">        "hello world !"</div><div class="line">    end</div><div class="line">end</div><div class="line">class Foo</div><div class="line">    def plus(arg1,arg2)</div><div class="line">        arg1 + arg2</div><div class="line">    end</div><div class="line">end</div><div class="line">&gt;&gt; foo = <span class="constant">Foo</span>.new</div><div class="line"><span class="output"><span class="status">=&gt;</span> <span class="value">#&lt;Foo:0xb8c2b574&gt;</span></span></div><div class="line"><span class="input"><span class="prompt">&gt;&gt;</span> foo.hello</span></div><div class="line"><span class="output"><span class="status">=&gt;</span> <span class="string">"hello world !"</span></span></div><div class="line"><span class="input"><span class="prompt">&gt;&gt;</span> foo.plus(<span class="number">3</span>,<span class="number">4</span>)</span></div><div class="line"><span class="output"><span class="status">=&gt;</span> <span class="number">7</span></span></div></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>,<span class="number">20</span>):</div><div class="line">    <span class="keyword">if</span> i % <span class="number">3</span> == <span class="number">0</span> <span class="keyword">or</span> i % <span class="number">5</span> == <span class="number">0</span>:</div><div class="line">        print(i)</div></pre></td></tr></table></figure>
 
-<p>第二个class Foo中并不是新建了一个Foo类，而是重新打开了Foo类，给其新增了一个叫plus的方法。在ruby中所有的类都是开放类，你可以自由的开发String、Fixnum等基本的数据类型给它增加功能.</p>
-<h1 id="ruby中的类">ruby中的类</h1>
-<p>上文说类也是一个对象，那么什么是类呢？所谓类就是一个Class类的实例加一组实例方法和一个对其父类的引用。既然这样，就可以这样定义一个类，虽然结果也会产生一个类：</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hello = <span class="keyword">Class</span>.<span class="keyword">new</span></div></pre></td></tr></table></figure>
+这段程序将打印出1~19之间能被3或5整除的数字。我们将不使用任何Python内建类型及方法来实现上面程序的功能。
 
-<p>一般情况下，类这么定义：</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Hello</span></span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
 
-<p>其区别在于Hello是个常量（在ruby中，任何以大写字母开头的引用即为常量）而已。那么，class 包裹起来的一块东西又是什么呢？其只不过是个作用域。</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Hello</span></span></div><div class="line">    puts <span class="string">"hello world"</span></div><div class="line">    <span class="number">123</span></div><div class="line">    <span class="function"><span class="keyword">def</span> </span>say</div><div class="line">        <span class="string">"hello sllt"</span></div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
 
-<h1 id="self">self</h1>
-<p>每一行代码都会在一个对象中执行，这个对象就是当前对象（self)。</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyClass</span></span></div><div class="line">    <span class="keyword">self</span></div><div class="line"><span class="keyword">end</span></div><div class="line"><span class="output"><span class="status"></span></span></div><div class="line">=&gt; <span class="constant">MyClass</span></div><div class="line"><span class="input"><span class="prompt"></span></span></div><div class="line">class MyClass</div><div class="line">    def say</div><div class="line">        "hello"</div><div class="line">    end</div><div class="line">    def put_self</div><div class="line">        self</div><div class="line">        say</div><div class="line">    end</div><div class="line">end</div><div class="line"></div><div class="line">&gt;&gt; m = <span class="constant">MyClass</span>.new</div><div class="line"><span class="input"><span class="prompt">&gt;&gt;</span> m.put_self</span></div><div class="line"><span class="output"><span class="status">=&gt;</span> <span class="value">#&lt;MyClass:0xb93de870&gt;</span> <span class="string">"hello"</span></span></div></pre></td></tr></table></figure>
+## 1 数字
 
-<p>通过上面代码可以看出：</p>
-<ul>
-<li>当定义一个模块和类时，其自身扮演self的角色。</li>
-<li>当调用一个方法时，接收者会扮演self的角色。</li>
-</ul>
+数字的特征可以简单的描述为某一个动作的迭代。比如吃了6个苹果，6就表示重复的进行了n次的吃这个动作。相同的，我们也可以在程序中用某一个函数被调用了几次来表示数字。
+
+比如数字`1`可以表示成如下代码：
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">one</span><span class="params">(p, x)</span>:</span></div><div class="line">  <span class="keyword">return</span> p(x)</div></pre></td></tr></table></figure>
+
+依照同样的定义，我们可以这么表示`2`:
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">two</span><span class="params">(p, x)</span>:</span></div><div class="line">   <span class="keyword">return</span> p(p(x))</div></pre></td></tr></table></figure>
+
+那么， 如何表示`0`呢？ 我们传入`p`但是不进行调用，就可以表示0了：
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">zero</span><span class="params">(p, x)</span>:</span></div><div class="line">    <span class="keyword">return</span> x</div></pre></td></tr></table></figure>
+
+用`lambda`表达式表示如下：
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">ZERO = <span class="keyword">lambda</span> p: <span class="keyword">lambda</span> x: x</div><div class="line">ONE = <span class="keyword">lambda</span> p: <span class="keyword">lambda</span> x: p(x)</div><div class="line">TWO = <span class="keyword">lambda</span> p: <span class="keyword">lambda</span> x: p(p(x))</div><div class="line">THREE = <span class="keyword">lambda</span> p: <span class="keyword">lambda</span> x: p(p(p(x)))</div></pre></td></tr></table></figure>
+
+让我们来实现一个函数来将这些lambda表达式这换成Python的数字，依次来支持一些其他特性，比如使用`range`函数：
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">to_integer = <span class="keyword">lambda</span> n: n(<span class="keyword">lambda</span> x: x+<span class="number">1</span>)(<span class="number">0</span>)</div></pre></td></tr></table></figure>
+
+同样的，`5`、`20`可以这么表示：
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">FIVE = <span class="keyword">lambda</span> p: <span class="keyword">lambda</span> x: p(p(p(p(p(x)))))</div><div class="line"></div><div class="line">TWENTY = <span class="keyword">lambda</span> p: <span class="keyword">lambda</span> x: p(p(p(p(p(p(p(p(p(p(p(p(p(p(p(p(p(p(p(p(x))))))))))))))))))))</div></pre></td></tr></table></figure>
+
+现在，我们的程序可以这么表示：
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(to_integer(ONE), to_integer(TWENTY)):</div><div class="line">    <span class="keyword">if</span> i % to_integer(THREE) == to_integer(ZERO) <span class="keyword">or</span> i % to_integer(FIVE) == to_integer(ZERO):</div><div class="line">        print(i)</div></pre></td></tr></table></figure>
+
+# 2 布尔值    
+
+
+待写...
 ]]></content>
+    
     <summary type="html">
-    <![CDATA[<h1 id="ruby中的对象">ruby中的对象</h1>
-<p>在ruby中任何东西都是对象，甚至是nil、类等都是对象。<br>比如下面的例子：</p>
-<figure class="highlight ruby"><table><tr><td class="gutter]]>
+    
+      
+我们将从下面这段程序开始：
+
+&lt;figure class=&quot;highlight python&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div c
+    
     </summary>
     
-      <category term="ruby" scheme="http://blog.snowy.in/tags/ruby/"/>
+    
+      <category term="python" scheme="http://blog.snowy.in/tags/python/"/>
+    
+      <category term="lambda" scheme="http://blog.snowy.in/tags/lambda/"/>
     
   </entry>
   
   <entry>
-    <title><![CDATA[在Rails中实现markdown解析]]></title>
-    <link href="http://blog.snowy.in/2014/11/13/use-markdown-in-rails/"/>
-    <id>http://blog.snowy.in/2014/11/13/use-markdown-in-rails/</id>
-    <published>2014-11-13T08:39:34.000Z</published>
-    <updated>2015-01-08T06:14:47.000Z</updated>
-    <content type="html"><![CDATA[<p>首先，安装gem</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="title">gem</span> <span class="string">'redcarpet'</span></div></pre></td></tr></table></figure>
+    <title>如何写一个web服务器</title>
+    <link href="http://blog.snowy.in/2015/11/25/write-a-web-server-with-python/"/>
+    <id>http://blog.snowy.in/2015/11/25/write-a-web-server-with-python/</id>
+    <published>2015-11-25T08:14:41.000Z</published>
+    <updated>2016-07-30T13:53:26.000Z</updated>
+    
+    <content type="html"><![CDATA[
+Hello, Web
 
-<p>然后在app/helpers/application_helper.rb添加如下代码：</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">def markdown(<span class="keyword">text</span>)</div><div class="line">    render_options = {</div><div class="line">        filter_html:     <span class="constant">false</span>,</div><div class="line">        hard_wrap:       <span class="constant">true</span>, </div><div class="line">        link_attributes: { <span class="built_in">rel</span>: <span class="string">'nofollow'</span> }</div><div class="line">    }</div><div class="line">    renderer = Redcarpet::Render::HTML.<span class="built_in">new</span>(render_options)</div><div class="line">    extensions = {</div><div class="line">            <span class="comment">#will parse links without need of enclosing them</span></div><div class="line">            autolink:           <span class="constant">true</span>,</div><div class="line">            fenced_code_blocks: <span class="constant">true</span>,</div><div class="line">            <span class="comment"># will ignore standard require for empty lines surrounding HTML blocks</span></div><div class="line">            lax_spacing:        <span class="constant">true</span>,</div><div class="line">            <span class="comment"># will not generate emphasis inside of words, for example no_emph_no</span></div><div class="line">            no_intra_emphasis:  <span class="constant">true</span>,</div><div class="line">            <span class="comment"># will parse strikethrough from ~~, for example: ~~bad~~</span></div><div class="line">            strikethrough:      <span class="constant">true</span>,</div><div class="line">            <span class="comment"># will parse superscript after ^, you can wrap superscript in () </span></div><div class="line">            superscript:        <span class="constant">true</span></div><div class="line">            <span class="comment"># will require a space after # in defining headers</span></div><div class="line">            <span class="comment"># space_after_headers: true</span></div><div class="line">        }</div><div class="line">    Redcarpet::Markdown.<span class="built_in">new</span>(renderer, extensions).render(<span class="keyword">text</span>).html_safe</div><div class="line"><span class="function"><span class="keyword">end</span></span></div></pre></td></tr></table></figure>
+我们先来写一个简单的web服务器，思路如下：
 
-<p>在view中:<br><code>&lt;%= markdown @content %&gt;</code></p>
-<p>在controller中：</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">ApplicationController</span> <span class="inheritance">&lt; <span class="parent">ActionController::Base</span></span></span></div><div class="line">    <span class="keyword">include</span> <span class="constant">ApplicationHelper</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+1. 等待客户端连接我们的服务器，并发送一个HTTP 请求；
+2. 解析这个请求；
+3. 找出它要请求的具体内容；
+4. 获取该数据 (或者动态生成);
+5. 将数据格式化为HTML；
+6. 返回数据。
+
+步骤1、2、6的实现方式大致相同, 在Python中有一个叫BaseHTTPServer的模块可以帮助我们实现这些步骤。 我们仅需要实现步骤3-5, 一个简单的实现如下:
+
+    import BaseHTTPServer
+    
+    class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+        '''Handle HTTP requests by returning a fixed 'page'.'''
+    
+        # Page to send back.
+        Page = '''\
+    <html>
+    <body>
+    <p>Hello, web!</p>
+    </body>
+    </html>
+    '''
+    
+        # Handle a GET request.
+        def do_GET(self):
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html")
+            self.send_header("Content-Length", str(len(self.Page)))
+            self.end_headers()
+            self.wfile.write(self.Page)
+    
+    #----------------------------------------------------------------------
+    
+    if __name__ == '__main__':
+        serverAddress = ('', 8080)
+        server = BaseHTTPServer.HTTPServer(serverAddress, RequestHandler)
+        server.serve_forever()
+
+BaseHTTPRequestHandler类负责解析传入的HTTP请求， 并调用特定的方法。如果是GET请求，它将调用do_GET方法。我们的RequestHandler类重写了这个方法来动态的生成一个页面：返回的内容保存在类变量Page中，我们给客户端返回一个200的状态码，Content-Type用来告诉客户端将我们返回的数据为HTML，Content-Length表示返回信息的长度（end_headers方法将会插入空行用来分割HTTP头以及内容主体）。
+
+但RequestHandler并不是故事的全部：我们需要调用最后三行代码来启动一个服务器。其中第一行定义了一个元组来表示服务器的地址：空字符串表示“运行在当前的机器上”，8080表示占用的端口。接着我们创建了一个BaseHTTPServer.HTTPServer的实例，然后让其一直运行（按Control-C终止）。
+
+我们在命令行下运行这个程序， 并不会显示任何内容：
+
+    $ python server.py
+
+用浏览器打开 http://localhost:8080 我们会看到以下内容：
+
+    Hello, web!
+
+这时候我们的shell将会显示类似如下信息：
+
+    127.0.0.1 - - [24/Feb/2014 10:26:28] "GET / HTTP/1.1" 200 -
+    127.0.0.1 - - [24/Feb/2014 10:26:28] "GET /favicon.ico HTTP/1.1" 200 -
+
+因为我们没有指定特定的文件，浏览器默认将会访问'/'目录（服务器的根目录）。
+
+浏览器会自动发送第二个请求获取/favicon.ico图像,它会显示在地址栏上，如果它存在的话。
+
+Displaying Values
+
+我们来修改代码让程序返回HTTP请求的部分信息 。 为了保持代码的整洁，我们将分为几个方法来写：
+
+    class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+    
+        # ...page template...
+    
+        def do_GET(self):
+            page = self.create_page()
+            self.send_page(page)
+    
+        def create_page(self):
+            # ...fill in...
+    
+        def send_page(self, page):
+            # ...fill in...
+
+
+
+我们需要先实现send_page方法： 
+
+    def send_page(self, page):
+        self.send_response(200)
+        self.send_header("Content-type", "text/html")
+        self.send_header("Content-Length", str(len(page)))
+        self.end_headers()
+        self.wfile.write(page)
+
+将要显示的页面模板：
+
+        Page = '''\
+    <html>
+    <body>
+    <table>
+    <tr>  <td>Header</td>         <td>Value</td>          </tr>
+    <tr>  <td>Date and time</td>  <td>{date_time}</td>    </tr>
+    <tr>  <td>Client host</td>    <td>{client_host}</td>  </tr>
+    <tr>  <td>Client port</td>    <td>{client_port}s</td> </tr>
+    <tr>  <td>Command</td>        <td>{command}</td>      </tr>
+    <tr>  <td>Path</td>           <td>{path}</td>         </tr>
+    </table>
+    </body>
+    </html>
+    '''
+
+实现create_page方法，用来格式化要显示的信息：
+
+    def create_page(self):
+        values = {
+            'date_time'   : self.date_time_string(),
+            'client_host' : self.client_address[0],
+            'client_port' : self.client_address[1],
+            'command'     : self.command,
+            'path'        : self.path
+        }
+        page = self.Page.format(**values)
+        return page
+
+
+
+不需要改变程序主体: 像之前一样, 以地址、RequestHandler作为参数创建一个 HTTPServer的实例，接着程序会监听此地址。如果我们用浏览器打开http://localhost:8080/something.html，将会看到如下信息：  
+
+      Date and time  Mon, 24 Feb 2014 17:17:12 GMT
+      Client host    127.0.0.1
+      Client port    54548
+      Command        GET
+      Path           /something.html
+
+即使something.html页面不存在程序也不会返回一个404错误。这是因为我们在获取一个HTTP请求后可以给它返回任意内容。
+
+Serving Static Pages
+
+接下来我们监听磁盘上的文件，将其返回给客户端。来修改do_GET方法:
+
+    def do_GET(self):
+        try:
+    
+            # Figure out what exactly is being requested.
+            full_path = os.getcwd() + self.path
+    
+            # It doesn't exist...
+            if not os.path.exists(full_path):
+                raise ServerException("'{0}' not found".format(self.path))
+    
+            # ...it's a file...
+            elif os.path.isfile(full_path):
+                self.handle_file(full_path)
+    
+            # ...it's something we don't handle.
+            else:
+                raise ServerException("Unknown object '{0}'".format(self.path))
+    
+        # Handle errors.
+        except Exception as msg:
+            self.handle_error(msg)
+    
+
+
+
+该方法假定服务器所在目录为根目录(调用 os.getcwd方法)。然后跟URL中的地址组合在一起来寻找文件 (相对路径保存在 self.path中，并始终以'/'开头) 。
+
+如果这个文件不存在，或者不是个文件程序会抛出一个异常，并捕获它。如果这个文件存在，将会调用hand_file方法来获取文件的内容。然后调用send_content方法将读到的内容返回给客户端：
+
+    def handle_file(self, full_path):
+        try:
+            with open(full_path, 'rb') as reader:
+                content = reader.read()
+            self.send_content(content)
+        except IOError as msg:
+            msg = "'{0}' cannot be read: {1}".format(self.path, msg)
+            self.handle_error(msg)
+
+
+
+接着，我们来完成错误处理的方法和错误报告的页面模板：
+
+    Error_Page = """\
+            <html>
+            <body>
+            <h1>Error accessing {path}</h1>
+            <p>{msg}</p>
+            </body>
+            </html>
+            """
+    
+    def handle_error(self, msg):
+        content = self.Error_Page.format(path=self.path, msg=msg)
+        self.send_content(content)
+
+This program works, but only if we don't look too closely. The problem is that it always returns a status code of 200, even when the page being requested doesn't exist. Yes, the page sent back in that case contains an error message, but since our browser can't read English, it doesn't know that the request actually failed. In order to make that clear, we need to modify handle_error and send_content as follows:
+
+    # Handle unknown objects.
+    def handle_error(self, msg):
+        content = self.Error_Page.format(path=self.path, msg=msg)
+        self.send_content(content, 404)
+    
+    # Send actual content.
+    def send_content(self, content, status=200):
+        self.send_response(status)
+        self.send_header("Content-type", "text/html")
+        self.send_header("Content-Length", str(len(content)))
+        self.end_headers()
+        self.wfile.write(content)
+
+
+
+Listing Directories
+
+As our next step, we could teach the web server to display a listing of a directory's contents when the path in the URL is a directory rather than a file. We could even go one step further and have it look in that directory for an index.html file to display, and only show a listing of the directory's contents if that file is not present.
+
+But building these rules into do_GET would be a mistake, since the resulting method would be a long tangle of if statements controlling special behaviors. The right solution is to step back and solve the general problem, which is figuring out what to do with a URL. Here's a rewrite of the do_GET method:
+
+    def do_GET(self):
+        try:
+    
+            # Figure out what exactly is being requested.
+            self.full_path = os.getcwd() + self.path
+    
+            # Figure out how to handle it.
+            for case in self.Cases:
+                handler = case()
+                if handler.test(self):
+                    handler.act(self)
+                    break
+    
+        # Handle errors.
+        except Exception as msg:
+            self.handle_error(msg)
+
+
+
+The first step is the same: figure out the full path to the thing being requested. After that, though, the code looks quite different. Instead of a bunch of inline tests, this version loops over a set of cases stored in a list. Each case is an object with two methods: test, which tells us whether it's able to handle the request, and act, which actually takes some action. As soon as we find the right case, we let it handle the request and break out of the loop.
+
+These three case classes reproduce the behavior of our previous server:
+
+
+
+    class case_no_file(object):
+        '''File or directory does not exist.'''
+    
+        def test(self, handler):
+            return not os.path.exists(handler.full_path)
+    
+        def act(self, handler):
+            raise ServerException("'{0}' not found".format(handler.path))
+    
+    
+    class case_existing_file(object):
+        '''File exists.'''
+    
+        def test(self, handler):
+            return os.path.isfile(handler.full_path)
+    
+        def act(self, handler):
+            handler.handle_file(handler.full_path)
+    
+    
+    class case_always_fail(object):
+        '''Base case if nothing else worked.'''
+    
+        def test(self, handler):
+            return True
+    
+        def act(self, handler):
+            raise ServerException("Unknown object '{0}'".format(handler.path))
+
+and here's how we construct the list of case handlers at the top of the RequestHandler class:
+
+    class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+        '''
+        If the requested path maps to a file, that file is served.
+        If anything goes wrong, an error page is constructed.
+        '''
+    
+        Cases = [case_no_file(),
+                 case_existing_file(),
+                 case_always_fail()]
+    
+        ...everything else as before...
+
+Now, on the surface this has made our server more complicated, not less: the file has grown from 74 lines to 99, and there's an extra level of indirection without any new functionality. The benefit comes when we go back to the task that started this chapter and try to teach our server to serve up the index.html page for a directory if there is one, and a listing of the directory if there isn't. The handler for the former is:
+
+    class case_directory_index_file(object):
+        '''Serve index.html page for a directory.'''
+    
+        def index_path(self, handler):
+            return os.path.join(handler.full_path, 'index.html')
+    
+        def test(self, handler):
+            return os.path.isdir(handler.full_path) and \
+                   os.path.isfile(self.index_path(handler))
+    
+        def act(self, handler):
+            handler.handle_file(self.index_path(handler))
+    
+
+Here, the helper method index_path constructs the path to the index.html file; putting it in the case handler prevents clutter in the main RequestHandler.test checks whether the path is a directory containing an index.html page, and act asks the main request handler to serve that page.
+
+The only change needed to RequestHandler is to add a case_directory_index_file object to our Cases list:
+
+        Cases = [case_no_file(),
+                 case_existing_file(),
+                 case_directory_index_file(),
+                 case_always_fail()]
+
+What about directories that don't contain index.html pages? The test is the same as the one above with a not strategically inserted, but what about the actmethod? What should it do?
+
+    class case_directory_no_index_file(object):
+        '''Serve listing for a directory without an index.html page.'''
+    
+        def index_path(self, handler):
+            return os.path.join(handler.full_path, 'index.html')
+    
+        def test(self, handler):
+            return os.path.isdir(handler.full_path) and \
+                   not os.path.isfile(self.index_path(handler))
+    
+        def act(self, handler):
+            ???
+
+It seems we've backed ourselves into a corner. Logically, the act method should create and return the directory listing, but our existing code doesn't allow for that:RequestHandler.do_GET calls act, but doesn't expect or handle a return value from it. For now, let's add a method to RequestHandler to generate a directory listing, and call that from the case handler's act:
+
+    class case_directory_no_index_file(object):
+        '''Serve listing for a directory without an index.html page.'''
+    
+        # ...index_path and test as above...
+    
+        def act(self, handler):
+            handler.list_dir(handler.full_path)
+    
+    
+    class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+    
+        # ...all the other code...
+    
+        # How to display a directory listing.
+        Listing_Page = '''\
+            <html>
+            <body>
+            <ul>
+            {0}
+            </ul>
+            </body>
+            </html>
+            '''
+    
+        def list_dir(self, full_path):
+            try:
+                entries = os.listdir(full_path)
+                bullets = ['<li>{0}</li>'.format(e) 
+                    for e in entries if not e.startswith('.')]
+                page = self.Listing_Page.format('\n'.join(bullets))
+                self.send_content(page)
+            except OSError as msg:
+                msg = "'{0}' cannot be listed: {1}".format(self.path, msg)
+                self.handle_error(msg)
+    
+
+The CGI Protocol
+
+Of course, most people won't want to edit the source of their web server in order to add new functionality. To save them from having to do so, servers have always supported a mechanism called the Common Gateway Interface (CGI), which provides a standard way for a web server to run an external program in order to satisfy a request.
+
+For example, suppose we want the server to be able to display the local time in an HTML page. We can do this in a standalone program with just a few lines of code:
+
+    from datetime import datetime
+    print '''\
+    <html>
+    <body>
+    <p>Generated {0}</p>
+    </body>
+    </html>'''.format(datetime.now())
+
+In order to get the web server to run this program for us, we add this case handler:
+
+    class case_cgi_file(object):
+        '''Something runnable.'''
+    
+        def test(self, handler):
+            return os.path.isfile(handler.full_path) and \
+                   handler.full_path.endswith('.py')
+    
+        def act(self, handler):
+            handler.run_cgi(handler.full_path)
+
+The test is simple: does the file path end with .py? If so, RequestHandler runs this program.
+
+        def run_cgi(self, full_path):
+            cmd = "python " + full_path
+            child_stdin, child_stdout = os.popen2(cmd)
+            child_stdin.close()
+            data = child_stdout.read()
+            child_stdout.close()
+            self.send_content(data)
+
+This is horribly insecure: if someone knows the path to a Python file on our server, we're just letting them run it without worrying about what data it has access to, whether it might contain an infinite loop, or anything else.2
+
+Sweeping that aside, the core idea is simple:
+
+1. Run the program in a subprocess.
+2. Capture whatever that subprocess sends to standard output.
+3. Send that back to the client that made the request.
+
+The full CGI protocol is much richer than this—in particular, it allows for parameters in the URL, which the server passes into the program being run—but those details don't affect the overall architecture of the system...
+
+...which is once again becoming rather tangled. RequestHandler initially had one method, handle_file, for dealing with content. We have now added two special cases in the form of list_dir and run_cgi. These three methods don't really belong where they are, since they're primarily used by others.
+
+The fix is straightforward: create a parent class for all our case handlers, and move other methods to that class if (and only if) they are shared by two or more handlers. When we're done, the RequestHandler class looks like this:
+
+    class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+    
+        Cases = [case_no_file(),
+                 case_cgi_file(),
+                 case_existing_file(),
+                 case_directory_index_file(),
+                 case_directory_no_index_file(),
+                 case_always_fail()]
+    
+        # How to display an error.
+        Error_Page = """\
+            <html>
+            <body>
+            <h1>Error accessing {path}</h1>
+            <p>{msg}</p>
+            </body>
+            </html>
+            """
+    
+        # Classify and handle request.
+        def do_GET(self):
+            try:
+    
+                # Figure out what exactly is being requested.
+                self.full_path = os.getcwd() + self.path
+    
+                # Figure out how to handle it.
+                for case in self.Cases:
+                    if case.test(self):
+                        case.act(self)
+                        break
+    
+            # Handle errors.
+            except Exception as msg:
+                self.handle_error(msg)
+    
+        # Handle unknown objects.
+        def handle_error(self, msg):
+            content = self.Error_Page.format(path=self.path, msg=msg)
+            self.send_content(content, 404)
+    
+        # Send actual content.
+        def send_content(self, content, status=200):
+            self.send_response(status)
+            self.send_header("Content-type", "text/html")
+            self.send_header("Content-Length", str(len(content)))
+            self.end_headers()
+            self.wfile.write(content)
+    
+
+while the parent class for our case handlers is:
+
+    class base_case(object):
+        '''Parent for case handlers.'''
+    
+        def handle_file(self, handler, full_path):
+            try:
+                with open(full_path, 'rb') as reader:
+                    content = reader.read()
+                handler.send_content(content)
+            except IOError as msg:
+                msg = "'{0}' cannot be read: {1}".format(full_path, msg)
+                handler.handle_error(msg)
+    
+        def index_path(self, handler):
+            return os.path.join(handler.full_path, 'index.html')
+    
+        def test(self, handler):
+            assert False, 'Not implemented.'
+    
+        def act(self, handler):
+            assert False, 'Not implemented.'
+
+and the handler for an existing file (just to pick an example at random) is:
+
+    class case_existing_file(base_case):
+        '''File exists.'''
+    
+        def test(self, handler):
+            return os.path.isfile(handler.full_path)
+    
+        def act(self, handler):
+            self.handle_file(handler, handler.full_path)
+
+Discussion
+
+The differences between our original code and the refactored version reflect two important ideas. The first is to think of a class as a collection of related services.RequestHandler and base_case don't make decisions or take actions; they provide tools that other classes can use to do those things.
+
+The second is extensibility: people can add new functionality to our web server either by writing an external CGI program, or by adding a case handler class. The latter does require a one-line change to RequestHandler (to insert the case handler in the Cases list), but we could get rid of that by having the web server read a configuration file and load handler classes from that. In both cases, they can ignore most lower-level details, just as the authors of the BaseHTTPRequestHandlerclass have allowed us to ignore the details of handling socket connections and parsing HTTP requests.
+
+These ideas are generally useful; see if you can find ways to use them in your own projects.
+
 
 ]]></content>
+    
     <summary type="html">
-    <![CDATA[<p>首先，安装gem</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div ]]>
+    
+      
+Hello, Web
+
+我们先来写一个简单的web服务器，思路如下：
+
+1. 等待客户端连接我们的服务器，并发送一个HTTP 请求；
+2. 解析这个请求；
+3. 找出它要请求的具体内容；
+4. 获取该数据 (或者动态生成);
+5. 将数据格式化为HTML；
+6. 返回数据。
+
+
+    
     </summary>
+    
+    
+      <category term="python" scheme="http://blog.snowy.in/tags/python/"/>
+    
+      <category term="server" scheme="http://blog.snowy.in/tags/server/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>如何写一个Scheme解释器</title>
+    <link href="http://blog.snowy.in/2015/11/17/write-a-scheme-interpreter/"/>
+    <id>http://blog.snowy.in/2015/11/17/write-a-scheme-interpreter/</id>
+    <published>2015-11-17T06:02:14.000Z</published>
+    <updated>2015-11-18T04:38:09.000Z</updated>
+    
+    <content type="html"><![CDATA[
+本文假设你会使用python。
+
+我们会先实现一个scheme语法的简单计算器，以便了解实现一个解释器的简单步骤，接着会逐步给此计算器增加功能，使其成为一个完整的scheme解释器。
+
+[Scheme-wikipedia](https://zh.wikipedia.org/wiki/Scheme)这里有关于scheme的更详细的介绍。
+
+## 1.1 Scheme语法式的计算器
+此简化的计算器包含加（+）、减（-）、乘（*）、除（/）四个表达式。
+
+加法和乘法表达式可以接收任意数量的参数：
+
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&gt; (+ 1 2 3 4 )</div><div class="line">10</div><div class="line">&gt; (+)</div><div class="line">0</div><div class="line">&gt; (* 1 2 3 4)</div><div class="line">24</div><div class="line">&gt; (*)</div><div class="line">1</div></pre></td></tr></table></figure>
+
+减法(`-`)有两种情况，当传入一个参数时，会求这个数的相反数；传入两个或两个以上的操作时，会
+进行减法操作， 例如`(- 10 1 2 3)` 等同于`10 - 1 - 2 - 3`。除法(`/`)也有两种情况。
+
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">&gt; (- 10 1 2 3)</div><div class="line">4</div><div class="line">&gt; (- 3)</div><div class="line">-3</div><div class="line">&gt; (/ 15 12)</div><div class="line">1.25</div><div class="line">&gt; (/ 30 5 2)</div><div class="line">3</div><div class="line">&gt; (/ 10)</div><div class="line">0.1</div></pre></td></tr></table></figure>
+
+一个表达式执行的时候，先会对其子表达式求值，将所得结果再执行所返回的值。
+
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt; (- 100 ( * 7 ( + 8 (/ -12 -3))))</div><div class="line">16.0</div></pre></td></tr></table></figure>
+
+接下来我们将会用python编写此求值器的解释器。大致步骤是读取一串字符串(例如: `(+ 1 2)` )，将其转换成表达式树，然后遍历表达式树，对其求值，再将求得的值输出出来。
+
+## 1.2 表达式树
+
+通过观察会发现所有的scheme表达式都是一个列表，这个列表的第一个值是函数名， 后面的值是这个函数
+的参数。
+
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt;&gt; s = Pair(<span class="number">1</span>, Pair(<span class="number">2</span>, nil))</div><div class="line">&gt;&gt;&gt;&gt; s</div><div class="line">Pair(<span class="number">1</span>, Pair(<span class="number">2</span>, nil))</div><div class="line">&gt;&gt;&gt;&gt; print(s)</div><div class="line">(<span class="number">1</span> <span class="number">2</span>)</div></pre></td></tr></table></figure>
+
+next
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt;&gt; len(s)</div><div class="line"><span class="number">2</span></div><div class="line">&gt;&gt;&gt;&gt; s[<span class="number">1</span>]</div><div class="line"><span class="number">2</span></div><div class="line">&gt;&gt;&gt;&gt; print(s.map(<span class="keyword">lambda</span> x: x + <span class="number">4</span>))</div><div class="line">(<span class="number">5</span> <span class="number">6</span>)</div></pre></td></tr></table></figure>
+
+next
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt;&gt; expr = Pair(<span class="string">'+'</span>, Pair(<span class="string">'*'</span>, Pair(<span class="number">3</span>, Pair(<span class="number">4</span>, nil))), Pair(<span class="number">5</span>, nil)))</div><div class="line">&gt;&gt;&gt;&gt; print(expr)</div><div class="line">(+ （* <span class="number">3</span> <span class="number">4</span>） <span class="number">5</span>）</div><div class="line">&gt;&gt;&gt;&gt; expr.second.first.second.first.second.first</div><div class="line"><span class="number">3</span></div></pre></td></tr></table></figure>
+
+## 1.3 解析表达式
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&gt;&gt;&gt;&gt; tokenize_line(<span class="string">'(+ 1 (* 2.3 45))'</span>)</div><div class="line">[<span class="string">'('</span>, <span class="string">'+'</span>, <span class="number">1</span>, <span class="string">'('</span>, <span class="string">'*'</span>, <span class="number">2.3</span>, <span class="number">45</span>, <span class="string">')'</span>, <span class="string">')'</span>, <span class="string">')'</span>]</div></pre></td></tr></table></figure>
+
+next
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>lines = [<span class="string">'(+ 1'</span>, <span class="string">'   (* 2.3 45))'</span>]</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>expression = scheme_read(Buffer(tokenize_lines(lines)))</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>expression</div><div class="line">Pair(<span class="string">'+'</span>, Pair(<span class="number">1</span>, Pair(Pair(<span class="string">'*'</span>, Pair(<span class="number">2.3</span>, Pair(<span class="number">45</span>, nil))), nil)))</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(expression)</div><div class="line">(+ <span class="number">1</span> (* <span class="number">2.3</span> <span class="number">45</span>))</div></pre></td></tr></table></figure>
+
+## 1.4 求值
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">calc_eval</span><span class="params">(exp)</span>:</span></div><div class="line">        <span class="string">"""Evaluate a Calculator expression."""</span></div><div class="line">        <span class="keyword">if</span> type(exp) <span class="keyword">in</span> (int, float):</div><div class="line">            <span class="keyword">return</span> simplify(exp)</div><div class="line">        <span class="keyword">elif</span> isinstance(exp, Pair):</div><div class="line">            arguments = exp.second.map(calc_eval)</div><div class="line">            <span class="keyword">return</span> simplify(calc_apply(exp.first, arguments))</div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            <span class="keyword">raise</span> TypeError(exp + <span class="string">' is not a number or call expression'</span>)</div></pre></td></tr></table></figure>
+
+next
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">calc_apply</span><span class="params">(operator, args)</span>:</span></div><div class="line">        <span class="string">"""Apply the named operator to a list of args."""</span></div><div class="line">        <span class="keyword">if</span> <span class="keyword">not</span> isinstance(operator, str):</div><div class="line">            <span class="keyword">raise</span> TypeError(str(operator) + <span class="string">' is not a symbol'</span>)</div><div class="line">        <span class="keyword">if</span> operator == <span class="string">'+'</span>:</div><div class="line">            <span class="keyword">return</span> reduce(add, args, <span class="number">0</span>)</div><div class="line">        <span class="keyword">elif</span> operator == <span class="string">'-'</span>:</div><div class="line">            <span class="keyword">if</span> len(args) == <span class="number">0</span>:</div><div class="line">                <span class="keyword">raise</span> TypeError(operator + <span class="string">' requires at least 1 argument'</span>)</div><div class="line">            <span class="keyword">elif</span> len(args) == <span class="number">1</span>:</div><div class="line">                <span class="keyword">return</span> -args.first</div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                <span class="keyword">return</span> reduce(sub, args.second, args.first)</div><div class="line">        <span class="keyword">elif</span> operator == <span class="string">'*'</span>:</div><div class="line">            <span class="keyword">return</span> reduce(mul, args, <span class="number">1</span>)</div><div class="line">        <span class="keyword">elif</span> operator == <span class="string">'/'</span>:</div><div class="line">            <span class="keyword">if</span> len(args) == <span class="number">0</span>:</div><div class="line">                <span class="keyword">raise</span> TypeError(operator + <span class="string">' requires at least 1 argument'</span>)</div><div class="line">            <span class="keyword">elif</span> len(args) == <span class="number">1</span>:</div><div class="line">                <span class="keyword">return</span> <span class="number">1</span>/args.first</div><div class="line">            <span class="keyword">else</span>:</div><div class="line">                <span class="keyword">return</span> reduce(truediv, args.second, args.first)</div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            <span class="keyword">raise</span> TypeError(operator + <span class="string">' is an unknown operator'</span>)</div></pre></td></tr></table></figure>
+
+next
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span>calc_apply(<span class="string">'+'</span>, as_scheme_list(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>))</div><div class="line"><span class="number">6</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>calc_apply(<span class="string">'-'</span>, as_scheme_list(<span class="number">10</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>))</div><div class="line"><span class="number">4</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>calc_apply(<span class="string">'*'</span>, nil)</div><div class="line"><span class="number">1</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>calc_apply(<span class="string">'*'</span>, as_scheme_list(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>))</div><div class="line"><span class="number">120</span></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>calc_apply(<span class="string">'/'</span>, as_scheme_list(<span class="number">40</span>, <span class="number">5</span>))</div><div class="line"><span class="number">8.0</span></div></pre></td></tr></table></figure>
+
+next
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="meta">&gt;&gt;&gt; </span>print(exp)</div><div class="line">(+ (* <span class="number">3</span> <span class="number">4</span>) <span class="number">5</span>)</div><div class="line"><span class="meta">&gt;&gt;&gt; </span>calc_eval(exp)</div><div class="line"><span class="number">17</span></div></pre></td></tr></table></figure>
+
+next
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">read_eval_print_loop</span><span class="params">()</span>:</span></div><div class="line">        <span class="string">"""Run a read-eval-print loop for calculator."""</span></div><div class="line">        <span class="keyword">while</span> <span class="keyword">True</span>:</div><div class="line">            src = buffer_input()</div><div class="line">            <span class="keyword">while</span> src.more_on_line:</div><div class="line">                expression = scheme_read(src)</div><div class="line">                print(calc_eval(expression))</div></pre></td></tr></table></figure>
+
+next
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">&gt; (* <span class="number">1</span> <span class="number">2</span> <span class="number">3</span>)</div><div class="line"><span class="number">6</span></div><div class="line">&gt; (+)</div><div class="line"><span class="number">0</span></div><div class="line">&gt; (+ <span class="number">2</span> (/ <span class="number">4</span> <span class="number">8</span>))</div><div class="line"><span class="number">2.5</span></div><div class="line">&gt; (+ <span class="number">2</span> <span class="number">2</span>) (* <span class="number">3</span> <span class="number">3</span>)</div><div class="line"><span class="number">4</span></div><div class="line"><span class="number">9</span></div><div class="line">&gt; (+ <span class="number">1</span></div><div class="line">     (- <span class="number">23</span>)</div><div class="line">     (* <span class="number">4</span> <span class="number">2.5</span>))</div><div class="line"><span class="number">-12</span></div></pre></td></tr></table></figure>
+
+next
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;&gt; </span><span class="function"><span class="keyword">def</span> <span class="title">read_eval_print_loop</span><span class="params">()</span>:</span></div><div class="line">        <span class="string">"""Run a read-eval-print loop for calculator."""</span></div><div class="line">        <span class="keyword">while</span> <span class="keyword">True</span>:</div><div class="line">            <span class="keyword">try</span>:</div><div class="line">                src = buffer_input()</div><div class="line">                <span class="keyword">while</span> src.more_on_line:</div><div class="line">                    expression = scheme_read(src)</div><div class="line">                    print(calc_eval(expression))</div><div class="line">            <span class="keyword">except</span> (SyntaxError, TypeError, ValueError, ZeroDivisionError) <span class="keyword">as</span> err:</div><div class="line">                print(type(err).__name__ + <span class="string">':'</span>, err)</div><div class="line">            <span class="keyword">except</span> (KeyboardInterrupt, EOFError):  <span class="comment"># &lt;Control&gt;-D, etc.</span></div><div class="line">                print(<span class="string">'Calculation completed.'</span>)</div><div class="line">                <span class="keyword">return</span></div></pre></td></tr></table></figure>
+
+next
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">&gt; )</div><div class="line">SyntaxError: unexpected token: )</div><div class="line">&gt; <span class="number">2.3</span><span class="number">.4</span></div><div class="line">ValueError: invalid numeral: <span class="number">2.3</span><span class="number">.4</span></div><div class="line">&gt; +</div><div class="line">TypeError: + <span class="keyword">is</span> <span class="keyword">not</span> a number <span class="keyword">or</span> call expression</div><div class="line">&gt; (/ <span class="number">5</span>)</div><div class="line">TypeError: / requires exactly <span class="number">2</span> arguments</div><div class="line">&gt; (/ <span class="number">1</span> <span class="number">0</span>)</div><div class="line">ZeroDivisionError: division by zero</div></pre></td></tr></table></figure>
+
+next
+
+
+未完待续...
+]]></content>
+    
+    <summary type="html">
+    
+      
+本文假设你会使用python。
+
+我们会先实现一个scheme语法的简单计算器，以便了解实现一个解释器的简单步骤，接着会逐步给此计算器增加功能，使其成为一个完整的scheme解释器。
+
+[Scheme-wikipedia](https://zh.wikipedia.org/wi
+    
+    </summary>
+    
+    
+      <category term="python" scheme="http://blog.snowy.in/tags/python/"/>
+    
+      <category term="scheme" scheme="http://blog.snowy.in/tags/scheme/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>使用faye + sidekiq制作实时消息队列</title>
+    <link href="http://blog.snowy.in/2015/08/17/make-realtime-queue-use-faye-and-sidekiq/"/>
+    <id>http://blog.snowy.in/2015/08/17/make-realtime-queue-use-faye-and-sidekiq/</id>
+    <published>2015-08-17T06:35:52.000Z</published>
+    <updated>2015-11-16T15:30:04.000Z</updated>
+    
+    <content type="html"><![CDATA[
+install faye and sidekiq
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Gemfile</span></div><div class="line"></div><div class="line"></div><div class="line"><span class="comment"># Faye</span></div><div class="line">gem <span class="string">'faye-rails'</span>, <span class="string">'~&gt; 2.0.0'</span></div><div class="line">gem <span class="string">'faye-redis'</span>, <span class="string">'~&gt; 0.2.0'</span></div><div class="line">gem <span class="string">'faye'</span>,       <span class="string">'1.0.3'</span></div><div class="line"></div><div class="line"><span class="comment"># sidekiq</span></div><div class="line">gem <span class="string">'sidekiq'</span></div></pre></td></tr></table></figure>
+
+编辑 config/application.rb
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">config.middleware.use FayeRails::Middleware, <span class="symbol">mount:</span> <span class="string">'/faye'</span>, <span class="symbol">engine:</span> &#123;<span class="symbol">type:</span> Faye::Redis, <span class="symbol">uri:</span> <span class="string">"<span class="subst">#&#123;ENV[<span class="string">'REDIS_URL'</span>]&#125;</span>/4"</span>&#125;, <span class="symbol">:timeout</span> =&gt; <span class="number">25</span> <span class="keyword">do</span></div><div class="line">     map <span class="string">'/api/questions/status'</span> =&gt; Api::QuestionStateController</div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+
+增加worker类
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># app/workers/question_state_worker.rb</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">QuestionStateWorker</span></span></div><div class="line">  <span class="keyword">include</span> Sidekiq::Worker</div><div class="line"></div><div class="line"></div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">get_question_state</span><span class="params">(user_id)</span></span></div><div class="line">    Question.where(<span class="string">"user_id = ? and finished= ?"</span>, user_id, <span class="literal">false</span>).select(<span class="string">"id,user_id,has_teacher_answer"</span>).to_json</div><div class="line">  <span class="keyword">end</span></div><div class="line"></div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">keep_state</span><span class="params">(user_id, data)</span></span></div><div class="line">    $redis.set <span class="string">"questions_state_<span class="subst">#&#123;user_id&#125;</span>"</span>, data</div><div class="line">  <span class="keyword">end</span></div><div class="line"></div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">perform</span><span class="params">(user_id)</span></span></div><div class="line">    keep_state(user_id, get_question_state(user_id))</div><div class="line">  <span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+
+监听数据库
+
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment"># app/realtime/api/question_state_controller.rb</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Api::QuestionStateController</span> &lt; FayeRails::Controller</span></div><div class="line">  observe Question, <span class="symbol">:after_save</span> <span class="keyword">do</span> <span class="params">|question|</span></div><div class="line">    QuestionStateWorker.perform_async(question.user_id)</div><div class="line">  <span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      
+install faye and sidekiq
+
+&lt;figure class=&quot;highlight ruby&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/d
+    
+    </summary>
+    
     
       <category term="rails" scheme="http://blog.snowy.in/tags/rails/"/>
     
   </entry>
   
   <entry>
-    <title><![CDATA[Hash表的实现]]></title>
+    <title>brainfuck解释器的实现(一)</title>
+    <link href="http://blog.snowy.in/2015/03/26/make-brainfuck-interpreter-with-nim/"/>
+    <id>http://blog.snowy.in/2015/03/26/make-brainfuck-interpreter-with-nim/</id>
+    <published>2015-03-26T05:41:46.000Z</published>
+    <updated>2015-07-29T09:30:46.000Z</updated>
+    
+    <content type="html"><![CDATA[
+Brainfuck，是一种极小化的，符合图灵完全思想的编程语言。更多资料[Brainfuck](http://zh.wikipedia.org/wiki/Brainfuck)
+
+这种语言基于一个简单的机器模型，除了指令，这个机器还包括：一个以字节为单位、被初始化为零的数组、一个指向该数组的指针（初始时指向数组的第一个字节）、以及用于输入输出的两个字节流。
+
+开始实现（使用nim）：
+1 . 读取输入的代码
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">import os</div><div class="line"></div><div class="line">let code = if paramCount() &gt; 0: readFile paramStr(1)</div><div class="line">           else: readAll stdin</div></pre></td></tr></table></figure>
+
+2 . 创建初始值为0的数组，并初始一个指向它的指针
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">var</div><div class="line">  tape: seq[char] = newSeq[char]()</div><div class="line">  codePos: int = 0</div><div class="line">  tapePos: int = 0</div></pre></td></tr></table></figure>
+
+3 . 根据输入来做相应操作
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">case code[codePos]</div><div class="line">of &apos;+&apos;: inc tape[tapePos]</div><div class="line">of &apos;-&apos;: dec tape[tapePos]</div><div class="line">of &apos;&gt;&apos;: inc tapePos</div><div class="line">of &apos;&lt;&apos;: dec tapePos</div><div class="line">of &apos;.&apos;: stdout.write tape[tapePos]</div><div class="line">of &apos;,&apos;: tape[tapePos] = stdin.readChar</div><div class="line">else: discard</div></pre></td></tr></table></figure>
+
+4 . 处理“[”跟“]”
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">if code[codePos] == &apos;[&apos;:</div><div class="line">  inc codePos</div><div class="line">  let oldPos = codePos</div><div class="line">  while run(tape[tapePos] == &apos;\0&apos;):</div><div class="line">    codePos = oldPos</div><div class="line">elif code[codePos] == &apos;]&apos;:</div><div class="line">  return tape[tapePos] != &apos;\0&apos;</div></pre></td></tr></table></figure>
+
+至此，解释器完成，但是处理速度相当慢...
+完整代码如下:
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line">import os</div><div class="line"></div><div class="line">let code = if paramCount() &gt; 0: readFile paramStr(1)</div><div class="line">           else: readAll stdin</div><div class="line"></div><div class="line">var</div><div class="line">  tape: seq[char] = newSeq[char]()</div><div class="line">  codePos: int = 0</div><div class="line">  tapePos: int = 0</div><div class="line">  </div><div class="line">proc run(skip = false): bool =</div><div class="line">  # echo &quot;codePos: &quot;, codePos, &quot; tapePos:&quot;, tapePos</div><div class="line">  while tapePos &gt;= 0 and codePos &lt; code.len:</div><div class="line">    if tapePos &gt;= tape.len:</div><div class="line">      tape.add &apos;\0&apos;</div><div class="line">    if code[codePos] == &apos;[&apos;:</div><div class="line">      inc codePos</div><div class="line">      let oldPos = codePos</div><div class="line">      while run(tape[tapePos] == &apos;\0&apos;):</div><div class="line">        codePos = oldPos</div><div class="line">    elif code[codePos] == &apos;]&apos;:</div><div class="line">      return tape[tapePos] != &apos;\0&apos;</div><div class="line">    elif not skip:</div><div class="line">      case code[codePos]</div><div class="line">      of &apos;+&apos;: inc tape[tapePos]</div><div class="line">      of &apos;-&apos;: dec tape[tapePos]</div><div class="line">      of &apos;&gt;&apos;: inc tapePos</div><div class="line">      of &apos;&lt;&apos;: dec tapePos</div><div class="line">      of &apos;.&apos;: stdout.write tape[tapePos]</div><div class="line">      of &apos;,&apos;: tape[tapePos] = stdin.readChar</div><div class="line">      else: discard</div><div class="line">    </div><div class="line">    inc codePos</div><div class="line"></div><div class="line">discard run()</div></pre></td></tr></table></figure>
+
+]]></content>
+    
+    <summary type="html">
+    
+      
+Brainfuck，是一种极小化的，符合图灵完全思想的编程语言。更多资料[Brainfuck](http://zh.wikipedia.org/wiki/Brainfuck)
+
+这种语言基于一个简单的机器模型，除了指令，这个机器还包括：一个以字节为单位、被初始化为零的数组、一个
+    
+    </summary>
+    
+    
+      <category term="nim" scheme="http://blog.snowy.in/tags/nim/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>实现网打算换成puma来跑</title>
+    <link href="http://blog.snowy.in/2015/01/20/get-real-deploy-with-puma/"/>
+    <id>http://blog.snowy.in/2015/01/20/get-real-deploy-with-puma/</id>
+    <published>2015-01-20T08:25:43.000Z</published>
+    <updated>2015-07-29T09:30:46.000Z</updated>
+    
+    <content type="html"><![CDATA[将unicorn换成puma的原因：
+* 节省内存 ，提高效率
+* Capistrano部署集成（capistrano3-puma）
+
+以下为手动配置方法：
+启动puma
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">bundle exec puma -b unix:///tmp/puma.sock -e production --daemon</div></pre></td></tr></table></figure>
+
+nginx配置例子：
+​
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div></pre></td><td class="code"><pre><div class="line">upstream shixian &#123;</div><div class="line">  server unix:///tmp/puma.sock;</div><div class="line">&#125;</div><div class="line"></div><div class="line">server &#123;</div><div class="line">  listen 80;</div><div class="line">  server_name dev.shixian.com;</div><div class="line"></div><div class="line">  # ~2 seconds is often enough for most folks to parse HTML/CSS and</div><div class="line">  # retrieve needed images/icons/frames, connections are cheap in</div><div class="line">  # nginx so increasing this is generally safe...</div><div class="line">  keepalive_timeout 5;</div><div class="line"></div><div class="line">  # path for static files</div><div class="line">  root /home/deploy/apps/shixian/public;</div><div class="line">  access_log /home/deploy/apps/shixian/log/nginx.access.log;</div><div class="line">  error_log /home/deploy/apps/shixian/log/nginx.error.log info;</div><div class="line"></div><div class="line">  # this rewrites all the requests to the maintenance.html</div><div class="line">  # page if it exists in the doc root. This is for capistrano&apos;s</div><div class="line">  # disable web task</div><div class="line">  if (-f $document_root/maintenance.html) &#123;</div><div class="line">    rewrite  ^(.*)$  /maintenance.html last;</div><div class="line">    break;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  location / &#123;</div><div class="line">    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</div><div class="line">    proxy_set_header Host $http_host;</div><div class="line"></div><div class="line">    # If the file exists as a static file serve it directly without</div><div class="line">    # running all the other rewite tests on it</div><div class="line">    if (-f $request_filename) &#123;</div><div class="line">      break;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    # check for index.html for directory index</div><div class="line">    # if its there on the filesystem then rewite</div><div class="line">    # the url to add /index.html to the end of it</div><div class="line">    # and then break to send it to the next config rules.</div><div class="line">    if (-f $request_filename/index.html) &#123;</div><div class="line">      rewrite (.*) $1/index.html break;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    # this is the meat of the rack page caching config</div><div class="line">    # it adds .html to the end of the url and then checks</div><div class="line">    # the filesystem for that file. If it exists, then we</div><div class="line">    # rewite the url to have explicit .html on the end</div><div class="line">    # and then send it on its way to the next config rule.</div><div class="line">    # if there is no file on the fs then it sets all the</div><div class="line">    # necessary headers and proxies to our upstream pumas</div><div class="line">    if (-f $request_filename.html) &#123;</div><div class="line">      rewrite (.*) $1.html break;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    if (!-f $request_filename) &#123;</div><div class="line">      proxy_pass http://shixian;</div><div class="line">      break;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  # Now this supposedly should work as it gets the filenames with querystrings that Rails provides.</div><div class="line">  # BUT there&apos;s a chance it could break the ajax calls.</div><div class="line">  location ~* \.(ico|css|gif|jpe?g|png|js)(\?[0-9]+)?$ &#123;</div><div class="line">     expires max;</div><div class="line">     break;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  # Error pages</div><div class="line">  # error_page 500 502 503 504 /500.html;</div><div class="line">  location = /500.html &#123;</div><div class="line">    root /home/deploy/apps/shixian/public;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+]]></content>
+    
+    <summary type="html">
+    
+      将unicorn换成puma的原因：
+* 节省内存 ，提高效率
+* Capistrano部署集成（capistrano3-puma）
+
+以下为手动配置方法：
+启动puma
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;
+    
+    </summary>
+    
+    
+      <category term="rails" scheme="http://blog.snowy.in/tags/rails/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>使用Houston+Sidekiq做ios消息推送</title>
+    <link href="http://blog.snowy.in/2015/01/08/push-notifications-for-ios-with-houston-and-sidekiq/"/>
+    <id>http://blog.snowy.in/2015/01/08/push-notifications-for-ios-with-houston-and-sidekiq/</id>
+    <published>2015-01-08T08:05:35.000Z</published>
+    <updated>2015-07-29T09:30:46.000Z</updated>
+    
+    <content type="html"><![CDATA[创建`NotifierWorker`类
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># app/workers/notifier_worker.rb</span></div><div class="line"><span class="keyword">require</span> <span class="string">'apn_connection'</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">NotifierWorker</span></span></div><div class="line">  <span class="keyword">include</span> Sidekiq::Worker</div><div class="line"></div><div class="line">  APN_POOL = ConnectionPool.new(<span class="symbol">:size</span> =&gt; <span class="number">2</span>, <span class="symbol">:timeout</span> =&gt; <span class="number">300</span>) <span class="keyword">do</span></div><div class="line">    APNConnection.new</div><div class="line">  <span class="keyword">end</span></div><div class="line">​</div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">perform</span><span class="params">(message,  custom_data = <span class="literal">nil</span>)</span></span></div><div class="line">    APN_POOL.with <span class="keyword">do</span> <span class="params">|connection|</span></div><div class="line">      token = <span class="string">"&lt;dccec3dd 25936d87 5ed2d16b 75f0785c bdb0b33d 8dd48f1c 72529c00 b1c56a19&gt;"</span></div><div class="line">      notification = Houston::Notification.new(<span class="symbol">device:</span> token)</div><div class="line">      notification.alert = message</div><div class="line">      notification.sound = <span class="string">'default'</span></div><div class="line">      notification.custom_data = custom_data</div><div class="line">      connection.write(notification.message)</div><div class="line">    <span class="keyword">end</span></div><div class="line">  <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+
+创建`APNConnection`类
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># lib/apn_connection.rb</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">APNConnection</span></span></div><div class="line"></div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">initialize</span></span></div><div class="line">    setup</div><div class="line">  <span class="keyword">end</span></div><div class="line"></div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">setup</span></span></div><div class="line">    @uri, @certificate = <span class="keyword">if</span> Rails.env.production?</div><div class="line">      [</div><div class="line">        Houston::APPLE_PRODUCTION_GATEWAY_URI,</div><div class="line">        File.read(<span class="string">"<span class="subst">#&#123;Rails.root&#125;</span>/config/shixian-production.pem"</span>)</div><div class="line">      ]</div><div class="line">    <span class="keyword">else</span></div><div class="line">      [</div><div class="line">        Houston::APPLE_DEVELOPMENT_GATEWAY_URI,</div><div class="line">        File.read(<span class="string">"<span class="subst">#&#123;Rails.root&#125;</span>/config/shixian-development.pem"</span>)</div><div class="line">      ]</div><div class="line">    <span class="keyword">end</span></div><div class="line"></div><div class="line">    @connection = Houston::Connection.new(@uri, @certificate, <span class="literal">nil</span>)</div><div class="line">    @connection.open</div><div class="line">  <span class="keyword">end</span></div><div class="line"></div><div class="line">  <span class="function"><span class="keyword">def</span> <span class="title">write</span><span class="params">(data)</span></span></div><div class="line">    <span class="keyword">begin</span></div><div class="line">      raise <span class="string">"Connection is closed"</span> <span class="keyword">unless</span> @connection.open?</div><div class="line">      @connection.write(data)</div><div class="line">    <span class="keyword">rescue</span> Exception =&gt; e</div><div class="line">      attempts <span class="params">||</span>= <span class="number">0</span></div><div class="line">      attempts += <span class="number">1</span></div><div class="line"></div><div class="line">      <span class="keyword">if</span> attempts &lt; <span class="number">5</span></div><div class="line">        setup</div><div class="line">        <span class="keyword">retry</span></div><div class="line">      <span class="keyword">else</span></div><div class="line">        raise e</div><div class="line">      <span class="keyword">end</span></div><div class="line">    <span class="keyword">end</span></div><div class="line">  <span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+
+使用
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">NotifierWorker.perform_async(&quot;hello&quot;,&quot;s&quot; =&gt; &quot;1,Notification&quot;)</div></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      创建`NotifierWorker`类
+&lt;figure class=&quot;highlight ruby&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;div class=&quot;line&quot;&gt;2&lt;/div&gt;&lt;div
+    
+    </summary>
+    
+    
+      <category term="rails" scheme="http://blog.snowy.in/tags/rails/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>ruby元编程-对象模型</title>
+    <link href="http://blog.snowy.in/2014/12/02/metaprogramming-ruby-object/"/>
+    <id>http://blog.snowy.in/2014/12/02/metaprogramming-ruby-object/</id>
+    <published>2014-12-02T04:46:45.000Z</published>
+    <updated>2015-07-29T09:30:46.000Z</updated>
+    
+    <content type="html"><![CDATA[ruby中的对象
+=================
+在ruby中任何东西都是对象，甚至是nil、类等都是对象。
+比如下面的例子：
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">&gt;&gt;</span> <span class="number">1</span>.methods</div><div class="line">=&gt; [<span class="symbol">:to_s</span>, <span class="symbol">:inspect</span>, <span class="symbol">:-@</span>, <span class="symbol">:+</span>, <span class="symbol">:-</span>, <span class="symbol">:*</span>, <span class="symbol">:/</span>, <span class="symbol">:div</span>, <span class="symbol">:%</span>, <span class="symbol">:modulo</span>, <span class="symbol">:divmod</span>, <span class="symbol">:fdiv</span>, <span class="symbol">:**</span>, <span class="symbol">:abs</span>, <span class="symbol">:magnitude</span>, <span class="symbol">:==</span>, <span class="symbol">:===</span>, <span class="symbol">:&lt;=&gt;</span>, <span class="symbol">:&gt;</span>, <span class="symbol">:&gt;=</span>, <span class="symbol">:&lt;</span>, <span class="symbol">:&lt;=</span>, <span class="symbol">:~</span>, <span class="symbol">:&amp;</span>, <span class="symbol">:|</span>, <span class="symbol">:^</span>, <span class="symbol">:[]</span>, <span class="symbol">:&lt;&lt;</span>, <span class="symbol">:&gt;&gt;</span>, <span class="symbol">:to_f</span>, <span class="symbol">:size</span>, <span class="symbol">:bit_length</span>, <span class="symbol">:zero?</span>, <span class="symbol">:odd?</span>, <span class="symbol">:even?</span>, <span class="symbol">:succ</span>, <span class="symbol">:integer?</span>, <span class="symbol">:upto</span>, <span class="symbol">:downto</span>, <span class="symbol">:times</span>, <span class="symbol">:next</span>, <span class="symbol">:pred</span>, <span class="symbol">:chr</span>, <span class="symbol">:ord</span>, <span class="symbol">:to_i</span>, <span class="symbol">:to_int</span>, <span class="symbol">:floor</span>, <span class="symbol">:ceil</span>, <span class="symbol">:truncate</span>, <span class="symbol">:round</span>, <span class="symbol">:gcd</span>, <span class="symbol">:lcm</span>, <span class="symbol">:gcdlcm</span>, <span class="symbol">:numerator</span>, <span class="symbol">:denominator</span>, <span class="symbol">:to_r</span>, <span class="symbol">:rationalize</span>, <span class="symbol">:singleton_method_added</span>, <span class="symbol">:coerce</span>, <span class="symbol">:i</span>, <span class="symbol">:+@</span>, <span class="symbol">:eql?</span>, ......]</div><div class="line"><span class="meta">&gt;&gt;</span> <span class="number">1</span>.class</div><div class="line">=&gt; Fixnum</div><div class="line"><span class="meta">&gt;&gt;</span> Fixnum.class</div><div class="line">=&gt; Class</div><div class="line"><span class="meta">&gt;&gt;</span> Class.class</div><div class="line">=&gt; Class</div></pre></td></tr></table></figure>
+
+在ruby中对象是由一组实例变量和一个类的引用组成的，对象的方法存在于对象所在的类中。
+
+猴子补丁
+===================
+所谓猴子补丁就是不改变源代码而对功能进行追加和变更。
+### 开放类
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Foo</span></span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">hello</span></span></div><div class="line">        <span class="string">"hello world !"</span></div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Foo</span></span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">plus</span><span class="params">(arg1,arg2)</span></span></div><div class="line">        arg1 + arg2</div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"><span class="meta">&gt;&gt;</span> foo = Foo.new</div><div class="line">=&gt; #&lt;Foo:0xb8c2b574&gt;</div><div class="line"><span class="meta">&gt;&gt;</span> foo.hello</div><div class="line">=&gt; <span class="string">"hello world !"</span></div><div class="line"><span class="meta">&gt;&gt;</span> foo.plus(<span class="number">3</span>,<span class="number">4</span>)</div><div class="line">=&gt; <span class="number">7</span></div></pre></td></tr></table></figure>
+
+第二个class Foo中并不是新建了一个Foo类，而是重新打开了Foo类，给其新增了一个叫plus的方法。在ruby中所有的类都是开放类，你可以自由的开发String、Fixnum等基本的数据类型给它增加功能.
+
+ruby中的类
+===================
+上文说类也是一个对象，那么什么是类呢？所谓类就是一个Class类的实例加一组实例方法和一个对其父类的引用。既然这样，就可以这样定义一个类，虽然结果也会产生一个类：
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hello = Class.new</div></pre></td></tr></table></figure>
+
+一般情况下，类这么定义：
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">class Hello</div><div class="line">end</div></pre></td></tr></table></figure>
+
+其区别在于Hello是个常量（在ruby中，任何以大写字母开头的引用即为常量）而已。那么，class 包裹起来的一块东西又是什么呢？其只不过是个作用域。
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Hello</span></span></div><div class="line">    puts <span class="string">"hello world"</span></div><div class="line">    <span class="number">123</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">say</span></span></div><div class="line">        <span class="string">"hello sllt"</span></div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div></pre></td></tr></table></figure>
+
+self
+====================
+每一行代码都会在一个对象中执行，这个对象就是当前对象（self)。
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyClass</span></span></div><div class="line">    <span class="keyword">self</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line">=&gt; MyClass</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyClass</span></span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">say</span></span></div><div class="line">        <span class="string">"hello"</span></div><div class="line">    <span class="keyword">end</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">put_self</span></span></div><div class="line">        <span class="keyword">self</span></div><div class="line">        say</div><div class="line">    <span class="keyword">end</span></div><div class="line"><span class="keyword">end</span></div><div class="line"></div><div class="line"><span class="meta">&gt;&gt;</span> m = MyClass.new</div><div class="line"><span class="meta">&gt;&gt;</span> m.put_self</div><div class="line">=&gt; #&lt;MyClass:0xb93de870&gt; <span class="string">"hello"</span></div></pre></td></tr></table></figure>
+
+通过上面代码可以看出：
+* 当定义一个模块和类时，其自身扮演self的角色。
+* 当调用一个方法时，接收者会扮演self的角色。
+]]></content>
+    
+    <summary type="html">
+    
+      ruby中的对象
+=================
+在ruby中任何东西都是对象，甚至是nil、类等都是对象。
+比如下面的例子：
+&lt;figure class=&quot;highlight ruby&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div cla
+    
+    </summary>
+    
+    
+      <category term="ruby" scheme="http://blog.snowy.in/tags/ruby/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>在Rails中实现markdown解析</title>
+    <link href="http://blog.snowy.in/2014/11/13/use-markdown-in-rails/"/>
+    <id>http://blog.snowy.in/2014/11/13/use-markdown-in-rails/</id>
+    <published>2014-11-13T08:39:34.000Z</published>
+    <updated>2015-07-29T09:30:46.000Z</updated>
+    
+    <content type="html"><![CDATA[
+首先，安装gem
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">gem &apos;redcarpet&apos;</div></pre></td></tr></table></figure>
+
+然后在app/helpers/application_helper.rb添加如下代码：
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">def markdown(text)</div><div class="line">    render_options = &#123;</div><div class="line">        filter_html:     false,</div><div class="line">        hard_wrap:       true, </div><div class="line">        link_attributes: &#123; rel: &apos;nofollow&apos; &#125;</div><div class="line">    &#125;</div><div class="line">    renderer = Redcarpet::Render::HTML.new(render_options)</div><div class="line">    extensions = &#123;</div><div class="line">            #will parse links without need of enclosing them</div><div class="line">            autolink:           true,</div><div class="line">            fenced_code_blocks: true,</div><div class="line">            # will ignore standard require for empty lines surrounding HTML blocks</div><div class="line">            lax_spacing:        true,</div><div class="line">            # will not generate emphasis inside of words, for example no_emph_no</div><div class="line">            no_intra_emphasis:  true,</div><div class="line">            # will parse strikethrough from ~~, for example: ~~bad~~</div><div class="line">            strikethrough:      true,</div><div class="line">            # will parse superscript after ^, you can wrap superscript in () </div><div class="line">            superscript:        true</div><div class="line">            # will require a space after # in defining headers</div><div class="line">            # space_after_headers: true</div><div class="line">        &#125;</div><div class="line">    Redcarpet::Markdown.new(renderer, extensions).render(text).html_safe</div><div class="line">end</div></pre></td></tr></table></figure>
+
+在view中:
+` <%= markdown="" @content="" %=""> `
+
+在controller中：
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">class ApplicationController &lt; ActionController::Base</div><div class="line">    include ApplicationHelper</div><div class="line">end</div></pre></td></tr></table></figure></%=>]]></content>
+    
+    <summary type="html">
+    
+      
+首先，安装gem
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;&gt;1&lt;/div&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;div 
+    
+    </summary>
+    
+    
+      <category term="rails" scheme="http://blog.snowy.in/tags/rails/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Hash表的实现</title>
     <link href="http://blog.snowy.in/2014/10/11/java-hash/"/>
     <id>http://blog.snowy.in/2014/10/11/java-hash/</id>
     <published>2014-10-11T05:43:25.000Z</published>
-    <updated>2015-01-08T06:14:47.000Z</updated>
-    <content type="html"><![CDATA[<p>Hash表是一种特殊的数据结构。在Hash表中，记录在表中的位置和其关键字之间存在着一种确定的关系，这样我们就可以预先知道关键字在表中的位置，从而直接通过下标找到记录。使时间复杂度直接降为O（1）.Hash表采用一个映射函数f(key) —&gt; adress将关键字映射到该记录在表中的存储位置.</p>
-<h3 id="Hash函数的设计">Hash函数的设计</h3>
-<ul>
-<li>直接定址法<br>  取关键字或者关键字的某个线性函数为Hash地址，即address(key)=a*key+b;如知道学生的学号从2000开始，最大为4000，则可以将address(key)=key-2000作为Hash地址。</li>
-<li>平方取中法<br>  对关键字进行平方运算，然后取结果的中间几位作为Hash地址。假如有以下关键字序列{421，423，436}，平方之后的结果为{177241，178929，190096}，那么可以取{72，89，00}作为Hash地址。</li>
-<li>折叠法<br>  将关键字拆分成几部分，然后将这几部分组合在一起，以特定的方式进行转化形成Hash地址。假如知道图书的ISBN号为8903-241-23，可以将address(key)=89+03+24+12+3作为Hash地址。</li>
-<li>除留取余法<br>  如果知道Hash表的最大长度为m，可以取不大于m的最大质数p，然后对关键字进行取余运算，address(key)=key%p。在这里p的选取非常关键，p选择的好的话，能够最大程度地减少冲突，p一般取不大于m的最大质数。</li>
-</ul>
-<h3 id="Hash处理冲突方法">Hash处理冲突方法</h3>
-<ul>
-<li>开放定址法<br>  为产生冲突的关键字地址 H(key) 求得一个地址序列： H0, H1, H2, …, Hs  1≤s≤m-1，Hi = (H(key) +di ) MOD m，其中： i=1, 2, …, s，H(key)为哈希函数;m为哈希表长;</li>
-<li>再哈希法<br>  构造若干个哈希函数，当发生冲突时，根据另一个哈希函数计算下一个哈希地址，直到冲突不再发生。即：Hi=Rhi(key)    i=1,2,……k，其中：Rhi——不同的哈希函数，特点：计算时间增加</li>
-<li>链地址法<br>  采用数组和链表相结合的办法，将Hash地址相同的记录存储在一张线性表中，而每张表的表头的序号即为计算得到的Hash地址。如上述例子中，采用链地址法形成的Hash表存储表示为：<br>  <img src="http://pic002.cnblogs.com/images/2012/288799/2012092709470640.jpg" alt="链地址法"></li>
-</ul>
-<h3 id="代码实现">代码实现</h3>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.sllt.qiao;</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyMap</span>&lt;<span class="title">K</span>, <span class="title">V</span>&gt; </span>{</div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> size;<span class="comment">// 当前容量</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> INIT_CAPACITY = <span class="number">16</span>;<span class="comment">// 默认容量</span></div><div class="line">    <span class="keyword">private</span> Entry&lt;K, V&gt;[] container;<span class="comment">// 实际存储数据的数组对象</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">float</span> LOAD_FACTOR = <span class="number">0.75</span>f;<span class="comment">// 装载因子</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> max;<span class="comment">// 能存的最大的数=capacity*factor</span></div><div class="line"></div><div class="line">    <span class="comment">// 自己设置容量和装载因子的构造器</span></div><div class="line">    <span class="keyword">public</span> <span class="title">MyMap</span>(<span class="keyword">int</span> init_Capaticy, <span class="keyword">float</span> load_factor) {</div><div class="line">        <span class="keyword">if</span> (init_Capaticy &lt; <span class="number">0</span>)</div><div class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Illegal initial capacity: "</span></div><div class="line">                    + init_Capaticy);</div><div class="line">        <span class="keyword">if</span> (load_factor &lt;= <span class="number">0</span> || Float.isNaN(load_factor))</div><div class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Illegal load factor: "</span></div><div class="line">                    + load_factor);</div><div class="line">        <span class="keyword">this</span>.LOAD_FACTOR = load_factor;</div><div class="line">        max = (<span class="keyword">int</span>) (init_Capaticy * load_factor);</div><div class="line">        container = <span class="keyword">new</span> Entry[init_Capaticy];</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="comment">// 使用默认参数的构造器</span></div><div class="line">    <span class="keyword">public</span> <span class="title">MyMap</span>() {</div><div class="line">        <span class="keyword">this</span>(INIT_CAPACITY, LOAD_FACTOR);</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="javadoc">/**</span></div><div class="line">     * 存</div><div class="line">     * </div><div class="line">     *<span class="javadoctag"> @param</span> k</div><div class="line">     *<span class="javadoctag"> @param</span> v</div><div class="line">     *<span class="javadoctag"> @return</span></div><div class="line">     */</div><div class="line">    <span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">put</span>(K k, V v) {</div><div class="line">        <span class="comment">// 1.计算K的hash值</span></div><div class="line">        <span class="comment">// 因为自己很难写出对不同的类型都适用的Hash算法，故调用JDK给出的hashCode()方法来计算hash值</span></div><div class="line">        <span class="keyword">int</span> hash = k.hashCode();</div><div class="line">        <span class="comment">//将所有信息封装为一个Entry</span></div><div class="line">        Entry&lt;K,V&gt; temp=<span class="keyword">new</span> Entry(k,v,hash);</div><div class="line">            <span class="keyword">if</span>(setEntry(temp, container)){</div><div class="line">                <span class="comment">// 大小加一</span></div><div class="line">                size++;</div><div class="line">                <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">            }</div><div class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    }</div><div class="line"></div><div class="line"></div><div class="line">    <span class="javadoc">/**</span></div><div class="line">     * 扩容的方法</div><div class="line">     * </div><div class="line">     *<span class="javadoctag"> @param</span> newSize</div><div class="line">     *            新的容器大小</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title">reSize</span>(<span class="keyword">int</span> newSize) {</div><div class="line">        <span class="comment">// 1.声明新数组</span></div><div class="line">        Entry&lt;K, V&gt;[] newTable = <span class="keyword">new</span> Entry[newSize];</div><div class="line">        max = (<span class="keyword">int</span>) (newSize * LOAD_FACTOR);</div><div class="line">        <span class="comment">// 2.复制已有元素,即遍历所有元素，每个元素再存一遍</span></div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; container.length; j++) {</div><div class="line">            Entry&lt;K, V&gt; entry = container[j];</div><div class="line">            <span class="comment">//因为每个数组元素其实为链表，所以…………</span></div><div class="line">            <span class="keyword">while</span> (<span class="keyword">null</span> != entry) {</div><div class="line">                setEntry(entry, newTable);</div><div class="line">                entry = entry.next;</div><div class="line">            }</div><div class="line">        }</div><div class="line">        <span class="comment">// 3.改变指向</span></div><div class="line">        container = newTable;</div><div class="line">        </div><div class="line">    }</div><div class="line">    </div><div class="line">    <span class="javadoc">/**</span></div><div class="line">     *将指定的结点temp添加到指定的hash表table当中</div><div class="line">     * 添加时判断该结点是否已经存在</div><div class="line">     * 如果已经存在，返回false</div><div class="line">     * 添加成功返回true</div><div class="line">     *<span class="javadoctag"> @param</span> temp</div><div class="line">     *<span class="javadoctag"> @param</span> table</div><div class="line">     *<span class="javadoctag"> @return</span></div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">setEntry</span>(Entry&lt;K,V&gt; temp,Entry[] table){</div><div class="line">        <span class="comment">// 根据hash值找到下标</span></div><div class="line">        <span class="keyword">int</span> index = indexFor(temp.hash, table.length);</div><div class="line">        <span class="comment">//根据下标找到对应元素</span></div><div class="line">        Entry&lt;K, V&gt; entry = table[index];</div><div class="line">        <span class="comment">// 3.若存在</span></div><div class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> != entry) {</div><div class="line">            <span class="comment">// 3.1遍历整个链表，判断是否相等</span></div><div class="line">            <span class="keyword">while</span> (<span class="keyword">null</span> != entry) {</div><div class="line">                <span class="comment">//判断相等的条件时应该注意，除了比较地址相同外，引用传递的相等用equals()方法比较</span></div><div class="line">                <span class="comment">//相等则不存，返回false</span></div><div class="line">                <span class="keyword">if</span> ((temp.key == entry.key||temp.key.equals(entry.key)) && temp.hash == entry.hash&&(temp.value==entry.value||temp.value.equals(entry.value))) {</div><div class="line">                    <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">                }</div><div class="line">                <span class="comment">//不相等则比较下一个元素</span></div><div class="line">                <span class="keyword">else</span> <span class="keyword">if</span> (temp.key != entry.key && temp.value != entry.value) {</div><div class="line">                        <span class="comment">//到达队尾，中断循环</span></div><div class="line">                        <span class="keyword">if</span>(<span class="keyword">null</span>==entry.next){</div><div class="line">                            <span class="keyword">break</span>;</div><div class="line">                        }</div><div class="line">                        <span class="comment">// 没有到达队尾，继续遍历下一个元素</span></div><div class="line">                        entry = entry.next;</div><div class="line">                }</div><div class="line">            }</div><div class="line">            <span class="comment">// 3.2当遍历到了队尾，如果都没有相同的元素，则将该元素挂在队尾</span></div><div class="line">            addEntry2Last(entry,temp);</div><div class="line">                </div><div class="line">        }</div><div class="line">        <span class="comment">// 4.若不存在,直接设置初始化元素</span></div><div class="line">        setFirstEntry(temp,index,table);</div><div class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    }</div><div class="line">    </div><div class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title">addEntry2Last</span>(Entry&lt;K, V&gt; entry, Entry&lt;K, V&gt; temp) {</div><div class="line">        <span class="keyword">if</span> (size &gt; max) {</div><div class="line">            reSize(container.length * <span class="number">4</span>);</div><div class="line">        }</div><div class="line">        entry.next=temp;</div><div class="line">        </div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="javadoc">/**</span></div><div class="line">     * 将指定结点temp，添加到指定的hash表table的指定下标index中</div><div class="line">     *<span class="javadoctag"> @param</span> temp</div><div class="line">     *<span class="javadoctag"> @param</span> index</div><div class="line">     *<span class="javadoctag"> @param</span> table</div><div class="line">     */</div><div class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title">setFirstEntry</span>(Entry&lt;K, V&gt; temp, <span class="keyword">int</span> index, Entry[] table) {</div><div class="line">        <span class="comment">// 1.判断当前容量是否超标，如果超标，调用扩容方法</span></div><div class="line">        <span class="keyword">if</span> (size &gt; max) {</div><div class="line">            reSize(table.length * <span class="number">4</span>);</div><div class="line">        }</div><div class="line">        <span class="comment">// 2.不超标，或者扩容以后，设置元素</span></div><div class="line">        table[index] = temp;</div><div class="line">        <span class="comment">//！！！！！！！！！！！！！！！</span></div><div class="line">        <span class="comment">//因为每次设置后都是新的链表，需要将其后接的结点都去掉</span></div><div class="line">         <span class="comment">//NND，少这一行代码卡了哥哥7个小时（代码重构）</span></div><div class="line">        temp.next=<span class="keyword">null</span>;</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="javadoc">/**</span></div><div class="line">     * 取</div><div class="line">     * </div><div class="line">     *<span class="javadoctag"> @param</span> k</div><div class="line">     *<span class="javadoctag"> @return</span></div><div class="line">     */</div><div class="line">    <span class="keyword">public</span> V <span class="title">get</span>(K k) {</div><div class="line">        Entry&lt;K, V&gt; entry = <span class="keyword">null</span>;</div><div class="line">        <span class="comment">// 1.计算K的hash值</span></div><div class="line">        <span class="keyword">int</span> hash = k.hashCode();</div><div class="line">        <span class="comment">// 2.根据hash值找到下标</span></div><div class="line">        <span class="keyword">int</span> index = indexFor(hash, container.length);</div><div class="line">        <span class="comment">// 3。根据index找到链表</span></div><div class="line">        entry = container[index];</div><div class="line">        <span class="comment">// 3。若链表为空，返回null</span></div><div class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> == entry) {</div><div class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">        }</div><div class="line">        <span class="comment">// 4。若不为空，遍历链表，比较k是否相等,如果k相等，则返回该value</span></div><div class="line">        <span class="keyword">while</span> (<span class="keyword">null</span> != entry) {</div><div class="line">            <span class="keyword">if</span> (k == entry.key||entry.key.equals(k)) {</div><div class="line">                <span class="keyword">return</span> entry.value;</div><div class="line">            }</div><div class="line">            entry = entry.next;</div><div class="line">        }</div><div class="line">        <span class="comment">// 如果遍历完了不相等，则返回空</span></div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line"></div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="javadoc">/**</span></div><div class="line">     * 根据hash码，容器数组的长度,计算该哈希码在容器数组中的下标值</div><div class="line">     * </div><div class="line">     *<span class="javadoctag"> @param</span> hashcode</div><div class="line">     *<span class="javadoctag"> @param</span> containerLength</div><div class="line">     *<span class="javadoctag"> @return</span></div><div class="line">     */</div><div class="line">    <span class="keyword">public</span> <span class="keyword">int</span> <span class="title">indexFor</span>(<span class="keyword">int</span> hashcode, <span class="keyword">int</span> containerLength) {</div><div class="line">        <span class="keyword">return</span> hashcode & (containerLength - <span class="number">1</span>);</div><div class="line"></div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="javadoc">/**</span></div><div class="line">     * 用来实际保存数据的内部类,因为采用挂链法解决冲突，此内部类设计为链表形式</div><div class="line">     * </div><div class="line">     *<span class="javadoctag"> @param</span> &lt;K&gt;key</div><div class="line">     *<span class="javadoctag"> @param</span> &lt;V&gt;</div><div class="line">     *            value</div><div class="line">     */</div><div class="line">    class Entry&lt;K, V&gt; {</div><div class="line">        Entry&lt;K, V&gt; next;<span class="comment">// 下一个结点</span></div><div class="line">        K key;<span class="comment">// key</span></div><div class="line">        V value;<span class="comment">// value</span></div><div class="line">        <span class="keyword">int</span> hash;<span class="comment">// 这个key对应的hash码，作为一个成员变量，当下次需要用的时候可以不用重新计算</span></div><div class="line"></div><div class="line">        <span class="comment">// 构造方法</span></div><div class="line">        Entry(K k, V v, <span class="keyword">int</span> hash) {</div><div class="line">            <span class="keyword">this</span>.key = k;</div><div class="line">            <span class="keyword">this</span>.value = v;</div><div class="line">            <span class="keyword">this</span>.hash = hash;</div><div class="line"></div><div class="line">        }</div><div class="line"></div><div class="line">        <span class="comment">//相应的getter()方法</span></div><div class="line"></div><div class="line">    }</div><div class="line">}</div></pre></td></tr></table></figure>
+    <updated>2015-07-29T09:30:46.000Z</updated>
+    
+    <content type="html"><![CDATA[Hash表是一种特殊的数据结构。在Hash表中，记录在表中的位置和其关键字之间存在着一种确定的关系，这样我们就可以预先知道关键字在表中的位置，从而直接通过下标找到记录。使时间复杂度直接降为O（1）.Hash表采用一个映射函数f(key) --> adress将关键字映射到该记录在表中的存储位置.
+###Hash函数的设计
+* 直接定址法 
+    取关键字或者关键字的某个线性函数为Hash地址，即address(key)=a*key+b;如知道学生的学号从2000开始，最大为4000，则可以将address(key)=key-2000作为Hash地址。
+* 平方取中法
+    对关键字进行平方运算，然后取结果的中间几位作为Hash地址。假如有以下关键字序列{421，423，436}，平方之后的结果为{177241，178929，190096}，那么可以取{72，89，00}作为Hash地址。
+* 折叠法
+    将关键字拆分成几部分，然后将这几部分组合在一起，以特定的方式进行转化形成Hash地址。假如知道图书的ISBN号为8903-241-23，可以将address(key)=89+03+24+12+3作为Hash地址。
+* 除留取余法
+    如果知道Hash表的最大长度为m，可以取不大于m的最大质数p，然后对关键字进行取余运算，address(key)=key%p。在这里p的选取非常关键，p选择的好的话，能够最大程度地减少冲突，p一般取不大于m的最大质数。
 
-]]></content>
+###Hash处理冲突方法
+* 开放定址法
+    为产生冲突的关键字地址 H(key) 求得一个地址序列： H0, H1, H2, …, Hs  1≤s≤m-1，Hi = (H(key) +di ) MOD m，其中： i=1, 2, …, s，H(key)为哈希函数;m为哈希表长;
+* 再哈希法
+    构造若干个哈希函数，当发生冲突时，根据另一个哈希函数计算下一个哈希地址，直到冲突不再发生。即：Hi=Rhi(key)    i=1,2,……k，其中：Rhi——不同的哈希函数，特点：计算时间增加
+* 链地址法
+    采用数组和链表相结合的办法，将Hash地址相同的记录存储在一张线性表中，而每张表的表头的序号即为计算得到的Hash地址。如上述例子中，采用链地址法形成的Hash表存储表示为：
+    ![链地址法](http://pic002.cnblogs.com/images/2012/288799/2012092709470640.jpg)
+
+### 代码实现
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.sllt.qiao;</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyMap</span>&lt;<span class="title">K</span>, <span class="title">V</span>&gt; </span>&#123;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> size;<span class="comment">// 当前容量</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> INIT_CAPACITY = <span class="number">16</span>;<span class="comment">// 默认容量</span></div><div class="line">    <span class="keyword">private</span> Entry&lt;K, V&gt;[] container;<span class="comment">// 实际存储数据的数组对象</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">float</span> LOAD_FACTOR = <span class="number">0.75f</span>;<span class="comment">// 装载因子</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">int</span> max;<span class="comment">// 能存的最大的数=capacity*factor</span></div><div class="line"></div><div class="line">    <span class="comment">// 自己设置容量和装载因子的构造器</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyMap</span><span class="params">(<span class="keyword">int</span> init_Capaticy, <span class="keyword">float</span> load_factor)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (init_Capaticy &lt; <span class="number">0</span>)</div><div class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Illegal initial capacity: "</span></div><div class="line">                    + init_Capaticy);</div><div class="line">        <span class="keyword">if</span> (load_factor &lt;= <span class="number">0</span> || Float.isNaN(load_factor))</div><div class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Illegal load factor: "</span></div><div class="line">                    + load_factor);</div><div class="line">        <span class="keyword">this</span>.LOAD_FACTOR = load_factor;</div><div class="line">        max = (<span class="keyword">int</span>) (init_Capaticy * load_factor);</div><div class="line">        container = <span class="keyword">new</span> Entry[init_Capaticy];</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// 使用默认参数的构造器</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyMap</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>(INIT_CAPACITY, LOAD_FACTOR);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 存</div><div class="line">     * </div><div class="line">     * <span class="doctag">@param</span> k</div><div class="line">     * <span class="doctag">@param</span> v</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">put</span><span class="params">(K k, V v)</span> </span>&#123;</div><div class="line">        <span class="comment">// 1.计算K的hash值</span></div><div class="line">        <span class="comment">// 因为自己很难写出对不同的类型都适用的Hash算法，故调用JDK给出的hashCode()方法来计算hash值</span></div><div class="line">        <span class="keyword">int</span> hash = k.hashCode();</div><div class="line">        <span class="comment">//将所有信息封装为一个Entry</span></div><div class="line">        Entry&lt;K,V&gt; temp=<span class="keyword">new</span> Entry(k,v,hash);</div><div class="line">            <span class="keyword">if</span>(setEntry(temp, container))&#123;</div><div class="line">                <span class="comment">// 大小加一</span></div><div class="line">                size++;</div><div class="line">                <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 扩容的方法</div><div class="line">     * </div><div class="line">     * <span class="doctag">@param</span> newSize</div><div class="line">     *            新的容器大小</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">reSize</span><span class="params">(<span class="keyword">int</span> newSize)</span> </span>&#123;</div><div class="line">        <span class="comment">// 1.声明新数组</span></div><div class="line">        Entry&lt;K, V&gt;[] newTable = <span class="keyword">new</span> Entry[newSize];</div><div class="line">        max = (<span class="keyword">int</span>) (newSize * LOAD_FACTOR);</div><div class="line">        <span class="comment">// 2.复制已有元素,即遍历所有元素，每个元素再存一遍</span></div><div class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; container.length; j++) &#123;</div><div class="line">            Entry&lt;K, V&gt; entry = container[j];</div><div class="line">            <span class="comment">//因为每个数组元素其实为链表，所以…………</span></div><div class="line">            <span class="keyword">while</span> (<span class="keyword">null</span> != entry) &#123;</div><div class="line">                setEntry(entry, newTable);</div><div class="line">                entry = entry.next;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="comment">// 3.改变指向</span></div><div class="line">        container = newTable;</div><div class="line">        </div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="comment">/**</span></div><div class="line">     *将指定的结点temp添加到指定的hash表table当中</div><div class="line">     * 添加时判断该结点是否已经存在</div><div class="line">     * 如果已经存在，返回false</div><div class="line">     * 添加成功返回true</div><div class="line">     * <span class="doctag">@param</span> temp</div><div class="line">     * <span class="doctag">@param</span> table</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">setEntry</span><span class="params">(Entry&lt;K,V&gt; temp,Entry[] table)</span></span>&#123;</div><div class="line">        <span class="comment">// 根据hash值找到下标</span></div><div class="line">        <span class="keyword">int</span> index = indexFor(temp.hash, table.length);</div><div class="line">        <span class="comment">//根据下标找到对应元素</span></div><div class="line">        Entry&lt;K, V&gt; entry = table[index];</div><div class="line">        <span class="comment">// 3.若存在</span></div><div class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> != entry) &#123;</div><div class="line">            <span class="comment">// 3.1遍历整个链表，判断是否相等</span></div><div class="line">            <span class="keyword">while</span> (<span class="keyword">null</span> != entry) &#123;</div><div class="line">                <span class="comment">//判断相等的条件时应该注意，除了比较地址相同外，引用传递的相等用equals()方法比较</span></div><div class="line">                <span class="comment">//相等则不存，返回false</span></div><div class="line">                <span class="keyword">if</span> ((temp.key == entry.key||temp.key.equals(entry.key)) &amp;&amp; temp.hash == entry.hash&amp;&amp;(temp.value==entry.value||temp.value.equals(entry.value))) &#123;</div><div class="line">                    <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">                &#125;</div><div class="line">                <span class="comment">//不相等则比较下一个元素</span></div><div class="line">                <span class="keyword">else</span> <span class="keyword">if</span> (temp.key != entry.key &amp;&amp; temp.value != entry.value) &#123;</div><div class="line">                        <span class="comment">//到达队尾，中断循环</span></div><div class="line">                        <span class="keyword">if</span>(<span class="keyword">null</span>==entry.next)&#123;</div><div class="line">                            <span class="keyword">break</span>;</div><div class="line">                        &#125;</div><div class="line">                        <span class="comment">// 没有到达队尾，继续遍历下一个元素</span></div><div class="line">                        entry = entry.next;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            <span class="comment">// 3.2当遍历到了队尾，如果都没有相同的元素，则将该元素挂在队尾</span></div><div class="line">            addEntry2Last(entry,temp);</div><div class="line">                </div><div class="line">        &#125;</div><div class="line">        <span class="comment">// 4.若不存在,直接设置初始化元素</span></div><div class="line">        setFirstEntry(temp,index,table);</div><div class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">addEntry2Last</span><span class="params">(Entry&lt;K, V&gt; entry, Entry&lt;K, V&gt; temp)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (size &gt; max) &#123;</div><div class="line">            reSize(container.length * <span class="number">4</span>);</div><div class="line">        &#125;</div><div class="line">        entry.next=temp;</div><div class="line">        </div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 将指定结点temp，添加到指定的hash表table的指定下标index中</div><div class="line">     * <span class="doctag">@param</span> temp</div><div class="line">     * <span class="doctag">@param</span> index</div><div class="line">     * <span class="doctag">@param</span> table</div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">setFirstEntry</span><span class="params">(Entry&lt;K, V&gt; temp, <span class="keyword">int</span> index, Entry[] table)</span> </span>&#123;</div><div class="line">        <span class="comment">// 1.判断当前容量是否超标，如果超标，调用扩容方法</span></div><div class="line">        <span class="keyword">if</span> (size &gt; max) &#123;</div><div class="line">            reSize(table.length * <span class="number">4</span>);</div><div class="line">        &#125;</div><div class="line">        <span class="comment">// 2.不超标，或者扩容以后，设置元素</span></div><div class="line">        table[index] = temp;</div><div class="line">        <span class="comment">//！！！！！！！！！！！！！！！</span></div><div class="line">        <span class="comment">//因为每次设置后都是新的链表，需要将其后接的结点都去掉</span></div><div class="line">         <span class="comment">//NND，少这一行代码卡了哥哥7个小时（代码重构）</span></div><div class="line">        temp.next=<span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 取</div><div class="line">     * </div><div class="line">     * <span class="doctag">@param</span> k</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> V <span class="title">get</span><span class="params">(K k)</span> </span>&#123;</div><div class="line">        Entry&lt;K, V&gt; entry = <span class="keyword">null</span>;</div><div class="line">        <span class="comment">// 1.计算K的hash值</span></div><div class="line">        <span class="keyword">int</span> hash = k.hashCode();</div><div class="line">        <span class="comment">// 2.根据hash值找到下标</span></div><div class="line">        <span class="keyword">int</span> index = indexFor(hash, container.length);</div><div class="line">        <span class="comment">// 3。根据index找到链表</span></div><div class="line">        entry = container[index];</div><div class="line">        <span class="comment">// 3。若链表为空，返回null</span></div><div class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> == entry) &#123;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">        &#125;</div><div class="line">        <span class="comment">// 4。若不为空，遍历链表，比较k是否相等,如果k相等，则返回该value</span></div><div class="line">        <span class="keyword">while</span> (<span class="keyword">null</span> != entry) &#123;</div><div class="line">            <span class="keyword">if</span> (k == entry.key||entry.key.equals(k)) &#123;</div><div class="line">                <span class="keyword">return</span> entry.value;</div><div class="line">            &#125;</div><div class="line">            entry = entry.next;</div><div class="line">        &#125;</div><div class="line">        <span class="comment">// 如果遍历完了不相等，则返回空</span></div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 根据hash码，容器数组的长度,计算该哈希码在容器数组中的下标值</div><div class="line">     * </div><div class="line">     * <span class="doctag">@param</span> hashcode</div><div class="line">     * <span class="doctag">@param</span> containerLength</div><div class="line">     * <span class="doctag">@return</span></div><div class="line">     */</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">indexFor</span><span class="params">(<span class="keyword">int</span> hashcode, <span class="keyword">int</span> containerLength)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> hashcode &amp; (containerLength - <span class="number">1</span>);</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">/**</span></div><div class="line">     * 用来实际保存数据的内部类,因为采用挂链法解决冲突，此内部类设计为链表形式</div><div class="line">     * </div><div class="line">     * <span class="doctag">@param</span> &lt;K&gt;key</div><div class="line">     * <span class="doctag">@param</span> &lt;V&gt;</div><div class="line">     *            value</div><div class="line">     */</div><div class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&lt;<span class="title">K</span>, <span class="title">V</span>&gt; </span>&#123;</div><div class="line">        Entry&lt;K, V&gt; next;<span class="comment">// 下一个结点</span></div><div class="line">        K key;<span class="comment">// key</span></div><div class="line">        V value;<span class="comment">// value</span></div><div class="line">        <span class="keyword">int</span> hash;<span class="comment">// 这个key对应的hash码，作为一个成员变量，当下次需要用的时候可以不用重新计算</span></div><div class="line"></div><div class="line">        <span class="comment">// 构造方法</span></div><div class="line">        Entry(K k, V v, <span class="keyword">int</span> hash) &#123;</div><div class="line">            <span class="keyword">this</span>.key = k;</div><div class="line">            <span class="keyword">this</span>.value = v;</div><div class="line">            <span class="keyword">this</span>.hash = hash;</div><div class="line"></div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="comment">//相应的getter()方法</span></div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>]]></content>
+    
     <summary type="html">
-    <![CDATA[<p>Hash表是一种特殊的数据结构。在Hash表中，记录在表中的位置和其关键字之间存在着一种确定的关系，这样我们就可以预先知道关键字在表中的位置，从而直接通过下标找到记录。使时间复杂度直接降为O（1）.Hash表采用一个映射函数f(key) —&gt; adress将关键字映射]]>
+    
+      Hash表是一种特殊的数据结构。在Hash表中，记录在表中的位置和其关键字之间存在着一种确定的关系，这样我们就可以预先知道关键字在表中的位置，从而直接通过下标找到记录。使时间复杂度直接降为O（1）.Hash表采用一个映射函数f(key) --&gt; adress将关键字映射到该记录在
+    
     </summary>
+    
     
       <category term="java" scheme="http://blog.snowy.in/tags/java/"/>
     
   </entry>
   
   <entry>
-    <title><![CDATA[HashSet的实现]]></title>
+    <title>HashSet的实现</title>
     <link href="http://blog.snowy.in/2014/10/07/java-set/"/>
     <id>http://blog.snowy.in/2014/10/07/java-set/</id>
     <published>2014-10-07T12:24:25.000Z</published>
-    <updated>2015-01-08T06:14:47.000Z</updated>
-    <content type="html"><![CDATA[<p>Set是由若干个无序且不重复的对象所组成。它既包含Array的运算功能,同时又兼有Hash的高速搜索功能。HashSet是基于HashMap实现的.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.util.Collection;</div><div class="line"><span class="keyword">import</span> java.util.HashMap;</div><div class="line"><span class="keyword">import</span> java.util.Iterator;</div><div class="line"><span class="keyword">import</span> java.util.Set;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MySet</span>&lt;<span class="title">E</span>&gt; <span class="keyword">implements</span> <span class="title">Set</span>&lt;<span class="title">E</span>&gt;</span>{</div><div class="line">    <span class="keyword">private</span> HashMap&lt;E, Object&gt; map;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Object notUse=<span class="keyword">new</span> Object();</div><div class="line">    </div><div class="line">    <span class="keyword">public</span> <span class="title">MySet</span>() {</div><div class="line">        map = <span class="keyword">new</span> HashMap&lt;E,Object&gt;();</div><div class="line">    }</div><div class="line">    <span class="annotation">@Override</span></div><div class="line">    <span class="keyword">public</span> Iterator&lt;E&gt; <span class="title">iterator</span>() {</div><div class="line">        <span class="keyword">return</span> map.keySet().iterator();</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="annotation">@Override</span></div><div class="line">    <span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">add</span>(E e) {</div><div class="line">        <span class="keyword">return</span> map.put(e, notUse) == <span class="keyword">null</span>;</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="annotation">@Override</span></div><div class="line">    <span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">addAll</span>(Collection&lt;? extends E&gt; c) {</div><div class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="annotation">@Override</span></div><div class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">clear</span>() {</div><div class="line">        map.clear();</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="annotation">@Override</span></div><div class="line">    <span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">contains</span>(Object o) {</div><div class="line">        <span class="keyword">return</span> map.containsKey(o);</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="annotation">@Override</span></div><div class="line">    <span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">containsAll</span>(Collection&lt;?&gt; c) {</div><div class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="annotation">@Override</span></div><div class="line">    <span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isEmpty</span>() {</div><div class="line">        <span class="keyword">return</span> map.isEmpty();</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="annotation">@Override</span></div><div class="line">    <span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">remove</span>(Object o) {</div><div class="line">        <span class="keyword">return</span> map.remove(o) == notUse;</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="annotation">@Override</span></div><div class="line">    <span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">removeAll</span>(Collection&lt;?&gt; c) {</div><div class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="annotation">@Override</span></div><div class="line">    <span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">retainAll</span>(Collection&lt;?&gt; c) {</div><div class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="annotation">@Override</span></div><div class="line">    <span class="keyword">public</span> <span class="keyword">int</span> <span class="title">size</span>() {</div><div class="line">        <span class="keyword">return</span> map.size();</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="annotation">@Override</span></div><div class="line">    <span class="keyword">public</span> Object[] <span class="title">toArray</span>() {</div><div class="line">        </div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    }</div><div class="line"></div><div class="line">    <span class="annotation">@Override</span></div><div class="line">    <span class="keyword">public</span> &lt;T&gt; T[] <span class="title">toArray</span>(T[] a) {</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    }</div><div class="line">}</div></pre></td></tr></table></figure>
-
-]]></content>
+    <updated>2015-07-29T09:30:46.000Z</updated>
+    
+    <content type="html"><![CDATA[Set是由若干个无序且不重复的对象所组成。它既包含Array的运算功能,同时又兼有Hash的高速搜索功能。HashSet是基于HashMap实现的.
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.util.Collection;</div><div class="line"><span class="keyword">import</span> java.util.HashMap;</div><div class="line"><span class="keyword">import</span> java.util.Iterator;</div><div class="line"><span class="keyword">import</span> java.util.Set;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MySet</span>&lt;<span class="title">E</span>&gt; <span class="keyword">implements</span> <span class="title">Set</span>&lt;<span class="title">E</span>&gt;</span>&#123;</div><div class="line">    <span class="keyword">private</span> HashMap&lt;E, Object&gt; map;</div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Object notUse=<span class="keyword">new</span> Object();</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MySet</span><span class="params">()</span> </span>&#123;</div><div class="line">        map = <span class="keyword">new</span> HashMap&lt;E,Object&gt;();</div><div class="line">    &#125;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Iterator&lt;E&gt; <span class="title">iterator</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> map.keySet().iterator();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">add</span><span class="params">(E e)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> map.put(e, notUse) == <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">addAll</span><span class="params">(Collection&lt;? extends E&gt; c)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">clear</span><span class="params">()</span> </span>&#123;</div><div class="line">        map.clear();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">contains</span><span class="params">(Object o)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> map.containsKey(o);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">containsAll</span><span class="params">(Collection&lt;?&gt; c)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isEmpty</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> map.isEmpty();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">remove</span><span class="params">(Object o)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> map.remove(o) == notUse;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">removeAll</span><span class="params">(Collection&lt;?&gt; c)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">retainAll</span><span class="params">(Collection&lt;?&gt; c)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">size</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> map.size();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="keyword">public</span> Object[] toArray() &#123;</div><div class="line">        </div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="keyword">public</span> &lt;T&gt; T[] toArray(T[] a) &#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>]]></content>
+    
     <summary type="html">
-    <![CDATA[<p>Set是由若干个无序且不重复的对象所组成。它既包含Array的运算功能,同时又兼有Hash的高速搜索功能。HashSet是基于HashMap实现的.</p>
-<figure class="highlight java"><table><tr><td class="gutte]]>
+    
+      Set是由若干个无序且不重复的对象所组成。它既包含Array的运算功能,同时又兼有Hash的高速搜索功能。HashSet是基于HashMap实现的.
+&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre
+    
     </summary>
+    
     
       <category term="java" scheme="http://blog.snowy.in/tags/java/"/>
     
   </entry>
   
   <entry>
-    <title><![CDATA[经典排序算法的golang实现]]></title>
+    <title>经典排序算法的golang实现</title>
     <link href="http://blog.snowy.in/2014/07/29/golang-sort/"/>
     <id>http://blog.snowy.in/2014/07/29/golang-sort/</id>
     <published>2014-07-29T02:32:19.000Z</published>
-    <updated>2015-01-08T06:14:47.000Z</updated>
-    <content type="html"><![CDATA[<blockquote>
-<p>冒泡排序</p>
-</blockquote>
-<p><img src="http://upload.wikimedia.org/wikipedia/commons/0/06/Bubble-sort.gif" alt="Bubble Sort"></p>
-<figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">func</span> (a Array) BubbleSort() {</div><div class="line">    <span class="keyword">for</span> i :=<span class="number"> 0</span>; i &lt; <span class="built_in">len</span>(a); i++ {</div><div class="line">        <span class="keyword">for</span> j :=<span class="number"> 0</span>; j &lt; <span class="built_in">len</span>(a)-i<span class="number">-1</span>; j++ {</div><div class="line">            <span class="keyword">if</span> a[j] &gt; a[j<span class="number">+1</span>] {</div><div class="line">                a[j], a[j<span class="number">+1</span>] = a[j<span class="number">+1</span>], a[j]</div><div class="line">            }</div><div class="line">        }</div><div class="line">    }</div><div class="line">}</div></pre></td></tr></table></figure>
+    <updated>2015-07-29T09:30:46.000Z</updated>
+    
+    <content type="html"><![CDATA[> 冒泡排序
 
-<blockquote>
-<p>插入排序</p>
-</blockquote>
-<p><img src="http://upload.wikimedia.org/wikipedia/commons/0/0f/Insertion-sort-example-300px.gif" alt="Insert Sort"></p>
-<figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">func</span> (a Array) InsertSort() {</div><div class="line">    <span class="keyword">for</span> i :=<span class="number"> 0</span>; i &lt; <span class="built_in">len</span>(a); i++ {</div><div class="line">        tmp := a[i]</div><div class="line">        j := i -<span class="number"> 1</span></div><div class="line">        <span class="keyword">for</span> j &gt;=<span class="number"> 0</span> && a[j] &gt; tmp {</div><div class="line">            a[j<span class="number">+1</span>] = a[j]</div><div class="line">            j--</div><div class="line">        }</div><div class="line">        a[j<span class="number">+1</span>] = tmp</div><div class="line">    }</div><div class="line">}</div></pre></td></tr></table></figure>
+![Bubble Sort](http://upload.wikimedia.org/wikipedia/commons/0/06/Bubble-sort.gif)
 
-<blockquote>
-<p>快速排序</p>
-</blockquote>
-<p><img src="http://upload.wikimedia.org/wikipedia/commons/9/9c/Quicksort-example.gif" alt="Quick Sort"></p>
-<figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">func</span> (a Array) QuickSort(left, right <span class="typename">int</span>) {</div><div class="line">    <span class="keyword">if</span> left &lt; right {</div><div class="line">        key := a[left]</div><div class="line">        low := left</div><div class="line">        high := right</div><div class="line">        <span class="keyword">for</span> low &lt; high {</div><div class="line">            <span class="keyword">for</span> low &lt; high && a[high] &gt; key {</div><div class="line">                high--</div><div class="line">            }</div><div class="line">            a[low] = a[high]</div><div class="line">            <span class="keyword">for</span> low &lt; high && a[low] &lt; key {</div><div class="line">                low++</div><div class="line">            }</div><div class="line">            a[high] = a[low]</div><div class="line">        }</div><div class="line">        a[low] = key</div><div class="line">        a.QuickSort(left, low<span class="number">-1</span>)</div><div class="line">        a.QuickSort(low<span class="number">+1</span>, right)</div><div class="line">    }</div><div class="line">}</div></pre></td></tr></table></figure>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(a Array)</span> <span class="title">BubbleSort</span><span class="params">()</span></span> &#123;</div><div class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(a); i++ &#123;</div><div class="line">        <span class="keyword">for</span> j := <span class="number">0</span>; j &lt; <span class="built_in">len</span>(a)-i<span class="number">-1</span>; j++ &#123;</div><div class="line">            <span class="keyword">if</span> a[j] &gt; a[j+<span class="number">1</span>] &#123;</div><div class="line">                a[j], a[j+<span class="number">1</span>] = a[j+<span class="number">1</span>], a[j]</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 
-<blockquote>
-<p>完整代码</p>
-</blockquote>
-<figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="keyword">type</span> Array []<span class="typename">int32</span></div><div class="line"></div><div class="line"><span class="keyword">func</span> (a Array) BubbleSort() {</div><div class="line">    <span class="keyword">for</span> i :=<span class="number"> 0</span>; i &lt; <span class="built_in">len</span>(a); i++ {</div><div class="line">        <span class="keyword">for</span> j :=<span class="number"> 0</span>; j &lt; <span class="built_in">len</span>(a)-i<span class="number">-1</span>; j++ {</div><div class="line">            <span class="keyword">if</span> a[j] &gt; a[j<span class="number">+1</span>] {</div><div class="line">                a[j], a[j<span class="number">+1</span>] = a[j<span class="number">+1</span>], a[j]</div><div class="line">            }</div><div class="line">        }</div><div class="line">    }</div><div class="line">}</div><div class="line"><span class="keyword">func</span> (a Array) InsertSort() {</div><div class="line">    <span class="keyword">for</span> i :=<span class="number"> 0</span>; i &lt; <span class="built_in">len</span>(a); i++ {</div><div class="line">        tmp := a[i]</div><div class="line">        j := i -<span class="number"> 1</span></div><div class="line">        <span class="keyword">for</span> j &gt;=<span class="number"> 0</span> && a[j] &gt; tmp {</div><div class="line">            a[j<span class="number">+1</span>] = a[j]</div><div class="line">            j--</div><div class="line">        }</div><div class="line">        a[j<span class="number">+1</span>] = tmp</div><div class="line">    }</div><div class="line"></div><div class="line">}</div><div class="line"><span class="keyword">func</span> (a Array) QuickSort(left, right <span class="typename">int</span>) {</div><div class="line">    <span class="keyword">if</span> left &lt; right {</div><div class="line">        key := a[left]</div><div class="line">        low := left</div><div class="line">        high := right</div><div class="line">        <span class="keyword">for</span> low &lt; high {</div><div class="line">            <span class="keyword">for</span> low &lt; high && a[high] &gt; key {</div><div class="line">                high--</div><div class="line">            }</div><div class="line">            a[low] = a[high]</div><div class="line">            <span class="keyword">for</span> low &lt; high && a[low] &lt; key {</div><div class="line">                low++</div><div class="line">            }</div><div class="line">            a[high] = a[low]</div><div class="line">        }</div><div class="line">        a[low] = key</div><div class="line">        a.QuickSort(left, low<span class="number">-1</span>)</div><div class="line">        a.QuickSort(low<span class="number">+1</span>, right)</div><div class="line">    }</div><div class="line">}</div><div class="line"><span class="keyword">func</span> main() {</div><div class="line">    <span class="keyword">var</span> a Array = []<span class="typename">int32</span><span class="number">{1</span>,<span class="number"> 5</span>,<span class="number"> 2</span>,<span class="number"> 6</span>,<span class="number"> 3</span>,<span class="number"> 9</span>,<span class="number"> 7</span>,<span class="number"> 4</span>}</div><div class="line"></div><div class="line">    <span class="comment">//a.Bubble()</span></div><div class="line">    <span class="comment">//a.Insert()</span></div><div class="line">    a.QuickSort<span class="number">(0</span>, <span class="built_in">len</span>(a<span class="number">)-1</span>)</div><div class="line">    <span class="keyword">for</span> _, i := <span class="keyword">range</span> a {</div><div class="line">        <span class="built_in">print</span>(i)</div><div class="line">    }</div><div class="line"></div><div class="line">}</div></pre></td></tr></table></figure>
+ > 插入排序
 
-]]></content>
+![Insert Sort](http://upload.wikimedia.org/wikipedia/commons/0/0f/Insertion-sort-example-300px.gif)
+
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(a Array)</span> <span class="title">InsertSort</span><span class="params">()</span></span> &#123;</div><div class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(a); i++ &#123;</div><div class="line">        tmp := a[i]</div><div class="line">        j := i - <span class="number">1</span></div><div class="line">        <span class="keyword">for</span> j &gt;= <span class="number">0</span> &amp;&amp; a[j] &gt; tmp &#123;</div><div class="line">            a[j+<span class="number">1</span>] = a[j]</div><div class="line">            j--</div><div class="line">        &#125;</div><div class="line">        a[j+<span class="number">1</span>] = tmp</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+> 快速排序
+
+![Quick Sort](http://upload.wikimedia.org/wikipedia/commons/9/9c/Quicksort-example.gif)
+
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(a Array)</span> <span class="title">QuickSort</span><span class="params">(left, right <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">    <span class="keyword">if</span> left &lt; right &#123;</div><div class="line">        key := a[left]</div><div class="line">        low := left</div><div class="line">        high := right</div><div class="line">        <span class="keyword">for</span> low &lt; high &#123;</div><div class="line">            <span class="keyword">for</span> low &lt; high &amp;&amp; a[high] &gt; key &#123;</div><div class="line">                high--</div><div class="line">            &#125;</div><div class="line">            a[low] = a[high]</div><div class="line">            <span class="keyword">for</span> low &lt; high &amp;&amp; a[low] &lt; key &#123;</div><div class="line">                low++</div><div class="line">            &#125;</div><div class="line">            a[high] = a[low]</div><div class="line">        &#125;</div><div class="line">        a[low] = key</div><div class="line">        a.QuickSort(left, low<span class="number">-1</span>)</div><div class="line">        a.QuickSort(low+<span class="number">1</span>, right)</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+> 完整代码
+
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> main</div><div class="line"></div><div class="line"><span class="keyword">type</span> Array []<span class="keyword">int32</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(a Array)</span> <span class="title">BubbleSort</span><span class="params">()</span></span> &#123;</div><div class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(a); i++ &#123;</div><div class="line">        <span class="keyword">for</span> j := <span class="number">0</span>; j &lt; <span class="built_in">len</span>(a)-i<span class="number">-1</span>; j++ &#123;</div><div class="line">            <span class="keyword">if</span> a[j] &gt; a[j+<span class="number">1</span>] &#123;</div><div class="line">                a[j], a[j+<span class="number">1</span>] = a[j+<span class="number">1</span>], a[j]</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(a Array)</span> <span class="title">InsertSort</span><span class="params">()</span></span> &#123;</div><div class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="built_in">len</span>(a); i++ &#123;</div><div class="line">        tmp := a[i]</div><div class="line">        j := i - <span class="number">1</span></div><div class="line">        <span class="keyword">for</span> j &gt;= <span class="number">0</span> &amp;&amp; a[j] &gt; tmp &#123;</div><div class="line">            a[j+<span class="number">1</span>] = a[j]</div><div class="line">            j--</div><div class="line">        &#125;</div><div class="line">        a[j+<span class="number">1</span>] = tmp</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(a Array)</span> <span class="title">QuickSort</span><span class="params">(left, right <span class="keyword">int</span>)</span></span> &#123;</div><div class="line">    <span class="keyword">if</span> left &lt; right &#123;</div><div class="line">        key := a[left]</div><div class="line">        low := left</div><div class="line">        high := right</div><div class="line">        <span class="keyword">for</span> low &lt; high &#123;</div><div class="line">            <span class="keyword">for</span> low &lt; high &amp;&amp; a[high] &gt; key &#123;</div><div class="line">                high--</div><div class="line">            &#125;</div><div class="line">            a[low] = a[high]</div><div class="line">            <span class="keyword">for</span> low &lt; high &amp;&amp; a[low] &lt; key &#123;</div><div class="line">                low++</div><div class="line">            &#125;</div><div class="line">            a[high] = a[low]</div><div class="line">        &#125;</div><div class="line">        a[low] = key</div><div class="line">        a.QuickSort(left, low<span class="number">-1</span>)</div><div class="line">        a.QuickSort(low+<span class="number">1</span>, right)</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">    <span class="keyword">var</span> a Array = []<span class="keyword">int32</span>&#123;<span class="number">1</span>, <span class="number">5</span>, <span class="number">2</span>, <span class="number">6</span>, <span class="number">3</span>, <span class="number">9</span>, <span class="number">7</span>, <span class="number">4</span>&#125;</div><div class="line"></div><div class="line">    <span class="comment">//a.Bubble()</span></div><div class="line">    <span class="comment">//a.Insert()</span></div><div class="line">    a.QuickSort(<span class="number">0</span>, <span class="built_in">len</span>(a)<span class="number">-1</span>)</div><div class="line">    <span class="keyword">for</span> _, i := <span class="keyword">range</span> a &#123;</div><div class="line">        <span class="built_in">print</span>(i)</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>]]></content>
+    
     <summary type="html">
-    <![CDATA[<blockquote>
-<p>冒泡排序</p>
-</blockquote>
-<p><img src="http://upload.wikimedia.org/wikipedia/commons/0/06/Bubble-sort.gif" alt="Bubble Sort"></]]>
+    
+      &gt; 冒泡排序
+
+![Bubble Sort](http://upload.wikimedia.org/wikipedia/commons/0/06/Bubble-sort.gif)
+
+&lt;figure class=&quot;highlight golang&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td 
+    
     </summary>
+    
     
       <category term="算法" scheme="http://blog.snowy.in/tags/%E7%AE%97%E6%B3%95/"/>
     
   </entry>
   
   <entry>
-    <title><![CDATA[从今天开始认真写东西啊混蛋]]></title>
+    <title>从今天开始认真写东西啊混蛋</title>
     <link href="http://blog.snowy.in/2014/05/23/first-blog/"/>
     <id>http://blog.snowy.in/2014/05/23/first-blog/</id>
     <published>2014-05-23T02:58:45.000Z</published>
-    <updated>2015-01-08T06:14:47.000Z</updated>
-    <content type="html"><![CDATA[<p>认真写学习心得。<br>所有的东西是写给自己看的，保持尽可能的简单。<br>ok that’s all</p>
+    <updated>2015-07-29T09:30:46.000Z</updated>
+    
+    <content type="html"><![CDATA[
+认真写学习心得。
+所有的东西是写给自己看的，保持尽可能的简单。
+ok that's all
 ]]></content>
+    
     <summary type="html">
-    <![CDATA[<p>认真写学习心得。<br>所有的东西是写给自己看的，保持尽可能的简单。<br>ok that’s all</p>
-]]>
+    
+      
+认真写学习心得。
+所有的东西是写给自己看的，保持尽可能的简单。
+ok that&#39;s all
+
+    
     </summary>
+    
     
       <category term="废话" scheme="http://blog.snowy.in/tags/%E5%BA%9F%E8%AF%9D/"/>
     
