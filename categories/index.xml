@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Categories on sllt的博客</title>
+    <link>https://blog.sllt.me/categories/</link>
+    <description>Recent content in Categories on sllt的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Wed, 09 Nov 2016 15:02:21 +0800</lastBuildDate><atom:link href="https://blog.sllt.me/categories/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>webshell</title>
+      <link>https://blog.sllt.me/categories/webshell/</link>
+      <pubDate>Wed, 09 Nov 2016 15:02:21 +0800</pubDate>
+      
+      <guid>https://blog.sllt.me/categories/webshell/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>lambda</title>
+      <link>https://blog.sllt.me/categories/lambda/</link>
+      <pubDate>Sun, 24 Apr 2016 15:34:47 +0800</pubDate>
+      
+      <guid>https://blog.sllt.me/categories/lambda/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>python</title>
+      <link>https://blog.sllt.me/categories/python/</link>
+      <pubDate>Sun, 24 Apr 2016 15:34:47 +0800</pubDate>
+      
+      <guid>https://blog.sllt.me/categories/python/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>scheme</title>
+      <link>https://blog.sllt.me/categories/scheme/</link>
+      <pubDate>Tue, 17 Nov 2015 14:02:14 +0800</pubDate>
+      
+      <guid>https://blog.sllt.me/categories/scheme/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>rails</title>
+      <link>https://blog.sllt.me/categories/rails/</link>
+      <pubDate>Mon, 17 Aug 2015 14:35:52 +0800</pubDate>
+      
+      <guid>https://blog.sllt.me/categories/rails/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>nim</title>
+      <link>https://blog.sllt.me/categories/nim/</link>
+      <pubDate>Thu, 26 Mar 2015 13:41:46 +0800</pubDate>
+      
+      <guid>https://blog.sllt.me/categories/nim/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>ruby</title>
+      <link>https://blog.sllt.me/categories/ruby/</link>
+      <pubDate>Tue, 02 Dec 2014 12:46:45 +0800</pubDate>
+      
+      <guid>https://blog.sllt.me/categories/ruby/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>java</title>
+      <link>https://blog.sllt.me/categories/java/</link>
+      <pubDate>Sat, 11 Oct 2014 13:43:25 +0800</pubDate>
+      
+      <guid>https://blog.sllt.me/categories/java/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>算法</title>
+      <link>https://blog.sllt.me/categories/%E7%AE%97%E6%B3%95/</link>
+      <pubDate>Tue, 29 Jul 2014 10:32:19 +0800</pubDate>
+      
+      <guid>https://blog.sllt.me/categories/%E7%AE%97%E6%B3%95/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

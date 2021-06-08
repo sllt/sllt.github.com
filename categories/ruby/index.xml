@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>ruby on sllt的博客</title>
+    <link>https://blog.sllt.me/categories/ruby/</link>
+    <description>Recent content in ruby on sllt的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Tue, 02 Dec 2014 12:46:45 +0800</lastBuildDate><atom:link href="https://blog.sllt.me/categories/ruby/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>ruby元编程-对象模型</title>
+      <link>https://blog.sllt.me/posts/metaprogramming-ruby-object/</link>
+      <pubDate>Tue, 02 Dec 2014 12:46:45 +0800</pubDate>
+      
+      <guid>https://blog.sllt.me/posts/metaprogramming-ruby-object/</guid>
+      <description>ruby中的对象 在ruby中任何东西都是对象，甚至是nil、类等都是对象。 比如下面的例子：
+&amp;gt;&amp;gt; 1.methods =&amp;gt; [:to_s, :inspect, :-@, :+, :-, :*, :/, :div, :%, :modulo, :divmod, :fdiv, :**, :abs, :magnitude, :==, :===, :&amp;lt;=&amp;gt;, :&amp;gt;, :&amp;gt;=, :&amp;lt;, :&amp;lt;=, :~, :&amp;amp;, :|, :^, :[], :&amp;lt;&amp;lt;, :&amp;gt;&amp;gt;, :to_f, :size, :bit_length, :zero?, :odd?, :even?, :succ, :integer?, :upto, :downto, :times, :next, :pred, :chr, :ord, :to_i, :to_int, :floor, :ceil, :truncate, :round, :gcd, :lcm, :gcdlcm, :numerator, :denominator, :to_r, :rationalize, :singleton_method_added, :coerce, :i, :+@, :eql?, ......] &amp;gt;&amp;gt; 1.</description>
+    </item>
+    
+  </channel>
+</rss>

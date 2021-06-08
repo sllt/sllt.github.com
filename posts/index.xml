@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on sllt的博客</title>
+    <link>https://blog.sllt.me/posts/</link>
+    <description>Recent content in Posts on sllt的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Wed, 09 Nov 2016 15:02:21 +0800</lastBuildDate><atom:link href="https://blog.sllt.me/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>一次误打误撞的提权经历</title>
+      <link>https://blog.sllt.me/posts/an-experience-of-hacked-website/</link>
+      <pubDate>Wed, 09 Nov 2016 15:02:21 +0800</pubDate>
+      
+      <guid>https://blog.sllt.me/posts/an-experience-of-hacked-website/</guid>
+      <description>误打误撞的输入某网站的ip结果自动跳转到一个探针文件：
+通过弱口令尝试登录数据库，测试成功！
+phpstudy这种集成包一般也会集成phpMyAdmin， 尝试找phpMyAdmin的相对路径登录，成功登录后通过select outfile语句将一句话木马写入到web服务器根目录下（探针暴露了绝对路径）
+测试是否写入成功
+通过第三方工具连接一句话木马上传GetPassword.exe 并运行。
+成功拿到密码</description>
+    </item>
+    
+    <item>
+      <title>使用Python模拟Lambda演算</title>
+      <link>https://blog.sllt.me/posts/lambda-calculus/</link>
+      <pubDate>Sun, 24 Apr 2016 15:34:47 +0800</pubDate>
+      
+      <guid>https://blog.sllt.me/posts/lambda-calculus/</guid>
+      <description>我们将从下面这段程序开始：
+for i in range(1,20): if i % 3 == 0 or i % 5 == 0: print(i) 这段程序将打印出1~19之间能被3或5整除的数字。我们将不使用任何Python内建类型及方法来实现上面程序的功能。
+1 数字 数字的特征可以简单的描述为某一个动作的迭代。比如吃了6个苹果，6就表示重复的进行了n次的吃这个动作。相同的，我们也可以在程序中用某一个函数被调用了几次来表示数字。
+比如数字1可以表示成如下代码：
+def one(p, x): return p(x) 依照同样的定义，我们可以这么表示2:
+def two(p, x): return p(p(x)) 那么， 如何表示0呢？ 我们传入p但是不进行调用，就可以表示0了：
+def zero(p, x): return x 用lambda表达式表示如下：
+ZERO = lambda p: lambda x: x ONE = lambda p: lambda x: p(x) TWO = lambda p: lambda x: p(p(x)) THREE = lambda p: lambda x: p(p(p(x))) 让我们来实现一个函数来将这些lambda表达式这换成Python的数字，依次来支持一些其他特性，比如使用range函数：</description>
+    </item>
+    
+    <item>
+      <title>如何写一个web服务器</title>
+      <link>https://blog.sllt.me/posts/write-a-web-server-with-python/</link>
+      <pubDate>Wed, 25 Nov 2015 16:14:41 +0800</pubDate>
+      
+      <guid>https://blog.sllt.me/posts/write-a-web-server-with-python/</guid>
+      <description>Hello, Web 我们先来写一个简单的web服务器，思路如下：
+ 等待客户端连接我们的服务器，并发送一个HTTP 请求； 解析这个请求； 找出它要请求的具体内容； 获取该数据 (或者动态生成); 将数据格式化为HTML； 返回数据。  步骤1、2、6的实现方式大致相同, 在Python中有一个叫BaseHTTPServer的模块可以帮助我们实现这些步骤。 我们仅需要实现步骤3-5, 一个简单的实现如下:
+import BaseHTTPServer class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler): &amp;#39;&amp;#39;&amp;#39;Handle HTTP requests by returning a fixed &amp;#39;page&amp;#39;.&amp;#39;&amp;#39;&amp;#39; # Page to send back. Page = &amp;#39;&amp;#39;&amp;#39;\ &amp;lt;html&amp;gt; &amp;lt;body&amp;gt; &amp;lt;p&amp;gt;Hello, web!&amp;lt;/p&amp;gt; &amp;lt;/body&amp;gt; &amp;lt;/html&amp;gt; &amp;#39;&amp;#39;&amp;#39; # Handle a GET request. def do_GET(self): self.send_response(200) self.send_header(&amp;#34;Content-Type&amp;#34;, &amp;#34;text/html&amp;#34;) self.send_header(&amp;#34;Content-Length&amp;#34;, str(len(self.Page))) self.end_headers() self.wfile.write(self.Page) #---------------------------------------------------------------------- if __name__ == &amp;#39;__main__&amp;#39;: serverAddress = (&amp;#39;&amp;#39;, 8080) server = BaseHTTPServer.HTTPServer(serverAddress, RequestHandler) server.</description>
+    </item>
+    
+    <item>
+      <title>如何写一个Scheme解释器</title>
+      <link>https://blog.sllt.me/posts/write-a-scheme-interpreter/</link>
+      <pubDate>Tue, 17 Nov 2015 14:02:14 +0800</pubDate>
+      
+      <guid>https://blog.sllt.me/posts/write-a-scheme-interpreter/</guid>
+      <description>本文假设你会使用python。
+我们会先实现一个scheme语法的简单计算器，以便了解实现一个解释器的简单步骤，接着会逐步给此计算器增加功能，使其成为一个完整的scheme解释器。
+Scheme-wikipedia这里有关于scheme的更详细的介绍。
+1.1 Scheme语法式的计算器 此简化的计算器包含加（+）、减（-）、乘（*）、除（/）四个表达式。
+加法和乘法表达式可以接收任意数量的参数：
+&amp;gt; (+ 1 2 3 4 ) 10 &amp;gt; (+) 0 &amp;gt; (* 1 2 3 4) 24 &amp;gt; (*) 1 减法(-)有两种情况，当传入一个参数时，会求这个数的相反数；传入两个或两个以上的操作时，会 进行减法操作， 例如(- 10 1 2 3) 等同于10 - 1 - 2 - 3。除法(/)也有两种情况。
+&amp;gt; (- 10 1 2 3) 4 &amp;gt; (- 3) -3 &amp;gt; (/ 15 12) 1.25 &amp;gt; (/ 30 5 2) 3 &amp;gt; (/ 10) 0.1 一个表达式执行的时候，先会对其子表达式求值，将所得结果再执行所返回的值。
+&amp;gt; (- 100 ( * 7 ( + 8 (/ -12 -3)))) 16.</description>
+    </item>
+    
+    <item>
+      <title>使用faye &#43; sidekiq制作实时消息队列</title>
+      <link>https://blog.sllt.me/posts/make-realtime-queue-use-faye-and-sidekiq/</link>
+      <pubDate>Mon, 17 Aug 2015 14:35:52 +0800</pubDate>
+      
+      <guid>https://blog.sllt.me/posts/make-realtime-queue-use-faye-and-sidekiq/</guid>
+      <description>install faye and sidekiq
+# Gemfile # Faye gem &amp;#39;faye-rails&amp;#39;, &amp;#39;~&amp;gt; 2.0.0&amp;#39; gem &amp;#39;faye-redis&amp;#39;, &amp;#39;~&amp;gt; 0.2.0&amp;#39; gem &amp;#39;faye&amp;#39;, &amp;#39;1.0.3&amp;#39; # sidekiq gem &amp;#39;sidekiq&amp;#39; 编辑 config/application.rb
+config.middleware.use FayeRails::Middleware, mount: &amp;#39;/faye&amp;#39;, engine: {type: Faye::Redis, uri: &amp;#34;#{ENV[&amp;#39;REDIS_URL&amp;#39;]}/4&amp;#34;}, :timeout =&amp;gt; 25 do map &amp;#39;/api/questions/status&amp;#39; =&amp;gt; Api::QuestionStateController end 增加worker类
+# app/workers/question_state_worker.rb class QuestionStateWorker include Sidekiq::Worker def get_question_state(user_id) Question.where(&amp;#34;user_id = ? and finished= ?&amp;#34;, user_id, false).select(&amp;#34;id,user_id,has_teacher_answer&amp;#34;).to_json end def keep_state(user_id, data) $redis.set &amp;#34;questions_state_#{user_id}&amp;#34;, data end def perform(user_id) keep_state(user_id, get_question_state(user_id)) end end 监听数据库</description>
+    </item>
+    
+    <item>
+      <title>brainfuck解释器的实现(一)</title>
+      <link>https://blog.sllt.me/posts/make-brainfuck-interpreter-with-nim/</link>
+      <pubDate>Thu, 26 Mar 2015 13:41:46 +0800</pubDate>
+      
+      <guid>https://blog.sllt.me/posts/make-brainfuck-interpreter-with-nim/</guid>
+      <description>Brainfuck，是一种极小化的，符合图灵完全思想的编程语言。更多资料Brainfuck
+这种语言基于一个简单的机器模型，除了指令，这个机器还包括：一个以字节为单位、被初始化为零的数组、一个指向该数组的指针（初始时指向数组的第一个字节）、以及用于输入输出的两个字节流。
+开始实现（使用nim）： 1 . 读取输入的代码
+import os let code = if paramCount() &amp;gt; 0: readFile paramStr(1) else: readAll stdin 2 . 创建初始值为0的数组，并初始一个指向它的指针
+var tape: seq[char] = newSeq[char]() codePos: int = 0 tapePos: int = 0 3 . 根据输入来做相应操作
+case code[codePos] of &amp;#39;+&amp;#39;: inc tape[tapePos] of &amp;#39;-&amp;#39;: dec tape[tapePos] of &amp;#39;&amp;gt;&amp;#39;: inc tapePos of &amp;#39;&amp;lt;&amp;#39;: dec tapePos of &amp;#39;.&amp;#39;: stdout.write tape[tapePos] of &amp;#39;,&amp;#39;: tape[tapePos] = stdin.readChar else: discard 4 . 处理“[”跟“]”</description>
+    </item>
+    
+    <item>
+      <title>实现网打算换成puma来跑</title>
+      <link>https://blog.sllt.me/posts/get-real-deploy-with-puma/</link>
+      <pubDate>Tue, 20 Jan 2015 16:25:43 +0800</pubDate>
+      
+      <guid>https://blog.sllt.me/posts/get-real-deploy-with-puma/</guid>
+      <description>将unicorn换成puma的原因：
+ 节省内存 ，提高效率 Capistrano部署集成（capistrano3-puma）  以下为手动配置方法： 启动puma
+bundle exec puma -b unix:///tmp/puma.sock -e production --daemon nginx配置例子： ​
+upstream shixian { server unix:///tmp/puma.sock; } server { listen 80; server_name dev.shixian.com; # ~2 seconds is often enough for most folks to parse HTML/CSS and # retrieve needed images/icons/frames, connections are cheap in # nginx so increasing this is generally safe... keepalive_timeout 5; # path for static files root /home/deploy/apps/shixian/public; access_log /home/deploy/apps/shixian/log/nginx.access.log; error_log /home/deploy/apps/shixian/log/nginx.</description>
+    </item>
+    
+    <item>
+      <title>使用Houston&#43;Sidekiq做ios消息推送</title>
+      <link>https://blog.sllt.me/posts/push-notifications-for-ios-with-houston-and-sidekiq/</link>
+      <pubDate>Thu, 08 Jan 2015 16:05:35 +0800</pubDate>
+      
+      <guid>https://blog.sllt.me/posts/push-notifications-for-ios-with-houston-and-sidekiq/</guid>
+      <description>创建NotifierWorker类
+# app/workers/notifier_worker.rb require &amp;#39;apn_connection&amp;#39; class NotifierWorker include Sidekiq::Worker APN_POOL = ConnectionPool.new(:size =&amp;gt; 2, :timeout =&amp;gt; 300) do APNConnection.new end ​ def perform(message, custom_data = nil) APN_POOL.with do |connection| token = &amp;#34;&amp;lt;dccec3dd 25936d87 5ed2d16b 75f0785c bdb0b33d 8dd48f1c 72529c00 b1c56a19&amp;gt;&amp;#34; notification = Houston::Notification.new(device: token) notification.alert = message notification.sound = &amp;#39;default&amp;#39; notification.custom_data = custom_data connection.write(notification.message) end end end 创建APNConnection类
+# lib/apn_connection.rb class APNConnection def initialize setup end def setup @uri, @certificate = if Rails.</description>
+    </item>
+    
+    <item>
+      <title>ruby元编程-对象模型</title>
+      <link>https://blog.sllt.me/posts/metaprogramming-ruby-object/</link>
+      <pubDate>Tue, 02 Dec 2014 12:46:45 +0800</pubDate>
+      
+      <guid>https://blog.sllt.me/posts/metaprogramming-ruby-object/</guid>
+      <description>ruby中的对象 在ruby中任何东西都是对象，甚至是nil、类等都是对象。 比如下面的例子：
+&amp;gt;&amp;gt; 1.methods =&amp;gt; [:to_s, :inspect, :-@, :+, :-, :*, :/, :div, :%, :modulo, :divmod, :fdiv, :**, :abs, :magnitude, :==, :===, :&amp;lt;=&amp;gt;, :&amp;gt;, :&amp;gt;=, :&amp;lt;, :&amp;lt;=, :~, :&amp;amp;, :|, :^, :[], :&amp;lt;&amp;lt;, :&amp;gt;&amp;gt;, :to_f, :size, :bit_length, :zero?, :odd?, :even?, :succ, :integer?, :upto, :downto, :times, :next, :pred, :chr, :ord, :to_i, :to_int, :floor, :ceil, :truncate, :round, :gcd, :lcm, :gcdlcm, :numerator, :denominator, :to_r, :rationalize, :singleton_method_added, :coerce, :i, :+@, :eql?, ......] &amp;gt;&amp;gt; 1.</description>
+    </item>
+    
+    <item>
+      <title>在Rails中实现markdown解析</title>
+      <link>https://blog.sllt.me/posts/use-markdown-in-rails/</link>
+      <pubDate>Thu, 13 Nov 2014 16:39:34 +0800</pubDate>
+      
+      <guid>https://blog.sllt.me/posts/use-markdown-in-rails/</guid>
+      <description>首先，安装gem
+gem &amp;#39;redcarpet&amp;#39; 然后在app/helpers/application_helper.rb添加如下代码：
+def markdown(text) render_options = { filter_html: false, hard_wrap: true, link_attributes: { rel: &amp;#39;nofollow&amp;#39; } } renderer = Redcarpet::Render::HTML.new(render_options) extensions = { #will parse links without need of enclosing them autolink: true, fenced_code_blocks: true, # will ignore standard require for empty lines surrounding HTML blocks lax_spacing: true, # will not generate emphasis inside of words, for example no_emph_no no_intra_emphasis: true, # will parse strikethrough from ~~, for example: ~~bad~~ strikethrough: true, # will parse superscript after ^, you can wrap superscript in () superscript: true # will require a space after # in defining headers # space_after_headers: true } Redcarpet::Markdown.</description>
+    </item>
+    
+    <item>
+      <title>Hash表的实现</title>
+      <link>https://blog.sllt.me/posts/java-hash/</link>
+      <pubDate>Sat, 11 Oct 2014 13:43:25 +0800</pubDate>
+      
+      <guid>https://blog.sllt.me/posts/java-hash/</guid>
+      <description>Hash表是一种特殊的数据结构。在Hash表中，记录在表中的位置和其关键字之间存在着一种确定的关系，这样我们就可以预先知道关键字在表中的位置，从而直接通过下标找到记录。使时间复杂度直接降为O（1）.Hash表采用一个映射函数f(key) &amp;ndash;&amp;gt; adress将关键字映射到该记录在表中的存储位置.
+###Hash函数的设计
+ 直接定址法 取关键字或者关键字的某个线性函数为Hash地址，即address(key)=a*key+b;如知道学生的学号从2000开始，最大为4000，则可以将address(key)=key-2000作为Hash地址。 平方取中法 对关键字进行平方运算，然后取结果的中间几位作为Hash地址。假如有以下关键字序列{421，423，436}，平方之后的结果为{177241，178929，190096}，那么可以取{72，89，00}作为Hash地址。 折叠法 将关键字拆分成几部分，然后将这几部分组合在一起，以特定的方式进行转化形成Hash地址。假如知道图书的ISBN号为8903-241-23，可以将address(key)=89+03+24+12+3作为Hash地址。 除留取余法 如果知道Hash表的最大长度为m，可以取不大于m的最大质数p，然后对关键字进行取余运算，address(key)=key%p。在这里p的选取非常关键，p选择的好的话，能够最大程度地减少冲突，p一般取不大于m的最大质数。  ###Hash处理冲突方法
+ 开放定址法 为产生冲突的关键字地址 H(key) 求得一个地址序列： H0, H1, H2, …, Hs 1≤s≤m-1，Hi = (H(key) +di ) MOD m，其中： i=1, 2, …, s，H(key)为哈希函数;m为哈希表长; 再哈希法 构造若干个哈希函数，当发生冲突时，根据另一个哈希函数计算下一个哈希地址，直到冲突不再发生。即：Hi=Rhi(key) i=1,2,……k，其中：Rhi——不同的哈希函数，特点：计算时间增加 链地址法 采用数组和链表相结合的办法，将Hash地址相同的记录存储在一张线性表中，而每张表的表头的序号即为计算得到的Hash地址。如上述例子中，采用链地址法形成的Hash表存储表示为：   代码实现 package com.sllt.qiao; public class MyMap&amp;lt;K, V&amp;gt; { private int size;// 当前容量  private static int INIT_CAPACITY = 16;// 默认容量  private Entry&amp;lt;K, V&amp;gt;[] container;// 实际存储数据的数组对象  private static float LOAD_FACTOR = 0.</description>
+    </item>
+    
+    <item>
+      <title>HashSet的实现</title>
+      <link>https://blog.sllt.me/posts/java-set/</link>
+      <pubDate>Tue, 07 Oct 2014 20:24:25 +0800</pubDate>
+      
+      <guid>https://blog.sllt.me/posts/java-set/</guid>
+      <description>Set是由若干个无序且不重复的对象所组成。它既包含Array的运算功能,同时又兼有Hash的高速搜索功能。HashSet是基于HashMap实现的.
+import java.util.Collection; import java.util.HashMap; import java.util.Iterator; import java.util.Set; public class MySet&amp;lt;E&amp;gt; implements Set&amp;lt;E&amp;gt;{ private HashMap&amp;lt;E, Object&amp;gt; map; private static final Object notUse=new Object(); public MySet() { map = new HashMap&amp;lt;E,Object&amp;gt;(); } @Override public Iterator&amp;lt;E&amp;gt; iterator() { return map.keySet().iterator(); } @Override public boolean add(E e) { return map.put(e, notUse) == null; } @Override public boolean addAll(Collection&amp;lt;? extends E&amp;gt; c) { return false; } @Override public void clear() { map.clear(); } @Override public boolean contains(Object o) { return map.</description>
+    </item>
+    
+    <item>
+      <title>经典排序算法的golang实现</title>
+      <link>https://blog.sllt.me/posts/golang-sort/</link>
+      <pubDate>Tue, 29 Jul 2014 10:32:19 +0800</pubDate>
+      
+      <guid>https://blog.sllt.me/posts/golang-sort/</guid>
+      <description>冒泡排序 func (a Array) BubbleSort() { for i := 0; i &amp;lt; len(a); i++ { for j := 0; j &amp;lt; len(a)-i-1; j++ { if a[j] &amp;gt; a[j+1] { a[j], a[j+1] = a[j+1], a[j] } } } } 插入排序 func (a Array) InsertSort() { for i := 0; i &amp;lt; len(a); i++ { tmp := a[i] j := i - 1 for j &amp;gt;= 0 &amp;amp;&amp;amp; a[j] &amp;gt; tmp { a[j+1] = a[j] j-- } a[j+1] = tmp } } 快速排序</description>
+    </item>
+    
+  </channel>
+</rss>

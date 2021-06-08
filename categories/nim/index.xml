@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>nim on sllt的博客</title>
+    <link>https://blog.sllt.me/categories/nim/</link>
+    <description>Recent content in nim on sllt的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Thu, 26 Mar 2015 13:41:46 +0800</lastBuildDate><atom:link href="https://blog.sllt.me/categories/nim/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>brainfuck解释器的实现(一)</title>
+      <link>https://blog.sllt.me/posts/make-brainfuck-interpreter-with-nim/</link>
+      <pubDate>Thu, 26 Mar 2015 13:41:46 +0800</pubDate>
+      
+      <guid>https://blog.sllt.me/posts/make-brainfuck-interpreter-with-nim/</guid>
+      <description>Brainfuck，是一种极小化的，符合图灵完全思想的编程语言。更多资料Brainfuck
+这种语言基于一个简单的机器模型，除了指令，这个机器还包括：一个以字节为单位、被初始化为零的数组、一个指向该数组的指针（初始时指向数组的第一个字节）、以及用于输入输出的两个字节流。
+开始实现（使用nim）： 1 . 读取输入的代码
+import os let code = if paramCount() &amp;gt; 0: readFile paramStr(1) else: readAll stdin 2 . 创建初始值为0的数组，并初始一个指向它的指针
+var tape: seq[char] = newSeq[char]() codePos: int = 0 tapePos: int = 0 3 . 根据输入来做相应操作
+case code[codePos] of &amp;#39;+&amp;#39;: inc tape[tapePos] of &amp;#39;-&amp;#39;: dec tape[tapePos] of &amp;#39;&amp;gt;&amp;#39;: inc tapePos of &amp;#39;&amp;lt;&amp;#39;: dec tapePos of &amp;#39;.&amp;#39;: stdout.write tape[tapePos] of &amp;#39;,&amp;#39;: tape[tapePos] = stdin.readChar else: discard 4 . 处理“[”跟“]”</description>
+    </item>
+    
+  </channel>
+</rss>

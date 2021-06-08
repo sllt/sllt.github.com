@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>python on sllt的博客</title>
+    <link>https://blog.sllt.me/tags/python/</link>
+    <description>Recent content in python on sllt的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Wed, 25 Nov 2015 16:14:41 +0800</lastBuildDate><atom:link href="https://blog.sllt.me/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>如何写一个web服务器</title>
+      <link>https://blog.sllt.me/posts/write-a-web-server-with-python/</link>
+      <pubDate>Wed, 25 Nov 2015 16:14:41 +0800</pubDate>
+      
+      <guid>https://blog.sllt.me/posts/write-a-web-server-with-python/</guid>
+      <description>Hello, Web
+我们先来写一个简单的web服务器，思路如下：
+ 等待客户端连接我们的服务器，并发送一个HTTP 请求； 解析这个请求； 找出它要请求的具体内容； 获取该数据 (或者动态生成); 将数据格式化为HTML； 返回数据。  步骤1、2、6的实现方式大致相同, 在Python中有一个叫BaseHTTPServer的模块可以帮助我们实现这些步骤。 我们仅需要实现步骤3-5, 一个简单的实现如下:
+import BaseHTTPServer class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler): &amp;#39;&amp;#39;&amp;#39;Handle HTTP requests by returning a fixed &amp;#39;page&amp;#39;.&amp;#39;&amp;#39;&amp;#39; # Page to send back. Page = &amp;#39;&amp;#39;&amp;#39;\ &amp;lt;html&amp;gt; &amp;lt;body&amp;gt; &amp;lt;p&amp;gt;Hello, web!&amp;lt;/p&amp;gt; &amp;lt;/body&amp;gt; &amp;lt;/html&amp;gt; &amp;#39;&amp;#39;&amp;#39; # Handle a GET request. def do_GET(self): self.send_response(200) self.send_header(&amp;#34;Content-Type&amp;#34;, &amp;#34;text/html&amp;#34;) self.send_header(&amp;#34;Content-Length&amp;#34;, str(len(self.Page))) self.end_headers() self.wfile.write(self.Page) #---------------------------------------------------------------------- if __name__ == &amp;#39;__main__&amp;#39;: serverAddress = (&amp;#39;&amp;#39;, 8080) server = BaseHTTPServer.HTTPServer(serverAddress, RequestHandler) server.</description>
+    </item>
+    
+  </channel>
+</rss>

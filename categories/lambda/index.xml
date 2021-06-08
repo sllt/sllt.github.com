@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>lambda on sllt的博客</title>
+    <link>https://blog.sllt.me/categories/lambda/</link>
+    <description>Recent content in lambda on sllt的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Sun, 24 Apr 2016 15:34:47 +0800</lastBuildDate><atom:link href="https://blog.sllt.me/categories/lambda/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>使用Python模拟Lambda演算</title>
+      <link>https://blog.sllt.me/posts/lambda-calculus/</link>
+      <pubDate>Sun, 24 Apr 2016 15:34:47 +0800</pubDate>
+      
+      <guid>https://blog.sllt.me/posts/lambda-calculus/</guid>
+      <description>我们将从下面这段程序开始：
+for i in range(1,20): if i % 3 == 0 or i % 5 == 0: print(i) 这段程序将打印出1~19之间能被3或5整除的数字。我们将不使用任何Python内建类型及方法来实现上面程序的功能。
+1 数字 数字的特征可以简单的描述为某一个动作的迭代。比如吃了6个苹果，6就表示重复的进行了n次的吃这个动作。相同的，我们也可以在程序中用某一个函数被调用了几次来表示数字。
+比如数字1可以表示成如下代码：
+def one(p, x): return p(x) 依照同样的定义，我们可以这么表示2:
+def two(p, x): return p(p(x)) 那么， 如何表示0呢？ 我们传入p但是不进行调用，就可以表示0了：
+def zero(p, x): return x 用lambda表达式表示如下：
+ZERO = lambda p: lambda x: x ONE = lambda p: lambda x: p(x) TWO = lambda p: lambda x: p(p(x)) THREE = lambda p: lambda x: p(p(p(x))) 让我们来实现一个函数来将这些lambda表达式这换成Python的数字，依次来支持一些其他特性，比如使用range函数：</description>
+    </item>
+    
+  </channel>
+</rss>

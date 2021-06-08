@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>rails on sllt的博客</title>
+    <link>https://blog.sllt.me/categories/rails/</link>
+    <description>Recent content in rails on sllt的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Mon, 17 Aug 2015 14:35:52 +0800</lastBuildDate><atom:link href="https://blog.sllt.me/categories/rails/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>使用faye &#43; sidekiq制作实时消息队列</title>
+      <link>https://blog.sllt.me/posts/make-realtime-queue-use-faye-and-sidekiq/</link>
+      <pubDate>Mon, 17 Aug 2015 14:35:52 +0800</pubDate>
+      
+      <guid>https://blog.sllt.me/posts/make-realtime-queue-use-faye-and-sidekiq/</guid>
+      <description>install faye and sidekiq
+# Gemfile # Faye gem &amp;#39;faye-rails&amp;#39;, &amp;#39;~&amp;gt; 2.0.0&amp;#39; gem &amp;#39;faye-redis&amp;#39;, &amp;#39;~&amp;gt; 0.2.0&amp;#39; gem &amp;#39;faye&amp;#39;, &amp;#39;1.0.3&amp;#39; # sidekiq gem &amp;#39;sidekiq&amp;#39; 编辑 config/application.rb
+config.middleware.use FayeRails::Middleware, mount: &amp;#39;/faye&amp;#39;, engine: {type: Faye::Redis, uri: &amp;#34;#{ENV[&amp;#39;REDIS_URL&amp;#39;]}/4&amp;#34;}, :timeout =&amp;gt; 25 do map &amp;#39;/api/questions/status&amp;#39; =&amp;gt; Api::QuestionStateController end 增加worker类
+# app/workers/question_state_worker.rb class QuestionStateWorker include Sidekiq::Worker def get_question_state(user_id) Question.where(&amp;#34;user_id = ? and finished= ?&amp;#34;, user_id, false).select(&amp;#34;id,user_id,has_teacher_answer&amp;#34;).to_json end def keep_state(user_id, data) $redis.set &amp;#34;questions_state_#{user_id}&amp;#34;, data end def perform(user_id) keep_state(user_id, get_question_state(user_id)) end end 监听数据库</description>
+    </item>
+    
+    <item>
+      <title>实现网打算换成puma来跑</title>
+      <link>https://blog.sllt.me/posts/get-real-deploy-with-puma/</link>
+      <pubDate>Tue, 20 Jan 2015 16:25:43 +0800</pubDate>
+      
+      <guid>https://blog.sllt.me/posts/get-real-deploy-with-puma/</guid>
+      <description>将unicorn换成puma的原因：
+ 节省内存 ，提高效率 Capistrano部署集成（capistrano3-puma）  以下为手动配置方法： 启动puma
+bundle exec puma -b unix:///tmp/puma.sock -e production --daemon nginx配置例子： ​
+upstream shixian { server unix:///tmp/puma.sock; } server { listen 80; server_name dev.shixian.com; # ~2 seconds is often enough for most folks to parse HTML/CSS and # retrieve needed images/icons/frames, connections are cheap in # nginx so increasing this is generally safe... keepalive_timeout 5; # path for static files root /home/deploy/apps/shixian/public; access_log /home/deploy/apps/shixian/log/nginx.access.log; error_log /home/deploy/apps/shixian/log/nginx.</description>
+    </item>
+    
+    <item>
+      <title>使用Houston&#43;Sidekiq做ios消息推送</title>
+      <link>https://blog.sllt.me/posts/push-notifications-for-ios-with-houston-and-sidekiq/</link>
+      <pubDate>Thu, 08 Jan 2015 16:05:35 +0800</pubDate>
+      
+      <guid>https://blog.sllt.me/posts/push-notifications-for-ios-with-houston-and-sidekiq/</guid>
+      <description>创建NotifierWorker类
+# app/workers/notifier_worker.rb require &amp;#39;apn_connection&amp;#39; class NotifierWorker include Sidekiq::Worker APN_POOL = ConnectionPool.new(:size =&amp;gt; 2, :timeout =&amp;gt; 300) do APNConnection.new end ​ def perform(message, custom_data = nil) APN_POOL.with do |connection| token = &amp;#34;&amp;lt;dccec3dd 25936d87 5ed2d16b 75f0785c bdb0b33d 8dd48f1c 72529c00 b1c56a19&amp;gt;&amp;#34; notification = Houston::Notification.new(device: token) notification.alert = message notification.sound = &amp;#39;default&amp;#39; notification.custom_data = custom_data connection.write(notification.message) end end end 创建APNConnection类
+# lib/apn_connection.rb class APNConnection def initialize setup end def setup @uri, @certificate = if Rails.</description>
+    </item>
+    
+    <item>
+      <title>在Rails中实现markdown解析</title>
+      <link>https://blog.sllt.me/posts/use-markdown-in-rails/</link>
+      <pubDate>Thu, 13 Nov 2014 16:39:34 +0800</pubDate>
+      
+      <guid>https://blog.sllt.me/posts/use-markdown-in-rails/</guid>
+      <description>首先，安装gem
+gem &amp;#39;redcarpet&amp;#39; 然后在app/helpers/application_helper.rb添加如下代码：
+def markdown(text) render_options = { filter_html: false, hard_wrap: true, link_attributes: { rel: &amp;#39;nofollow&amp;#39; } } renderer = Redcarpet::Render::HTML.new(render_options) extensions = { #will parse links without need of enclosing them autolink: true, fenced_code_blocks: true, # will ignore standard require for empty lines surrounding HTML blocks lax_spacing: true, # will not generate emphasis inside of words, for example no_emph_no no_intra_emphasis: true, # will parse strikethrough from ~~, for example: ~~bad~~ strikethrough: true, # will parse superscript after ^, you can wrap superscript in () superscript: true # will require a space after # in defining headers # space_after_headers: true } Redcarpet::Markdown.</description>
+    </item>
+    
+  </channel>
+</rss>

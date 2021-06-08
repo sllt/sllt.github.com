@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>算法 on sllt的博客</title>
+    <link>https://blog.sllt.me/categories/%E7%AE%97%E6%B3%95/</link>
+    <description>Recent content in 算法 on sllt的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Tue, 29 Jul 2014 10:32:19 +0800</lastBuildDate><atom:link href="https://blog.sllt.me/categories/%E7%AE%97%E6%B3%95/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>经典排序算法的golang实现</title>
+      <link>https://blog.sllt.me/posts/golang-sort/</link>
+      <pubDate>Tue, 29 Jul 2014 10:32:19 +0800</pubDate>
+      
+      <guid>https://blog.sllt.me/posts/golang-sort/</guid>
+      <description>冒泡排序 func (a Array) BubbleSort() { for i := 0; i &amp;lt; len(a); i++ { for j := 0; j &amp;lt; len(a)-i-1; j++ { if a[j] &amp;gt; a[j+1] { a[j], a[j+1] = a[j+1], a[j] } } } } 插入排序 func (a Array) InsertSort() { for i := 0; i &amp;lt; len(a); i++ { tmp := a[i] j := i - 1 for j &amp;gt;= 0 &amp;amp;&amp;amp; a[j] &amp;gt; tmp { a[j+1] = a[j] j-- } a[j+1] = tmp } } 快速排序</description>
+    </item>
+    
+  </channel>
+</rss>

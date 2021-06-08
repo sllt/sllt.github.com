@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Hugo 0.83.1" />
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="author" content="sllt" />
+  <meta property="og:url" content="https://blog.sllt.me/posts/write-a-web-server-with-python/" />
+  <link rel="canonical" href="https://blog.sllt.me/posts/write-a-web-server-with-python/" /><link rel="alternate" type="application/atom+xml" href="https://blog.sllt.meindex.xml" title="sllt的博客">
+
+  <script type="application/ld+json">
+  {
+      "@context" : "http://schema.org",
+      "@type" : "BlogPosting",
+      "mainEntityOfPage": {
+           "@type": "WebPage",
+           "@id": "https:\/\/blog.sllt.me"
+      },
+      "articleSection" : "posts",
+      "name" : "如何写一个web服务器",
+      "headline" : "如何写一个web服务器",
+      "description" : "Hello, Web 我们先来写一个简单的web服务器，思路如下：\n 等待客户端连接我们的服务器，并发送一个HTTP 请求； 解析这个请求； 找出它要请求的具体内容； 获取该数据 (或者动态生成); 将数据格式化为HTML； 返回数据。  步骤1、2、6的实现方式大致相同, 在Python中有一个叫BaseHTTPServer的模块可以帮助我们实现这些步骤。 我们仅需要实现步骤3-5, 一个简单的实现如下:\nimport BaseHTTPServer class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler): \u0026#39;\u0026#39;\u0026#39;Handle HTTP requests by returning a fixed \u0026#39;page\u0026#39;.\u0026#39;\u0026#39;\u0026#39; # Page to send back. Page = \u0026#39;\u0026#39;\u0026#39;\\ \u0026lt;html\u0026gt; \u0026lt;body\u0026gt; \u0026lt;p\u0026gt;Hello, web!\u0026lt;\/p\u0026gt; \u0026lt;\/body\u0026gt; \u0026lt;\/html\u0026gt; \u0026#39;\u0026#39;\u0026#39; # Handle a GET request. def do_GET(self): self.send_response(200) self.send_header(\u0026#34;Content-Type\u0026#34;, \u0026#34;text\/html\u0026#34;) self.send_header(\u0026#34;Content-Length\u0026#34;, str(len(self.Page))) self.end_headers() self.wfile.write(self.Page) #---------------------------------------------------------------------- if __name__ == \u0026#39;__main__\u0026#39;: serverAddress = (\u0026#39;\u0026#39;, 8080) server = BaseHTTPServer.HTTPServer(serverAddress, RequestHandler) server.",
+      "inLanguage" : "en-US",
+      "author" : "sllt",
+      "creator" : "sllt",
+      "publisher": "sllt",
+      "accountablePerson" : "sllt",
+      "copyrightHolder" : "sllt",
+      "copyrightYear" : "2015",
+      "datePublished": "2015-11-25 16:14:41 \u002b0800 CST",
+      "dateModified" : "2015-11-25 16:14:41 \u002b0800 CST",
+      "url" : "https:\/\/blog.sllt.me\/posts\/write-a-web-server-with-python\/",
+      "keywords" : [  ]
+  }
+</script>
+<title>如何写一个web服务器</title>
+  <meta property="og:title" content="如何写一个web服务器" />
+  <meta property="og:type" content="article" />
+  <meta property="og:description" content="Hello, Web 我们先来写一个简单的web服务器，思路如下：
+ 等待客户端连接我们的服务器，并发送一个HTTP 请求； 解析这个请求； 找出它要请求的具体内容； 获取该数据 (或者动态生成); 将数据格式化为HTML； 返回数据。  步骤1、2、6的实现方式大致相同, 在Python中有一个叫BaseHTTPServer的模块可以帮助我们实现这些步骤。 我们仅需要实现步骤3-5, 一个简单的实现如下:
+import BaseHTTPServer class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler): &amp;#39;&amp;#39;&amp;#39;Handle HTTP requests by returning a fixed &amp;#39;page&amp;#39;.&amp;#39;&amp;#39;&amp;#39; # Page to send back. Page = &amp;#39;&amp;#39;&amp;#39;\ &amp;lt;html&amp;gt; &amp;lt;body&amp;gt; &amp;lt;p&amp;gt;Hello, web!&amp;lt;/p&amp;gt; &amp;lt;/body&amp;gt; &amp;lt;/html&amp;gt; &amp;#39;&amp;#39;&amp;#39; # Handle a GET request. def do_GET(self): self.send_response(200) self.send_header(&amp;#34;Content-Type&amp;#34;, &amp;#34;text/html&amp;#34;) self.send_header(&amp;#34;Content-Length&amp;#34;, str(len(self.Page))) self.end_headers() self.wfile.write(self.Page) #---------------------------------------------------------------------- if __name__ == &amp;#39;__main__&amp;#39;: serverAddress = (&amp;#39;&amp;#39;, 8080) server = BaseHTTPServer.HTTPServer(serverAddress, RequestHandler) server." />
+  <meta name="description" content="Hello, Web 我们先来写一个简单的web服务器，思路如下：
+ 等待客户端连接我们的服务器，并发送一个HTTP 请求； 解析这个请求； 找出它要请求的具体内容； 获取该数据 (或者动态生成); 将数据格式化为HTML； 返回数据。  步骤1、2、6的实现方式大致相同, 在Python中有一个叫BaseHTTPServer的模块可以帮助我们实现这些步骤。 我们仅需要实现步骤3-5, 一个简单的实现如下:
+import BaseHTTPServer class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler): &amp;#39;&amp;#39;&amp;#39;Handle HTTP requests by returning a fixed &amp;#39;page&amp;#39;.&amp;#39;&amp;#39;&amp;#39; # Page to send back. Page = &amp;#39;&amp;#39;&amp;#39;\ &amp;lt;html&amp;gt; &amp;lt;body&amp;gt; &amp;lt;p&amp;gt;Hello, web!&amp;lt;/p&amp;gt; &amp;lt;/body&amp;gt; &amp;lt;/html&amp;gt; &amp;#39;&amp;#39;&amp;#39; # Handle a GET request. def do_GET(self): self.send_response(200) self.send_header(&amp;#34;Content-Type&amp;#34;, &amp;#34;text/html&amp;#34;) self.send_header(&amp;#34;Content-Length&amp;#34;, str(len(self.Page))) self.end_headers() self.wfile.write(self.Page) #---------------------------------------------------------------------- if __name__ == &amp;#39;__main__&amp;#39;: serverAddress = (&amp;#39;&amp;#39;, 8080) server = BaseHTTPServer.HTTPServer(serverAddress, RequestHandler) server." />
+  <meta property="og:locale" content="zh-cn" />
+
+  
+    <style>body{font-family:bree serif,sans-serif;-webkit-font-smoothing:antialiased;margin:0 20px}article{max-width:800px;margin-left:auto;margin-right:auto}a{color:#000;text-decoration:none}a:hover{font-weight:600;text-decoration:underline}.post-ads{margin:50px 0}.markdown-body{font-size:18px;max-width:100%}.markdown-body a{text-decoration:underline;text-decoration-color:#000}.markdown-body pre{padding:16px;overflow:auto;border-radius:10px}.markdown-body code{padding:.2em .4em;font-size:85%;background-color:#f6f8fa;border-radius:6px}.markdown-body pre>code{padding:0;font-size:100%;background-color:inherit;border:0}.Chinese .markdown-body{line-height:200%}.site-date-catalog{font-size:2rem}.header-title{font-size:2rem;font-weight:700;margin-top:32px;font-family:bungee shade,sans-serif}.header-title a{text-decoration:none}.header-subtitle{color:#666}.header-items{margin:10px 0}.header-item{margin:0 5px}.header-line{width:100%;border-width:2px;border-color:#482936;border-style:solid none none none}.lang-switch{font-weight:600}#posts-list{min-height:600px}.posts-line{font-size:1.2rem;margin:12px 0}.posts-categories{font-size:.8rem;margin:auto;text-align:center}.posts-category{padding:3px 0;border:#000 2px solid;border-radius:5px}.site-footer{margin-top:50px}.site-footer-item{margin-right:12px}.post-content img{max-width:100%;display:block;margin-right:auto;margin-top:12px}.post-header{margin-bottom:50px}.post-title{font-size:2rem;font-weight:600}.post-category{display:inline;font-weight:600;padding:2px 5px;border:#000 2px solid;border-radius:5px}.post-date{font-weight:800;font-style:italic}.post-author{float:right;font-weight:600}.page-content{min-height:60%}.post-content{margin-bottom:50px}.post-content p{hyphens:auto;line-height:1.8;text-justify:ideographic;margin-bottom:1em}.related-content{border-width:3px;border-style:solid;border-color:#000;padding:0 10px;margin-bottom:50px;margin-top:100px}.related-content li{margin:5px 0}.taxonomy-term{font-size:3rem}.gallery-img{text-align:center}.gallery-img span{text-align:center}.gallery-img-desc{font-size:.8em;font-weight:800}#disqus_thread{position:relative}#disqus_thread:after{content:"";display:block;height:55px;width:100%;position:absolute;bottom:0;background:#fff}@media screen and (max-width:600px){.header-title,.header-subtitle,.header-items{text-align:center}.posts-line{font-size:16px}.markdown-body{font-size:16px}.post-title{font-size:2rem}.post-content p{letter-spacing:.05em}}@media screen and (max-width:48em){.posts-category{display:none}}</style>
+  
+  
+    <style>.container,.container-fluid{margin-right:auto;margin-left:auto}.container-fluid{padding-right:2rem;padding-left:2rem}.row{box-sizing:border-box;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-flex:0;-ms-flex:0 1 auto;flex:initial;-webkit-box-orient:horizontal;-webkit-box-direction:normal;-ms-flex-direction:row;flex-direction:row;-ms-flex-wrap:wrap;flex-wrap:wrap;margin-right:-.5rem;margin-left:-.5rem}.row.reverse{-webkit-box-orient:horizontal;-webkit-box-direction:reverse;-ms-flex-direction:row-reverse;flex-direction:row-reverse}.col.reverse{-webkit-box-orient:vertical;-webkit-box-direction:reverse;-ms-flex-direction:column-reverse;flex-direction:column-reverse}.col-xs,.col-xs-1,.col-xs-10,.col-xs-11,.col-xs-12,.col-xs-2,.col-xs-3,.col-xs-4,.col-xs-5,.col-xs-6,.col-xs-7,.col-xs-8,.col-xs-9,.col-xs-offset-0,.col-xs-offset-1,.col-xs-offset-10,.col-xs-offset-11,.col-xs-offset-12,.col-xs-offset-2,.col-xs-offset-3,.col-xs-offset-4,.col-xs-offset-5,.col-xs-offset-6,.col-xs-offset-7,.col-xs-offset-8,.col-xs-offset-9{box-sizing:border-box;-webkit-box-flex:0;-ms-flex:0 0 auto;flex:none;padding-right:.5rem;padding-left:.5rem}.col-xs{-webkit-box-flex:1;-ms-flex-positive:1;flex-grow:1;-ms-flex-preferred-size:0;flex-basis:0;max-width:100%}.col-xs-1{-ms-flex-preferred-size:8.33333333%;flex-basis:8.33333333%;max-width:8.33333333%}.col-xs-2{-ms-flex-preferred-size:16.66666667%;flex-basis:16.66666667%;max-width:16.66666667%}.col-xs-3{-ms-flex-preferred-size:25%;flex-basis:25%;max-width:25%}.col-xs-4{-ms-flex-preferred-size:33.33333333%;flex-basis:33.33333333%;max-width:33.33333333%}.col-xs-5{-ms-flex-preferred-size:41.66666667%;flex-basis:41.66666667%;max-width:41.66666667%}.col-xs-6{-ms-flex-preferred-size:50%;flex-basis:50%;max-width:50%}.col-xs-7{-ms-flex-preferred-size:58.33333333%;flex-basis:58.33333333%;max-width:58.33333333%}.col-xs-8{-ms-flex-preferred-size:66.66666667%;flex-basis:66.66666667%;max-width:66.66666667%}.col-xs-9{-ms-flex-preferred-size:75%;flex-basis:75%;max-width:75%}.col-xs-10{-ms-flex-preferred-size:83.33333333%;flex-basis:83.33333333%;max-width:83.33333333%}.col-xs-11{-ms-flex-preferred-size:91.66666667%;flex-basis:91.66666667%;max-width:91.66666667%}.col-xs-12{-ms-flex-preferred-size:100%;flex-basis:100%;max-width:100%}.col-xs-offset-0{margin-left:0}.col-xs-offset-1{margin-left:8.33333333%}.col-xs-offset-2{margin-left:16.66666667%}.col-xs-offset-3{margin-left:25%}.col-xs-offset-4{margin-left:33.33333333%}.col-xs-offset-5{margin-left:41.66666667%}.col-xs-offset-6{margin-left:50%}.col-xs-offset-7{margin-left:58.33333333%}.col-xs-offset-8{margin-left:66.66666667%}.col-xs-offset-9{margin-left:75%}.col-xs-offset-10{margin-left:83.33333333%}.col-xs-offset-11{margin-left:91.66666667%}.start-xs{-webkit-box-pack:start;-ms-flex-pack:start;justify-content:flex-start;text-align:start}.center-xs{-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;text-align:center}.end-xs{-webkit-box-pack:end;-ms-flex-pack:end;justify-content:flex-end;text-align:end}.top-xs{-webkit-box-align:start;-ms-flex-align:start;align-items:flex-start}.middle-xs{-webkit-box-align:center;-ms-flex-align:center;align-items:center}.bottom-xs{-webkit-box-align:end;-ms-flex-align:end;align-items:flex-end}.around-xs{-ms-flex-pack:distribute;justify-content:space-around}.between-xs{-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between}.first-xs{-webkit-box-ordinal-group:0;-ms-flex-order:-1;order:-1}.last-xs{-webkit-box-ordinal-group:2;-ms-flex-order:1;order:1}@media only screen and (min-width:48em){.container{width:49rem}.col-sm,.col-sm-1,.col-sm-10,.col-sm-11,.col-sm-12,.col-sm-2,.col-sm-3,.col-sm-4,.col-sm-5,.col-sm-6,.col-sm-7,.col-sm-8,.col-sm-9,.col-sm-offset-0,.col-sm-offset-1,.col-sm-offset-10,.col-sm-offset-11,.col-sm-offset-12,.col-sm-offset-2,.col-sm-offset-3,.col-sm-offset-4,.col-sm-offset-5,.col-sm-offset-6,.col-sm-offset-7,.col-sm-offset-8,.col-sm-offset-9{box-sizing:border-box;-webkit-box-flex:0;-ms-flex:0 0 auto;flex:none;padding-right:.5rem;padding-left:.5rem}.col-sm{-webkit-box-flex:1;-ms-flex-positive:1;flex-grow:1;-ms-flex-preferred-size:0;flex-basis:0;max-width:100%}.col-sm-1{-ms-flex-preferred-size:8.33333333%;flex-basis:8.33333333%;max-width:8.33333333%}.col-sm-2{-ms-flex-preferred-size:16.66666667%;flex-basis:16.66666667%;max-width:16.66666667%}.col-sm-3{-ms-flex-preferred-size:25%;flex-basis:25%;max-width:25%}.col-sm-4{-ms-flex-preferred-size:33.33333333%;flex-basis:33.33333333%;max-width:33.33333333%}.col-sm-5{-ms-flex-preferred-size:41.66666667%;flex-basis:41.66666667%;max-width:41.66666667%}.col-sm-6{-ms-flex-preferred-size:50%;flex-basis:50%;max-width:50%}.col-sm-7{-ms-flex-preferred-size:58.33333333%;flex-basis:58.33333333%;max-width:58.33333333%}.col-sm-8{-ms-flex-preferred-size:66.66666667%;flex-basis:66.66666667%;max-width:66.66666667%}.col-sm-9{-ms-flex-preferred-size:75%;flex-basis:75%;max-width:75%}.col-sm-10{-ms-flex-preferred-size:83.33333333%;flex-basis:83.33333333%;max-width:83.33333333%}.col-sm-11{-ms-flex-preferred-size:91.66666667%;flex-basis:91.66666667%;max-width:91.66666667%}.col-sm-12{-ms-flex-preferred-size:100%;flex-basis:100%;max-width:100%}.col-sm-offset-0{margin-left:0}.col-sm-offset-1{margin-left:8.33333333%}.col-sm-offset-2{margin-left:16.66666667%}.col-sm-offset-3{margin-left:25%}.col-sm-offset-4{margin-left:33.33333333%}.col-sm-offset-5{margin-left:41.66666667%}.col-sm-offset-6{margin-left:50%}.col-sm-offset-7{margin-left:58.33333333%}.col-sm-offset-8{margin-left:66.66666667%}.col-sm-offset-9{margin-left:75%}.col-sm-offset-10{margin-left:83.33333333%}.col-sm-offset-11{margin-left:91.66666667%}.start-sm{-webkit-box-pack:start;-ms-flex-pack:start;justify-content:flex-start;text-align:start}.center-sm{-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;text-align:center}.end-sm{-webkit-box-pack:end;-ms-flex-pack:end;justify-content:flex-end;text-align:end}.top-sm{-webkit-box-align:start;-ms-flex-align:start;align-items:flex-start}.middle-sm{-webkit-box-align:center;-ms-flex-align:center;align-items:center}.bottom-sm{-webkit-box-align:end;-ms-flex-align:end;align-items:flex-end}.around-sm{-ms-flex-pack:distribute;justify-content:space-around}.between-sm{-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between}.first-sm{-webkit-box-ordinal-group:0;-ms-flex-order:-1;order:-1}.last-sm{-webkit-box-ordinal-group:2;-ms-flex-order:1;order:1}}@media only screen and (min-width:64em){.container{width:65rem}.col-md,.col-md-1,.col-md-10,.col-md-11,.col-md-12,.col-md-2,.col-md-3,.col-md-4,.col-md-5,.col-md-6,.col-md-7,.col-md-8,.col-md-9,.col-md-offset-0,.col-md-offset-1,.col-md-offset-10,.col-md-offset-11,.col-md-offset-12,.col-md-offset-2,.col-md-offset-3,.col-md-offset-4,.col-md-offset-5,.col-md-offset-6,.col-md-offset-7,.col-md-offset-8,.col-md-offset-9{box-sizing:border-box;-webkit-box-flex:0;-ms-flex:0 0 auto;flex:none;padding-right:.5rem;padding-left:.5rem}.col-md{-webkit-box-flex:1;-ms-flex-positive:1;flex-grow:1;-ms-flex-preferred-size:0;flex-basis:0;max-width:100%}.col-md-1{-ms-flex-preferred-size:8.33333333%;flex-basis:8.33333333%;max-width:8.33333333%}.col-md-2{-ms-flex-preferred-size:16.66666667%;flex-basis:16.66666667%;max-width:16.66666667%}.col-md-3{-ms-flex-preferred-size:25%;flex-basis:25%;max-width:25%}.col-md-4{-ms-flex-preferred-size:33.33333333%;flex-basis:33.33333333%;max-width:33.33333333%}.col-md-5{-ms-flex-preferred-size:41.66666667%;flex-basis:41.66666667%;max-width:41.66666667%}.col-md-6{-ms-flex-preferred-size:50%;flex-basis:50%;max-width:50%}.col-md-7{-ms-flex-preferred-size:58.33333333%;flex-basis:58.33333333%;max-width:58.33333333%}.col-md-8{-ms-flex-preferred-size:66.66666667%;flex-basis:66.66666667%;max-width:66.66666667%}.col-md-9{-ms-flex-preferred-size:75%;flex-basis:75%;max-width:75%}.col-md-10{-ms-flex-preferred-size:83.33333333%;flex-basis:83.33333333%;max-width:83.33333333%}.col-md-11{-ms-flex-preferred-size:91.66666667%;flex-basis:91.66666667%;max-width:91.66666667%}.col-md-12{-ms-flex-preferred-size:100%;flex-basis:100%;max-width:100%}.col-md-offset-0{margin-left:0}.col-md-offset-1{margin-left:8.33333333%}.col-md-offset-2{margin-left:16.66666667%}.col-md-offset-3{margin-left:25%}.col-md-offset-4{margin-left:33.33333333%}.col-md-offset-5{margin-left:41.66666667%}.col-md-offset-6{margin-left:50%}.col-md-offset-7{margin-left:58.33333333%}.col-md-offset-8{margin-left:66.66666667%}.col-md-offset-9{margin-left:75%}.col-md-offset-10{margin-left:83.33333333%}.col-md-offset-11{margin-left:91.66666667%}.start-md{-webkit-box-pack:start;-ms-flex-pack:start;justify-content:flex-start;text-align:start}.center-md{-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;text-align:center}.end-md{-webkit-box-pack:end;-ms-flex-pack:end;justify-content:flex-end;text-align:end}.top-md{-webkit-box-align:start;-ms-flex-align:start;align-items:flex-start}.middle-md{-webkit-box-align:center;-ms-flex-align:center;align-items:center}.bottom-md{-webkit-box-align:end;-ms-flex-align:end;align-items:flex-end}.around-md{-ms-flex-pack:distribute;justify-content:space-around}.between-md{-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between}.first-md{-webkit-box-ordinal-group:0;-ms-flex-order:-1;order:-1}.last-md{-webkit-box-ordinal-group:2;-ms-flex-order:1;order:1}}@media only screen and (min-width:75em){.container{width:76rem}.col-lg,.col-lg-1,.col-lg-10,.col-lg-11,.col-lg-12,.col-lg-2,.col-lg-3,.col-lg-4,.col-lg-5,.col-lg-6,.col-lg-7,.col-lg-8,.col-lg-9,.col-lg-offset-0,.col-lg-offset-1,.col-lg-offset-10,.col-lg-offset-11,.col-lg-offset-12,.col-lg-offset-2,.col-lg-offset-3,.col-lg-offset-4,.col-lg-offset-5,.col-lg-offset-6,.col-lg-offset-7,.col-lg-offset-8,.col-lg-offset-9{box-sizing:border-box;-webkit-box-flex:0;-ms-flex:0 0 auto;flex:none;padding-right:.5rem;padding-left:.5rem}.col-lg{-webkit-box-flex:1;-ms-flex-positive:1;flex-grow:1;-ms-flex-preferred-size:0;flex-basis:0;max-width:100%}.col-lg-1{-ms-flex-preferred-size:8.33333333%;flex-basis:8.33333333%;max-width:8.33333333%}.col-lg-2{-ms-flex-preferred-size:16.66666667%;flex-basis:16.66666667%;max-width:16.66666667%}.col-lg-3{-ms-flex-preferred-size:25%;flex-basis:25%;max-width:25%}.col-lg-4{-ms-flex-preferred-size:33.33333333%;flex-basis:33.33333333%;max-width:33.33333333%}.col-lg-5{-ms-flex-preferred-size:41.66666667%;flex-basis:41.66666667%;max-width:41.66666667%}.col-lg-6{-ms-flex-preferred-size:50%;flex-basis:50%;max-width:50%}.col-lg-7{-ms-flex-preferred-size:58.33333333%;flex-basis:58.33333333%;max-width:58.33333333%}.col-lg-8{-ms-flex-preferred-size:66.66666667%;flex-basis:66.66666667%;max-width:66.66666667%}.col-lg-9{-ms-flex-preferred-size:75%;flex-basis:75%;max-width:75%}.col-lg-10{-ms-flex-preferred-size:83.33333333%;flex-basis:83.33333333%;max-width:83.33333333%}.col-lg-11{-ms-flex-preferred-size:91.66666667%;flex-basis:91.66666667%;max-width:91.66666667%}.col-lg-12{-ms-flex-preferred-size:100%;flex-basis:100%;max-width:100%}.col-lg-offset-0{margin-left:0}.col-lg-offset-1{margin-left:8.33333333%}.col-lg-offset-2{margin-left:16.66666667%}.col-lg-offset-3{margin-left:25%}.col-lg-offset-4{margin-left:33.33333333%}.col-lg-offset-5{margin-left:41.66666667%}.col-lg-offset-6{margin-left:50%}.col-lg-offset-7{margin-left:58.33333333%}.col-lg-offset-8{margin-left:66.66666667%}.col-lg-offset-9{margin-left:75%}.col-lg-offset-10{margin-left:83.33333333%}.col-lg-offset-11{margin-left:91.66666667%}.start-lg{-webkit-box-pack:start;-ms-flex-pack:start;justify-content:flex-start;text-align:start}.center-lg{-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;text-align:center}.end-lg{-webkit-box-pack:end;-ms-flex-pack:end;justify-content:flex-end;text-align:end}.top-lg{-webkit-box-align:start;-ms-flex-align:start;align-items:flex-start}.middle-lg{-webkit-box-align:center;-ms-flex-align:center;align-items:center}.bottom-lg{-webkit-box-align:end;-ms-flex-align:end;align-items:flex-end}.around-lg{-ms-flex-pack:distribute;justify-content:space-around}.between-lg{-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between}.first-lg{-webkit-box-ordinal-group:0;-ms-flex-order:-1;order:-1}.last-lg{-webkit-box-ordinal-group:2;-ms-flex-order:1;order:1}}</style>
+  
+
+  
+
+  <link href="/index.xml" rel="alternate" type="application/rss+xml"
+    title="sllt的博客">
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css?family=Bree+Serif|Bungee+Shade" rel="stylesheet">
+  
+  
+
+  
+  
+</head>
+
+
+<body>
+  <article class="post Chinese" id="article">
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="site-header">
+          
+<header>
+  <div class="header-title">
+    <a href="/"
+      >sllt&#39;s blog</a
+    >
+  </div>
+  <div class="header-subtitle"></div>
+</header>
+<div class="row end-md center-xs header-items">
+  
+</div>
+<div class="row end-xs">
+   
+</div>
+<div class="header-line"></div>
+
+        </div>
+        <header class="post-header">
+          <h1 class="post-title">如何写一个web服务器</h1>
+          
+          <div class="row post-desc">
+            <div class="col-xs-6">
+              
+              <time class="post-date" datetime="2015-11-25 16:14:41 CST">
+                25 Nov 2015
+              </time>
+              
+            </div>
+            <div class="col-xs-6">
+              
+              <div class="post-author">
+                <a target="_blank" href="https://github.com/sllt">@sllt</a>
+              </div>
+              
+            </div>
+          </div>
+          
+        </header>
+
+        <div class="post-content markdown-body">
+          
+          <h3 id="hello-web">Hello, Web</h3>
+<p>我们先来写一个简单的web服务器，思路如下：</p>
+<ol>
+<li>等待客户端连接我们的服务器，并发送一个HTTP 请求；</li>
+<li>解析这个请求；</li>
+<li>找出它要请求的具体内容；</li>
+<li>获取该数据 (或者动态生成);</li>
+<li>将数据格式化为HTML；</li>
+<li>返回数据。</li>
+</ol>
+<p>步骤1、2、6的实现方式大致相同, 在Python中有一个叫BaseHTTPServer的模块可以帮助我们实现这些步骤。 我们仅需要实现步骤3-5, 一个简单的实现如下:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-python" data-lang="python"><span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">BaseHTTPServer</span>
+
+<span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">RequestHandler</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">BaseHTTPServer</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">BaseHTTPRequestHandler</span><span style="color:#000;font-weight:bold">):</span>
+    <span style="color:#4e9a06">&#39;&#39;&#39;Handle HTTP requests by returning a fixed &#39;page&#39;.&#39;&#39;&#39;</span>
+    <span style="color:#8f5902;font-style:italic"># Page to send back.</span>
+    <span style="color:#000">Page</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#4e9a06">&#39;&#39;&#39;</span><span style="color:#4e9a06">\
+</span><span style="color:#4e9a06"></span><span style="color:#4e9a06">&lt;html&gt;
+</span><span style="color:#4e9a06">&lt;body&gt;
+</span><span style="color:#4e9a06">&lt;p&gt;Hello, web!&lt;/p&gt;
+</span><span style="color:#4e9a06">&lt;/body&gt;
+</span><span style="color:#4e9a06">&lt;/html&gt;
+</span><span style="color:#4e9a06">&#39;&#39;&#39;</span>
+    <span style="color:#8f5902;font-style:italic"># Handle a GET request.</span>
+    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">do_GET</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">):</span>
+        <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">send_response</span><span style="color:#000;font-weight:bold">(</span><span style="color:#0000cf;font-weight:bold">200</span><span style="color:#000;font-weight:bold">)</span>
+        <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">send_header</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Content-Type&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;text/html&#34;</span><span style="color:#000;font-weight:bold">)</span>
+        <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">send_header</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Content-Length&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87">str</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87">len</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">Page</span><span style="color:#000;font-weight:bold">)))</span>
+        <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">end_headers</span><span style="color:#000;font-weight:bold">()</span>
+        <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">wfile</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">write</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">Page</span><span style="color:#000;font-weight:bold">)</span>
+
+<span style="color:#8f5902;font-style:italic">#----------------------------------------------------------------------</span>
+
+<span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">__name__</span> <span style="color:#ce5c00;font-weight:bold">==</span> <span style="color:#4e9a06">&#39;__main__&#39;</span><span style="color:#000;font-weight:bold">:</span>
+    <span style="color:#000">serverAddress</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#39;&#39;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#0000cf;font-weight:bold">8080</span><span style="color:#000;font-weight:bold">)</span>
+    <span style="color:#000">server</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">BaseHTTPServer</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">HTTPServer</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">serverAddress</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">RequestHandler</span><span style="color:#000;font-weight:bold">)</span>
+    <span style="color:#000">server</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">serve_forever</span><span style="color:#000;font-weight:bold">()</span>
+</code></pre></div><p>BaseHTTPRequestHandler类负责解析传入的HTTP请求， 并调用特定的方法。如果是GET请求，它将调用do_GET方法。我们的RequestHandler类重写了这个方法来动态的生成一个页面：返回的内容保存在类变量Page中，我们给客户端返回一个200的状态码，Content-Type用来告诉客户端将我们返回的数据为HTML，Content-Length表示返回信息的长度（end_headers方法将会插入空行用来分割HTTP头以及内容主体）。</p>
+<p>但RequestHandler并不是故事的全部：我们需要调用最后三行代码来启动一个服务器。其中第一行定义了一个元组来表示服务器的地址：空字符串表示“运行在当前的机器上”，8080表示占用的端口。接着我们创建了一个BaseHTTPServer.HTTPServer的实例，然后让其一直运行（按Control-C终止）。</p>
+<p>我们在命令行下运行这个程序， 并不会显示任何内容：</p>
+<p><code>$ python server.py</code></p>
+<p>用浏览器打开 http://localhost:8080 我们会看到以下内容：</p>
+<p><code>Hello, web!</code></p>
+<p>这时候我们的shell将会显示类似如下信息：</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-fallback" data-lang="fallback">    127.0.0.1 - - [24/Feb/2014 10:26:28] &#34;GET / HTTP/1.1&#34; 200 -
+    127.0.0.1 - - [24/Feb/2014 10:26:28] &#34;GET /favicon.ico HTTP/1.1&#34; 200 -
+</code></pre></div><p>因为我们没有指定特定的文件，浏览器默认将会访问'/&lsquo;目录（服务器的根目录）。</p>
+<p>浏览器会自动发送第二个请求获取/favicon.ico图像,它会显示在地址栏上，如果它存在的话。</p>
+<h3 id="渲染数据">渲染数据</h3>
+<p>我们来修改代码让程序返回HTTP请求的部分信息 。 为了保持代码的整洁，我们将分为几个方法来写：</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-python" data-lang="python"><span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">RequestHandler</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">BaseHTTPServer</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">BaseHTTPRequestHandler</span><span style="color:#000;font-weight:bold">):</span>
+    <span style="color:#8f5902;font-style:italic"># ...page template...</span>
+    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">do_GET</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">):</span>
+        <span style="color:#000">page</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">create_page</span><span style="color:#000;font-weight:bold">()</span>
+        <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">send_page</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">page</span><span style="color:#000;font-weight:bold">)</span>
+    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">create_page</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">):</span>
+        <span style="color:#8f5902;font-style:italic"># ...fill in...</span>
+    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">send_page</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">page</span><span style="color:#000;font-weight:bold">):</span>
+        <span style="color:#8f5902;font-style:italic"># ...fill in...</span>
+</code></pre></div><p>我们需要先实现send_page方法： </p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-python" data-lang="python"><span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">send_page</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">page</span><span style="color:#000;font-weight:bold">):</span>
+    <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">send_response</span><span style="color:#000;font-weight:bold">(</span><span style="color:#0000cf;font-weight:bold">200</span><span style="color:#000;font-weight:bold">)</span>
+    <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">send_header</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Content-type&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;text/html&#34;</span><span style="color:#000;font-weight:bold">)</span>
+    <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">send_header</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Content-Length&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87">str</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87">len</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">page</span><span style="color:#000;font-weight:bold">)))</span>
+    <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">end_headers</span><span style="color:#000;font-weight:bold">()</span>
+    <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">wfile</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">write</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">page</span><span style="color:#000;font-weight:bold">)</span>
+</code></pre></div><p>将要显示的页面模板：</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-python" data-lang="python">    <span style="color:#000">Page</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#4e9a06">&#39;&#39;&#39;</span><span style="color:#4e9a06">\
+</span><span style="color:#4e9a06"></span><span style="color:#4e9a06">&lt;html&gt;
+</span><span style="color:#4e9a06">&lt;body&gt;
+</span><span style="color:#4e9a06">&lt;table&gt;
+</span><span style="color:#4e9a06">&lt;tr&gt;  &lt;td&gt;Header&lt;/td&gt;         &lt;td&gt;Value&lt;/td&gt;          &lt;/tr&gt;
+</span><span style="color:#4e9a06">&lt;tr&gt;  &lt;td&gt;Date and time&lt;/td&gt;  &lt;td&gt;{date_time}&lt;/td&gt;    &lt;/tr&gt;
+</span><span style="color:#4e9a06">&lt;tr&gt;  &lt;td&gt;Client host&lt;/td&gt;    &lt;td&gt;{client_host}&lt;/td&gt;  &lt;/tr&gt;
+</span><span style="color:#4e9a06">&lt;tr&gt;  &lt;td&gt;Client port&lt;/td&gt;    &lt;td&gt;{client_port}s&lt;/td&gt; &lt;/tr&gt;
+</span><span style="color:#4e9a06">&lt;tr&gt;  &lt;td&gt;Command&lt;/td&gt;        &lt;td&gt;{command}&lt;/td&gt;      &lt;/tr&gt;
+</span><span style="color:#4e9a06">&lt;tr&gt;  &lt;td&gt;Path&lt;/td&gt;           &lt;td&gt;{path}&lt;/td&gt;         &lt;/tr&gt;
+</span><span style="color:#4e9a06">&lt;/table&gt;
+</span><span style="color:#4e9a06">&lt;/body&gt;
+</span><span style="color:#4e9a06">&lt;/html&gt;
+</span><span style="color:#4e9a06">&#39;&#39;&#39;</span>
+</code></pre></div><p>实现create_page方法，用来格式化要显示的信息：</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-python" data-lang="python"><span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">create_page</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">):</span>
+    <span style="color:#000">values</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">{</span>
+        <span style="color:#4e9a06">&#39;date_time&#39;</span>   <span style="color:#000;font-weight:bold">:</span> <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">date_time_string</span><span style="color:#000;font-weight:bold">(),</span>
+        <span style="color:#4e9a06">&#39;client_host&#39;</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">client_address</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">0</span><span style="color:#000;font-weight:bold">],</span>
+        <span style="color:#4e9a06">&#39;client_port&#39;</span> <span style="color:#000;font-weight:bold">:</span> <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">client_address</span><span style="color:#000;font-weight:bold">[</span><span style="color:#0000cf;font-weight:bold">1</span><span style="color:#000;font-weight:bold">],</span>
+        <span style="color:#4e9a06">&#39;command&#39;</span>     <span style="color:#000;font-weight:bold">:</span> <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">command</span><span style="color:#000;font-weight:bold">,</span>
+        <span style="color:#4e9a06">&#39;path&#39;</span>        <span style="color:#000;font-weight:bold">:</span> <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">path</span>
+    <span style="color:#000;font-weight:bold">}</span>
+    <span style="color:#000">page</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">Page</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">format</span><span style="color:#000;font-weight:bold">(</span><span style="color:#ce5c00;font-weight:bold">**</span><span style="color:#000">values</span><span style="color:#000;font-weight:bold">)</span>
+    <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#000">page</span>
+</code></pre></div><p>不需要改变程序主体: 像之前一样, 以地址、RequestHandler作为参数创建一个 HTTPServer的实例，接着程序会监听此地址。如果我们用浏览器打开http://localhost:8080/something.html，将会看到如下信息：</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-html" data-lang="html">Date and time  Mon, 24 Feb 2014 17:17:12 GMT
+Client host    127.0.0.1
+Client port    54548
+Command        GET
+Path           /something.html
+</code></pre></div><p>即使something.html页面不存在程序也不会返回一个404错误。这是因为我们在获取一个HTTP请求后可以给它返回任意内容。</p>
+<h3 id="监听静态文件">监听静态文件</h3>
+<p>接下来我们监听磁盘上的文件，将其返回给客户端。来修改do_GET方法:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-python" data-lang="python"><span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">do_GET</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">):</span>
+    <span style="color:#204a87;font-weight:bold">try</span><span style="color:#000;font-weight:bold">:</span>
+        <span style="color:#8f5902;font-style:italic"># Figure out what exactly is being requested.</span>
+        <span style="color:#000">full_path</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">os</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">getcwd</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#ce5c00;font-weight:bold">+</span> <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">path</span>
+        <span style="color:#8f5902;font-style:italic"># It doesn&#39;t exist...</span>
+        <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#204a87;font-weight:bold">not</span> <span style="color:#000">os</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">path</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">exists</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">full_path</span><span style="color:#000;font-weight:bold">):</span>
+            <span style="color:#204a87;font-weight:bold">raise</span> <span style="color:#000">ServerException</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;&#39;{0}&#39; not found&#34;</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">format</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">path</span><span style="color:#000;font-weight:bold">))</span>
+        <span style="color:#8f5902;font-style:italic"># ...it&#39;s a file...</span>
+        <span style="color:#204a87;font-weight:bold">elif</span> <span style="color:#000">os</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">path</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">isfile</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">full_path</span><span style="color:#000;font-weight:bold">):</span>
+            <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">handle_file</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">full_path</span><span style="color:#000;font-weight:bold">)</span>
+        <span style="color:#8f5902;font-style:italic"># ...it&#39;s something we don&#39;t handle.</span>
+        <span style="color:#204a87;font-weight:bold">else</span><span style="color:#000;font-weight:bold">:</span>
+            <span style="color:#204a87;font-weight:bold">raise</span> <span style="color:#000">ServerException</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Unknown object &#39;{0}&#39;&#34;</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">format</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">path</span><span style="color:#000;font-weight:bold">))</span>
+    <span style="color:#8f5902;font-style:italic"># Handle errors.</span>
+    <span style="color:#204a87;font-weight:bold">except</span> <span style="color:#c00;font-weight:bold">Exception</span> <span style="color:#204a87;font-weight:bold">as</span> <span style="color:#000">msg</span><span style="color:#000;font-weight:bold">:</span>
+        <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">handle_error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">msg</span><span style="color:#000;font-weight:bold">)</span>
+
+</code></pre></div><p>该方法假定服务器所在目录为根目录(调用 os.getcwd方法)。然后跟URL中的地址组合在一起来寻找文件 (相对路径保存在 self.path中，并始终以&rsquo;/&lsquo;开头) 。</p>
+<p>如果这个文件不存在，或者不是个文件程序会抛出一个异常，并捕获它。如果这个文件存在，将会调用hand_file方法来获取文件的内容。然后调用send_content方法将读到的内容返回给客户端：</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-python" data-lang="python"><span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">handle_file</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">full_path</span><span style="color:#000;font-weight:bold">):</span>
+    <span style="color:#204a87;font-weight:bold">try</span><span style="color:#000;font-weight:bold">:</span>
+        <span style="color:#204a87;font-weight:bold">with</span> <span style="color:#204a87">open</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">full_path</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#39;rb&#39;</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#204a87;font-weight:bold">as</span> <span style="color:#000">reader</span><span style="color:#000;font-weight:bold">:</span>
+            <span style="color:#000">content</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">reader</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">read</span><span style="color:#000;font-weight:bold">()</span>
+        <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">send_content</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">content</span><span style="color:#000;font-weight:bold">)</span>
+    <span style="color:#204a87;font-weight:bold">except</span> <span style="color:#c00;font-weight:bold">IOError</span> <span style="color:#204a87;font-weight:bold">as</span> <span style="color:#000">msg</span><span style="color:#000;font-weight:bold">:</span>
+        <span style="color:#000">msg</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#4e9a06">&#34;&#39;{0}&#39; cannot be read: {1}&#34;</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">format</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">path</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">msg</span><span style="color:#000;font-weight:bold">)</span>
+        <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">handle_error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">msg</span><span style="color:#000;font-weight:bold">)</span>
+</code></pre></div><p>接着，我们来完成错误处理的方法和错误报告的页面模板：</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-python" data-lang="python"><span style="color:#000">Error_Page</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#4e9a06">&#34;&#34;&#34;</span><span style="color:#4e9a06">\
+</span><span style="color:#4e9a06"></span><span style="color:#4e9a06">        &lt;html&gt;
+</span><span style="color:#4e9a06">        &lt;body&gt;
+</span><span style="color:#4e9a06">        &lt;h1&gt;Error accessing {path}&lt;/h1&gt;
+</span><span style="color:#4e9a06">        &lt;p&gt;{msg}&lt;/p&gt;
+</span><span style="color:#4e9a06">        &lt;/body&gt;
+</span><span style="color:#4e9a06">        &lt;/html&gt;
+</span><span style="color:#4e9a06">        &#34;&#34;&#34;</span>
+
+<span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">handle_error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">msg</span><span style="color:#000;font-weight:bold">):</span>
+    <span style="color:#000">content</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">Error_Page</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">format</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">path</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">path</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">msg</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000">msg</span><span style="color:#000;font-weight:bold">)</span>
+    <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">send_content</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">content</span><span style="color:#000;font-weight:bold">)</span>
+
+</code></pre></div><p>如果我们不要太较真的话，它已经可以正常使用了。但有一个问题，不论页面存不存在它都会返回200状态码；我们来修改 handle_error 和 send_content 方法来让它变得正常:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-python" data-lang="python"><span style="color:#8f5902;font-style:italic"># Handle unknown objects.</span>
+<span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">handle_error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">msg</span><span style="color:#000;font-weight:bold">):</span>
+    <span style="color:#000">content</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">Error_Page</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">format</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">path</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">path</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">msg</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000">msg</span><span style="color:#000;font-weight:bold">)</span>
+    <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">send_content</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">content</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#0000cf;font-weight:bold">404</span><span style="color:#000;font-weight:bold">)</span>
+
+<span style="color:#8f5902;font-style:italic"># Send actual content.</span>
+<span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">send_content</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">content</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">status</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#0000cf;font-weight:bold">200</span><span style="color:#000;font-weight:bold">):</span>
+    <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">send_response</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">status</span><span style="color:#000;font-weight:bold">)</span>
+    <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">send_header</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Content-type&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;text/html&#34;</span><span style="color:#000;font-weight:bold">)</span>
+    <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">send_header</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Content-Length&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87">str</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87">len</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">content</span><span style="color:#000;font-weight:bold">)))</span>
+    <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">end_headers</span><span style="color:#000;font-weight:bold">()</span>
+    <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">wfile</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">write</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">content</span><span style="color:#000;font-weight:bold">)</span>
+</code></pre></div><h3 id="目录列表">目录列表</h3>
+<p>As our next step, we could teach the web server to display a listing of a directory&rsquo;s contents when the path in the URL is a directory rather than a file. We could even go one step further and have it look in that directory for an index.html file to display, and only show a listing of the directory&rsquo;s contents if that file is not present.</p>
+<p>But building these rules into do_GET would be a mistake, since the resulting method would be a long tangle of if statements controlling special behaviors. The right solution is to step back and solve the general problem, which is figuring out what to do with a URL. Here&rsquo;s a rewrite of the do_GET method:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-python" data-lang="python"><span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">do_GET</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">):</span>
+    <span style="color:#204a87;font-weight:bold">try</span><span style="color:#000;font-weight:bold">:</span>
+
+        <span style="color:#8f5902;font-style:italic"># Figure out what exactly is being requested.</span>
+        <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">full_path</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">os</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">getcwd</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#ce5c00;font-weight:bold">+</span> <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">path</span>
+
+        <span style="color:#8f5902;font-style:italic"># Figure out how to handle it.</span>
+        <span style="color:#204a87;font-weight:bold">for</span> <span style="color:#000">case</span> <span style="color:#204a87;font-weight:bold">in</span> <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">Cases</span><span style="color:#000;font-weight:bold">:</span>
+            <span style="color:#000">handler</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">case</span><span style="color:#000;font-weight:bold">()</span>
+            <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">handler</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">test</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">):</span>
+                <span style="color:#000">handler</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">act</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">)</span>
+                <span style="color:#204a87;font-weight:bold">break</span>
+
+    <span style="color:#8f5902;font-style:italic"># Handle errors.</span>
+    <span style="color:#204a87;font-weight:bold">except</span> <span style="color:#c00;font-weight:bold">Exception</span> <span style="color:#204a87;font-weight:bold">as</span> <span style="color:#000">msg</span><span style="color:#000;font-weight:bold">:</span>
+        <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">handle_error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">msg</span><span style="color:#000;font-weight:bold">)</span>
+</code></pre></div><p>The first step is the same: figure out the full path to the thing being requested. After that, though, the code looks quite different. Instead of a bunch of inline tests, this version loops over a set of cases stored in a list. Each case is an object with two methods: test, which tells us whether it&rsquo;s able to handle the request, and act, which actually takes some action. As soon as we find the right case, we let it handle the request and break out of the loop.</p>
+<p>These three case classes reproduce the behavior of our previous server:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-python" data-lang="python"><span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">case_no_file</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87">object</span><span style="color:#000;font-weight:bold">):</span>
+    <span style="color:#4e9a06">&#39;&#39;&#39;File or directory does not exist.&#39;&#39;&#39;</span>
+
+    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">test</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">handler</span><span style="color:#000;font-weight:bold">):</span>
+        <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#204a87;font-weight:bold">not</span> <span style="color:#000">os</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">path</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">exists</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">handler</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">full_path</span><span style="color:#000;font-weight:bold">)</span>
+
+    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">act</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">handler</span><span style="color:#000;font-weight:bold">):</span>
+        <span style="color:#204a87;font-weight:bold">raise</span> <span style="color:#000">ServerException</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;&#39;{0}&#39; not found&#34;</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">format</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">handler</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">path</span><span style="color:#000;font-weight:bold">))</span>
+
+
+<span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">case_existing_file</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87">object</span><span style="color:#000;font-weight:bold">):</span>
+    <span style="color:#4e9a06">&#39;&#39;&#39;File exists.&#39;&#39;&#39;</span>
+
+    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">test</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">handler</span><span style="color:#000;font-weight:bold">):</span>
+        <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#000">os</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">path</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">isfile</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">handler</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">full_path</span><span style="color:#000;font-weight:bold">)</span>
+
+    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">act</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">handler</span><span style="color:#000;font-weight:bold">):</span>
+        <span style="color:#000">handler</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">handle_file</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">handler</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">full_path</span><span style="color:#000;font-weight:bold">)</span>
+
+
+<span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">case_always_fail</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87">object</span><span style="color:#000;font-weight:bold">):</span>
+    <span style="color:#4e9a06">&#39;&#39;&#39;Base case if nothing else worked.&#39;&#39;&#39;</span>
+
+    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">test</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">handler</span><span style="color:#000;font-weight:bold">):</span>
+        <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#3465a4">True</span>
+
+    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">act</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">handler</span><span style="color:#000;font-weight:bold">):</span>
+        <span style="color:#204a87;font-weight:bold">raise</span> <span style="color:#000">ServerException</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Unknown object &#39;{0}&#39;&#34;</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">format</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">handler</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">path</span><span style="color:#000;font-weight:bold">))</span>
+
+<span style="color:#204a87;font-weight:bold">and</span> <span style="color:#000">here</span><span style="color:#4e9a06">&#39;s how we construct the list of case handlers at the top of the RequestHandler class:</span>
+
+    <span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">RequestHandler</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">BaseHTTPServer</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">BaseHTTPRequestHandler</span><span style="color:#000;font-weight:bold">):</span>
+        <span style="color:#4e9a06">&#39;&#39;&#39;
+</span><span style="color:#4e9a06">        If the requested path maps to a file, that file is served.
+</span><span style="color:#4e9a06">        If anything goes wrong, an error page is constructed.
+</span><span style="color:#4e9a06">        &#39;&#39;&#39;</span>
+    
+        <span style="color:#000">Cases</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">[</span><span style="color:#000">case_no_file</span><span style="color:#000;font-weight:bold">(),</span>
+                 <span style="color:#000">case_existing_file</span><span style="color:#000;font-weight:bold">(),</span>
+                 <span style="color:#000">case_always_fail</span><span style="color:#000;font-weight:bold">()]</span>
+    
+        <span style="color:#ce5c00;font-weight:bold">...</span><span style="color:#000">everything</span> <span style="color:#204a87;font-weight:bold">else</span> <span style="color:#204a87;font-weight:bold">as</span> <span style="color:#000">before</span><span style="color:#ce5c00;font-weight:bold">...</span>
+</code></pre></div><p>Now, on the surface this has made our server more complicated, not less: the file has grown from 74 lines to 99, and there&rsquo;s an extra level of indirection without any new functionality. The benefit comes when we go back to the task that started this chapter and try to teach our server to serve up the index.html page for a directory if there is one, and a listing of the directory if there isn&rsquo;t. The handler for the former is:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-python" data-lang="python"><span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">case_directory_index_file</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87">object</span><span style="color:#000;font-weight:bold">):</span>
+    <span style="color:#4e9a06">&#39;&#39;&#39;Serve index.html page for a directory.&#39;&#39;&#39;</span>
+
+    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">index_path</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">handler</span><span style="color:#000;font-weight:bold">):</span>
+        <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#000">os</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">path</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">join</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">handler</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">full_path</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#39;index.html&#39;</span><span style="color:#000;font-weight:bold">)</span>
+
+    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">test</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">handler</span><span style="color:#000;font-weight:bold">):</span>
+        <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#000">os</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">path</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">isdir</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">handler</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">full_path</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#204a87;font-weight:bold">and</span> \
+                <span style="color:#000">os</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">path</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">isfile</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">index_path</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">handler</span><span style="color:#000;font-weight:bold">))</span>
+
+    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">act</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">handler</span><span style="color:#000;font-weight:bold">):</span>
+        <span style="color:#000">handler</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">handle_file</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">index_path</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">handler</span><span style="color:#000;font-weight:bold">))</span>
+</code></pre></div><p>Here, the helper method index_path constructs the path to the index.html file; putting it in the case handler prevents clutter in the main RequestHandler.test checks whether the path is a directory containing an index.html page, and act asks the main request handler to serve that page.</p>
+<p>The only change needed to RequestHandler is to add a case_directory_index_file object to our Cases list:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-python" data-lang="python"><span style="color:#000">Cases</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">[</span><span style="color:#000">case_no_file</span><span style="color:#000;font-weight:bold">(),</span>
+            <span style="color:#000">case_existing_file</span><span style="color:#000;font-weight:bold">(),</span>
+            <span style="color:#000">case_directory_index_file</span><span style="color:#000;font-weight:bold">(),</span>
+            <span style="color:#000">case_always_fail</span><span style="color:#000;font-weight:bold">()]</span>
+</code></pre></div><p>What about directories that don&rsquo;t contain index.html pages? The test is the same as the one above with a not strategically inserted, but what about the actmethod? What should it do?</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-python" data-lang="python"><span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">case_directory_no_index_file</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87">object</span><span style="color:#000;font-weight:bold">):</span>
+    <span style="color:#4e9a06">&#39;&#39;&#39;Serve listing for a directory without an index.html page.&#39;&#39;&#39;</span>
+
+    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">index_path</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">handler</span><span style="color:#000;font-weight:bold">):</span>
+        <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#000">os</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">path</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">join</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">handler</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">full_path</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#39;index.html&#39;</span><span style="color:#000;font-weight:bold">)</span>
+
+    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">test</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">handler</span><span style="color:#000;font-weight:bold">):</span>
+        <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#000">os</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">path</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">isdir</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">handler</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">full_path</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#204a87;font-weight:bold">and</span> \
+                <span style="color:#204a87;font-weight:bold">not</span> <span style="color:#000">os</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">path</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">isfile</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">index_path</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">handler</span><span style="color:#000;font-weight:bold">))</span>
+
+    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">act</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">handler</span><span style="color:#000;font-weight:bold">):</span>
+        <span style="color:#a40000">???</span>
+</code></pre></div><p>It seems we&rsquo;ve backed ourselves into a corner. Logically, the act method should create and return the directory listing, but our existing code doesn&rsquo;t allow for that:RequestHandler.do_GET calls act, but doesn&rsquo;t expect or handle a return value from it. For now, let&rsquo;s add a method to RequestHandler to generate a directory listing, and call that from the case handler&rsquo;s act:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-python" data-lang="python"><span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">case_directory_no_index_file</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87">object</span><span style="color:#000;font-weight:bold">):</span>
+    <span style="color:#4e9a06">&#39;&#39;&#39;Serve listing for a directory without an index.html page.&#39;&#39;&#39;</span>
+
+    <span style="color:#8f5902;font-style:italic"># ...index_path and test as above...</span>
+
+    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">act</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">handler</span><span style="color:#000;font-weight:bold">):</span>
+        <span style="color:#000">handler</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">list_dir</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">handler</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">full_path</span><span style="color:#000;font-weight:bold">)</span>
+
+
+<span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">RequestHandler</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">BaseHTTPServer</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">BaseHTTPRequestHandler</span><span style="color:#000;font-weight:bold">):</span>
+
+    <span style="color:#8f5902;font-style:italic"># ...all the other code...</span>
+
+    <span style="color:#8f5902;font-style:italic"># How to display a directory listing.</span>
+    <span style="color:#000">Listing_Page</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#4e9a06">&#39;&#39;&#39;</span><span style="color:#4e9a06">\
+</span><span style="color:#4e9a06"></span><span style="color:#4e9a06">        &lt;html&gt;
+</span><span style="color:#4e9a06">        &lt;body&gt;
+</span><span style="color:#4e9a06">        &lt;ul&gt;
+</span><span style="color:#4e9a06">        {0}
+</span><span style="color:#4e9a06">        &lt;/ul&gt;
+</span><span style="color:#4e9a06">        &lt;/body&gt;
+</span><span style="color:#4e9a06">        &lt;/html&gt;
+</span><span style="color:#4e9a06">        &#39;&#39;&#39;</span>
+
+    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">list_dir</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">full_path</span><span style="color:#000;font-weight:bold">):</span>
+        <span style="color:#204a87;font-weight:bold">try</span><span style="color:#000;font-weight:bold">:</span>
+            <span style="color:#000">entries</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">os</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">listdir</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">full_path</span><span style="color:#000;font-weight:bold">)</span>
+            <span style="color:#000">bullets</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">[</span><span style="color:#4e9a06">&#39;&lt;li&gt;{0}&lt;/li&gt;&#39;</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">format</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">e</span><span style="color:#000;font-weight:bold">)</span> 
+                <span style="color:#204a87;font-weight:bold">for</span> <span style="color:#000">e</span> <span style="color:#204a87;font-weight:bold">in</span> <span style="color:#000">entries</span> <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#204a87;font-weight:bold">not</span> <span style="color:#000">e</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">startswith</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#39;.&#39;</span><span style="color:#000;font-weight:bold">)]</span>
+            <span style="color:#000">page</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">Listing_Page</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">format</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#39;</span><span style="color:#4e9a06">\n</span><span style="color:#4e9a06">&#39;</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">join</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">bullets</span><span style="color:#000;font-weight:bold">))</span>
+            <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">send_content</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">page</span><span style="color:#000;font-weight:bold">)</span>
+        <span style="color:#204a87;font-weight:bold">except</span> <span style="color:#c00;font-weight:bold">OSError</span> <span style="color:#204a87;font-weight:bold">as</span> <span style="color:#000">msg</span><span style="color:#000;font-weight:bold">:</span>
+            <span style="color:#000">msg</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#4e9a06">&#34;&#39;{0}&#39; cannot be listed: {1}&#34;</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">format</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">path</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">msg</span><span style="color:#000;font-weight:bold">)</span>
+            <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">handle_error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">msg</span><span style="color:#000;font-weight:bold">)</span>
+</code></pre></div><p>The CGI Protocol</p>
+<p>Of course, most people won&rsquo;t want to edit the source of their web server in order to add new functionality. To save them from having to do so, servers have always supported a mechanism called the Common Gateway Interface (CGI), which provides a standard way for a web server to run an external program in order to satisfy a request.</p>
+<p>For example, suppose we want the server to be able to display the local time in an HTML page. We can do this in a standalone program with just a few lines of code:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-python" data-lang="python"><span style="color:#204a87;font-weight:bold">from</span> <span style="color:#000">datetime</span> <span style="color:#204a87;font-weight:bold">import</span> <span style="color:#000">datetime</span>
+<span style="color:#204a87;font-weight:bold">print</span> <span style="color:#4e9a06">&#39;&#39;&#39;</span><span style="color:#4e9a06">\
+</span><span style="color:#4e9a06"></span><span style="color:#4e9a06">&lt;html&gt;
+</span><span style="color:#4e9a06">&lt;body&gt;
+</span><span style="color:#4e9a06">&lt;p&gt;Generated {0}&lt;/p&gt;
+</span><span style="color:#4e9a06">&lt;/body&gt;
+</span><span style="color:#4e9a06">&lt;/html&gt;&#39;&#39;&#39;</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">format</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">datetime</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">now</span><span style="color:#000;font-weight:bold">())</span>
+</code></pre></div><p>In order to get the web server to run this program for us, we add this case handler:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-python" data-lang="python"><span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">case_cgi_file</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87">object</span><span style="color:#000;font-weight:bold">):</span>
+    <span style="color:#4e9a06">&#39;&#39;&#39;Something runnable.&#39;&#39;&#39;</span>
+
+    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">test</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">handler</span><span style="color:#000;font-weight:bold">):</span>
+        <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#000">os</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">path</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">isfile</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">handler</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">full_path</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#204a87;font-weight:bold">and</span> \
+                <span style="color:#000">handler</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">full_path</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">endswith</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#39;.py&#39;</span><span style="color:#000;font-weight:bold">)</span>
+
+    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">act</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">handler</span><span style="color:#000;font-weight:bold">):</span>
+        <span style="color:#000">handler</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">run_cgi</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">handler</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">full_path</span><span style="color:#000;font-weight:bold">)</span>
+</code></pre></div><p>The test is simple: does the file path end with .py? If so, RequestHandler runs this program.</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-python" data-lang="python"><span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">run_cgi</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">full_path</span><span style="color:#000;font-weight:bold">):</span>
+    <span style="color:#000">cmd</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#4e9a06">&#34;python &#34;</span> <span style="color:#ce5c00;font-weight:bold">+</span> <span style="color:#000">full_path</span>
+    <span style="color:#000">child_stdin</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">child_stdout</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">os</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">popen2</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">cmd</span><span style="color:#000;font-weight:bold">)</span>
+    <span style="color:#000">child_stdin</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">close</span><span style="color:#000;font-weight:bold">()</span>
+    <span style="color:#000">data</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">child_stdout</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">read</span><span style="color:#000;font-weight:bold">()</span>
+    <span style="color:#000">child_stdout</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">close</span><span style="color:#000;font-weight:bold">()</span>
+    <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">send_content</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">data</span><span style="color:#000;font-weight:bold">)</span>
+</code></pre></div><p>This is horribly insecure: if someone knows the path to a Python file on our server, we&rsquo;re just letting them run it without worrying about what data it has access to, whether it might contain an infinite loop, or anything else.2</p>
+<p>Sweeping that aside, the core idea is simple:</p>
+<ol>
+<li>Run the program in a subprocess.</li>
+<li>Capture whatever that subprocess sends to standard output.</li>
+<li>Send that back to the client that made the request.</li>
+</ol>
+<p>The full CGI protocol is much richer than this—in particular, it allows for parameters in the URL, which the server passes into the program being run—but those details don&rsquo;t affect the overall architecture of the system&hellip;</p>
+<p>&hellip;which is once again becoming rather tangled. RequestHandler initially had one method, handle_file, for dealing with content. We have now added two special cases in the form of list_dir and run_cgi. These three methods don&rsquo;t really belong where they are, since they&rsquo;re primarily used by others.</p>
+<p>The fix is straightforward: create a parent class for all our case handlers, and move other methods to that class if (and only if) they are shared by two or more handlers. When we&rsquo;re done, the RequestHandler class looks like this:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-python" data-lang="python"><span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">RequestHandler</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">BaseHTTPServer</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">BaseHTTPRequestHandler</span><span style="color:#000;font-weight:bold">):</span>
+
+    <span style="color:#000">Cases</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000;font-weight:bold">[</span><span style="color:#000">case_no_file</span><span style="color:#000;font-weight:bold">(),</span>
+                <span style="color:#000">case_cgi_file</span><span style="color:#000;font-weight:bold">(),</span>
+                <span style="color:#000">case_existing_file</span><span style="color:#000;font-weight:bold">(),</span>
+                <span style="color:#000">case_directory_index_file</span><span style="color:#000;font-weight:bold">(),</span>
+                <span style="color:#000">case_directory_no_index_file</span><span style="color:#000;font-weight:bold">(),</span>
+                <span style="color:#000">case_always_fail</span><span style="color:#000;font-weight:bold">()]</span>
+
+    <span style="color:#8f5902;font-style:italic"># How to display an error.</span>
+    <span style="color:#000">Error_Page</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#4e9a06">&#34;&#34;&#34;</span><span style="color:#4e9a06">\
+</span><span style="color:#4e9a06"></span><span style="color:#4e9a06">        &lt;html&gt;
+</span><span style="color:#4e9a06">        &lt;body&gt;
+</span><span style="color:#4e9a06">        &lt;h1&gt;Error accessing {path}&lt;/h1&gt;
+</span><span style="color:#4e9a06">        &lt;p&gt;{msg}&lt;/p&gt;
+</span><span style="color:#4e9a06">        &lt;/body&gt;
+</span><span style="color:#4e9a06">        &lt;/html&gt;
+</span><span style="color:#4e9a06">        &#34;&#34;&#34;</span>
+
+    <span style="color:#8f5902;font-style:italic"># Classify and handle request.</span>
+    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">do_GET</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">):</span>
+        <span style="color:#204a87;font-weight:bold">try</span><span style="color:#000;font-weight:bold">:</span>
+
+            <span style="color:#8f5902;font-style:italic"># Figure out what exactly is being requested.</span>
+            <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">full_path</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">os</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">getcwd</span><span style="color:#000;font-weight:bold">()</span> <span style="color:#ce5c00;font-weight:bold">+</span> <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">path</span>
+
+            <span style="color:#8f5902;font-style:italic"># Figure out how to handle it.</span>
+            <span style="color:#204a87;font-weight:bold">for</span> <span style="color:#000">case</span> <span style="color:#204a87;font-weight:bold">in</span> <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">Cases</span><span style="color:#000;font-weight:bold">:</span>
+                <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">case</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">test</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">):</span>
+                    <span style="color:#000">case</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">act</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">)</span>
+                    <span style="color:#204a87;font-weight:bold">break</span>
+
+        <span style="color:#8f5902;font-style:italic"># Handle errors.</span>
+        <span style="color:#204a87;font-weight:bold">except</span> <span style="color:#c00;font-weight:bold">Exception</span> <span style="color:#204a87;font-weight:bold">as</span> <span style="color:#000">msg</span><span style="color:#000;font-weight:bold">:</span>
+            <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">handle_error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">msg</span><span style="color:#000;font-weight:bold">)</span>
+
+    <span style="color:#8f5902;font-style:italic"># Handle unknown objects.</span>
+    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">handle_error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">msg</span><span style="color:#000;font-weight:bold">):</span>
+        <span style="color:#000">content</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">Error_Page</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">format</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">path</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">path</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">msg</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#000">msg</span><span style="color:#000;font-weight:bold">)</span>
+        <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">send_content</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">content</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#0000cf;font-weight:bold">404</span><span style="color:#000;font-weight:bold">)</span>
+
+    <span style="color:#8f5902;font-style:italic"># Send actual content.</span>
+    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">send_content</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">content</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">status</span><span style="color:#ce5c00;font-weight:bold">=</span><span style="color:#0000cf;font-weight:bold">200</span><span style="color:#000;font-weight:bold">):</span>
+        <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">send_response</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">status</span><span style="color:#000;font-weight:bold">)</span>
+        <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">send_header</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Content-type&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#34;text/html&#34;</span><span style="color:#000;font-weight:bold">)</span>
+        <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">send_header</span><span style="color:#000;font-weight:bold">(</span><span style="color:#4e9a06">&#34;Content-Length&#34;</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#204a87">str</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87">len</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">content</span><span style="color:#000;font-weight:bold">)))</span>
+        <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">end_headers</span><span style="color:#000;font-weight:bold">()</span>
+        <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">wfile</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">write</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">content</span><span style="color:#000;font-weight:bold">)</span>
+</code></pre></div><p>while the parent class for our case handlers is:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-python" data-lang="python"><span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">base_case</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87">object</span><span style="color:#000;font-weight:bold">):</span>
+    <span style="color:#4e9a06">&#39;&#39;&#39;Parent for case handlers.&#39;&#39;&#39;</span>
+
+    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">handle_file</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">handler</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">full_path</span><span style="color:#000;font-weight:bold">):</span>
+        <span style="color:#204a87;font-weight:bold">try</span><span style="color:#000;font-weight:bold">:</span>
+            <span style="color:#204a87;font-weight:bold">with</span> <span style="color:#204a87">open</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">full_path</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#39;rb&#39;</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#204a87;font-weight:bold">as</span> <span style="color:#000">reader</span><span style="color:#000;font-weight:bold">:</span>
+                <span style="color:#000">content</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#000">reader</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">read</span><span style="color:#000;font-weight:bold">()</span>
+            <span style="color:#000">handler</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">send_content</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">content</span><span style="color:#000;font-weight:bold">)</span>
+        <span style="color:#204a87;font-weight:bold">except</span> <span style="color:#c00;font-weight:bold">IOError</span> <span style="color:#204a87;font-weight:bold">as</span> <span style="color:#000">msg</span><span style="color:#000;font-weight:bold">:</span>
+            <span style="color:#000">msg</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#4e9a06">&#34;&#39;{0}&#39; cannot be read: {1}&#34;</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">format</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">full_path</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">msg</span><span style="color:#000;font-weight:bold">)</span>
+            <span style="color:#000">handler</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">handle_error</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">msg</span><span style="color:#000;font-weight:bold">)</span>
+
+    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">index_path</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">handler</span><span style="color:#000;font-weight:bold">):</span>
+        <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#000">os</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">path</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">join</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">handler</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">full_path</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#39;index.html&#39;</span><span style="color:#000;font-weight:bold">)</span>
+
+    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">test</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">handler</span><span style="color:#000;font-weight:bold">):</span>
+        <span style="color:#204a87;font-weight:bold">assert</span> <span style="color:#3465a4">False</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#39;Not implemented.&#39;</span>
+
+    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">act</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">handler</span><span style="color:#000;font-weight:bold">):</span>
+        <span style="color:#204a87;font-weight:bold">assert</span> <span style="color:#3465a4">False</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#4e9a06">&#39;Not implemented.&#39;</span>
+</code></pre></div><p>and the handler for an existing file (just to pick an example at random) is:</p>
+<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-python" data-lang="python"><span style="color:#204a87;font-weight:bold">class</span> <span style="color:#000">case_existing_file</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">base_case</span><span style="color:#000;font-weight:bold">):</span>
+    <span style="color:#4e9a06">&#39;&#39;&#39;File exists.&#39;&#39;&#39;</span>
+
+    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">test</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">handler</span><span style="color:#000;font-weight:bold">):</span>
+        <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#000">os</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">path</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">isfile</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">handler</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">full_path</span><span style="color:#000;font-weight:bold">)</span>
+
+    <span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">act</span><span style="color:#000;font-weight:bold">(</span><span style="color:#3465a4">self</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">handler</span><span style="color:#000;font-weight:bold">):</span>
+        <span style="color:#3465a4">self</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">handle_file</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">handler</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">handler</span><span style="color:#ce5c00;font-weight:bold">.</span><span style="color:#000">full_path</span><span style="color:#000;font-weight:bold">)</span>
+</code></pre></div><p>Discussion</p>
+<p>The differences between our original code and the refactored version reflect two important ideas. The first is to think of a class as a collection of related services.RequestHandler and base_case don&rsquo;t make decisions or take actions; they provide tools that other classes can use to do those things.</p>
+<p>The second is extensibility: people can add new functionality to our web server either by writing an external CGI program, or by adding a case handler class. The latter does require a one-line change to RequestHandler (to insert the case handler in the Cases list), but we could get rid of that by having the web server read a configuration file and load handler classes from that. In both cases, they can ignore most lower-level details, just as the authors of the BaseHTTPRequestHandlerclass have allowed us to ignore the details of handling socket connections and parsing HTTP requests.</p>
+<p>These ideas are generally useful; see if you can find ways to use them in your own projects.</p>
+
+        </div>
+
+        <div class="row middle-xs">
+          <div class="col-xs-12">
+            
+          </div>
+        </div>
+        
+          <div class="row">
+            <div class="col-xs-12">
+              
+            </div>
+          </div>
+
+          
+
+
+
+          
+          
+          <div style="height: 50px;"></div>
+          
+        
+
+        <div class="site-footer">
+  
+  
+</div>
+
+      </div>
+    </div>
+  </article>
+
+  
+
+<script>
+  
+  
+    
+    
+  
+</script>
+
+  
+
+</body>
+
+</html>

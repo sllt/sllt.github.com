@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>webshell on sllt的博客</title>
+    <link>https://blog.sllt.me/categories/webshell/</link>
+    <description>Recent content in webshell on sllt的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Wed, 09 Nov 2016 15:02:21 +0800</lastBuildDate><atom:link href="https://blog.sllt.me/categories/webshell/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>一次误打误撞的提权经历</title>
+      <link>https://blog.sllt.me/posts/an-experience-of-hacked-website/</link>
+      <pubDate>Wed, 09 Nov 2016 15:02:21 +0800</pubDate>
+      
+      <guid>https://blog.sllt.me/posts/an-experience-of-hacked-website/</guid>
+      <description>误打误撞的输入某网站的ip结果自动跳转到一个探针文件：
+通过弱口令尝试登录数据库，测试成功！
+phpstudy这种集成包一般也会集成phpMyAdmin， 尝试找phpMyAdmin的相对路径登录，成功登录后通过select outfile语句将一句话木马写入到web服务器根目录下（探针暴露了绝对路径）
+测试是否写入成功
+通过第三方工具连接一句话木马上传GetPassword.exe 并运行。
+成功拿到密码</description>
+    </item>
+    
+  </channel>
+</rss>
