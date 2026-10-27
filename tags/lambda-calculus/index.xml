@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Lambda-Calculus on sllt的博客</title>
+    <link>https://blog.sllt.me/tags/lambda-calculus/</link>
+    <description>Recent content in Lambda-Calculus on sllt的博客</description>
+    <generator>Hugo</generator>
+    <language>cn</language>
+    <lastBuildDate>Tue, 27 Oct 2026 00:25:00 +0800</lastBuildDate>
+    <atom:link href="https://blog.sllt.me/tags/lambda-calculus/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>使用Python模拟Lambda演算</title>
+      <link>https://blog.sllt.me/posts/lambda-calculus/</link>
+      <pubDate>Sun, 24 Apr 2016 15:34:47 +0800</pubDate>
+      <guid>https://blog.sllt.me/posts/lambda-calculus/</guid>
+      <description>我们将从下面这段程序开始：&#xA;python Copy 1for i in range(1, 20): 2 if i % 3 == 0 or i % 5 == 0: 3 print(i) 这段程序会打印出 1 到 19 之间能被 3 或 5 整除的数字：&#xA;text Copy 13 25 36 49 510 612 715 818 如果我们定下一个极端的限制：不允许使用 Python 内置的数字、布尔值、列表，不允许使用 +、-、%、==、or 等运算符，也不允许使用 if、for、range 甚至 def 具名函数——唯一允许使用的只有单参数的匿名函数 lambda x: ... 以及函数调用 f(x)，还能实现上面这段程序吗？&#xA;这正是阿隆佐·邱奇（Alonzo Church）在 20 世纪 30 年代提出 Lambda 演算（λ-calculus） 时所展示的核心思想：在只有“函数定义”与“函数调用”的世界里，函数本身就足以编码自然数、布尔值、算术运算、条件分支、递归乃至数据结构。这种仅用函数来构造数据与控制流的方法称为邱奇编码（Church Encoding）。&#xA;接下来，我们就以开头的 3 行代码为主线，每用 lambda 造出一个零件，就立刻替换掉原程序中的一部分，直到整段程序的计算过程完全由函数构成。</description>
+    </item>
+  </channel>
+</rss>

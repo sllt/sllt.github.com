@@ -1,27 +1,19 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>scheme on sllt的博客</title>
+    <title>Scheme on sllt的博客</title>
     <link>https://blog.sllt.me/categories/scheme/</link>
-    <description>Recent content in scheme on sllt的博客</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>zh-cn</language>
-    <lastBuildDate>Tue, 17 Nov 2015 14:02:14 +0800</lastBuildDate><atom:link href="https://blog.sllt.me/categories/scheme/index.xml" rel="self" type="application/rss+xml" />
+    <description>Recent content in Scheme on sllt的博客</description>
+    <generator>Hugo</generator>
+    <language>cn</language>
+    <lastBuildDate>Tue, 27 Oct 2026 10:50:00 +0800</lastBuildDate>
+    <atom:link href="https://blog.sllt.me/categories/scheme/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>如何写一个Scheme解释器</title>
       <link>https://blog.sllt.me/posts/write-a-scheme-interpreter/</link>
       <pubDate>Tue, 17 Nov 2015 14:02:14 +0800</pubDate>
-      
       <guid>https://blog.sllt.me/posts/write-a-scheme-interpreter/</guid>
-      <description>本文假设你会使用python。
-我们会先实现一个scheme语法的简单计算器，以便了解实现一个解释器的简单步骤，接着会逐步给此计算器增加功能，使其成为一个完整的scheme解释器。
-Scheme-wikipedia这里有关于scheme的更详细的介绍。
-1.1 Scheme语法式的计算器 此简化的计算器包含加（+）、减（-）、乘（*）、除（/）四个表达式。
-加法和乘法表达式可以接收任意数量的参数：
-&amp;gt; (+ 1 2 3 4 ) 10 &amp;gt; (+) 0 &amp;gt; (* 1 2 3 4) 24 &amp;gt; (*) 1 减法(-)有两种情况，当传入一个参数时，会求这个数的相反数；传入两个或两个以上的操作时，会 进行减法操作， 例如(- 10 1 2 3) 等同于10 - 1 - 2 - 3。除法(/)也有两种情况。
-&amp;gt; (- 10 1 2 3) 4 &amp;gt; (- 3) -3 &amp;gt; (/ 15 12) 1.25 &amp;gt; (/ 30 5 2) 3 &amp;gt; (/ 10) 0.1 一个表达式执行的时候，先会对其子表达式求值，将所得结果再执行所返回的值。
-&amp;gt; (- 100 ( * 7 ( + 8 (/ -12 -3)))) 16.</description>
+      <description>本文假设你会使用 Python。&#xA;我们会分两步来构建这个解释器：&#xA;先实现一个 Scheme 语法式的简单计算器：只支持加、减、乘、除，但麻雀虽小五脏俱全——借它跑通解释器最核心的四个环节：表达式树（Pair）、语法解析（Read）、递归求值（Eval）与交互循环（REPL）； 再逐步把计算器升级为完整的 Scheme 解释器：在计算器的骨架上依次加入环境与变量（define）、特殊形式（quote、if、cond、let 等）以及自定义函数与闭包（lambda）。 关于 Scheme 语言本身的更多背景，可以参考维基百科的 Scheme 词条。完整代码可以在文末查看，也可以直接下载 scheme.py。&#xA;1. Scheme 语法式的计算器 1.1 计算器的语法与求值规则 我们先从最简单的前缀表达式计算器开始。这个简化版计算器只包含加（+）、减（-）、乘（*）、除（/）四种运算。&#xA;在 Scheme 中，所有的运算都写成 (操作符 参数1 参数2 ...) 的前缀形式。加法和乘法可以接收任意数量的参数：&#xA;scheme Copy 1scm&amp;gt; (&amp;#43; 1 2 3 4) 210 3scm&amp;gt; (&amp;#43;) 40 5scm&amp;gt; (* 1 2 3 4) 624 7scm&amp;gt; (*) 81 减法（-）有两种情况：只传入 1 个参数时，求这个数的相反数；传入 2 个及以上参数时，用第一个数依次减去后面的数，例如 (- 10 1 2 3) 等同于 10 - 1 - 2 - 3。除法（/）也是类似的规则（单参数求倒数，多参数依次相除）：</description>
     </item>
-    
   </channel>
 </rss>

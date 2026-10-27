@@ -1,221 +1,1481 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="cn" data-theme="light">
 <head>
-  <meta charset="utf-8" />
-  <meta name="generator" content="Hugo 0.83.1" />
-
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="author" content="sllt" />
-  <meta property="og:url" content="https://blog.sllt.me/posts/lambda-calculus/" />
-  <link rel="canonical" href="https://blog.sllt.me/posts/lambda-calculus/" /><link rel="alternate" type="application/atom+xml" href="https://blog.sllt.meindex.xml" title="sllt的博客">
-
-  <script type="application/ld+json">
-  {
-      "@context" : "http://schema.org",
-      "@type" : "BlogPosting",
-      "mainEntityOfPage": {
-           "@type": "WebPage",
-           "@id": "https:\/\/blog.sllt.me"
-      },
-      "articleSection" : "posts",
-      "name" : "使用Python模拟Lambda演算",
-      "headline" : "使用Python模拟Lambda演算",
-      "description" : "我们将从下面这段程序开始：\nfor i in range(1,20): if i % 3 == 0 or i % 5 == 0: print(i) 这段程序将打印出1~19之间能被3或5整除的数字。我们将不使用任何Python内建类型及方法来实现上面程序的功能。\n1 数字 数字的特征可以简单的描述为某一个动作的迭代。比如吃了6个苹果，6就表示重复的进行了n次的吃这个动作。相同的，我们也可以在程序中用某一个函数被调用了几次来表示数字。\n比如数字1可以表示成如下代码：\ndef one(p, x): return p(x) 依照同样的定义，我们可以这么表示2:\ndef two(p, x): return p(p(x)) 那么， 如何表示0呢？ 我们传入p但是不进行调用，就可以表示0了：\ndef zero(p, x): return x 用lambda表达式表示如下：\nZERO = lambda p: lambda x: x ONE = lambda p: lambda x: p(x) TWO = lambda p: lambda x: p(p(x)) THREE = lambda p: lambda x: p(p(p(x))) 让我们来实现一个函数来将这些lambda表达式这换成Python的数字，依次来支持一些其他特性，比如使用range函数：",
-      "inLanguage" : "en-US",
-      "author" : "sllt",
-      "creator" : "sllt",
-      "publisher": "sllt",
-      "accountablePerson" : "sllt",
-      "copyrightHolder" : "sllt",
-      "copyrightYear" : "2016",
-      "datePublished": "2016-04-24 15:34:47 \u002b0800 CST",
-      "dateModified" : "2016-04-24 15:34:47 \u002b0800 CST",
-      "url" : "https:\/\/blog.sllt.me\/posts\/lambda-calculus\/",
-      "keywords" : [  ]
-  }
-</script>
-<title>使用Python模拟Lambda演算</title>
-  <meta property="og:title" content="使用Python模拟Lambda演算" />
-  <meta property="og:type" content="article" />
-  <meta property="og:description" content="我们将从下面这段程序开始：
-for i in range(1,20): if i % 3 == 0 or i % 5 == 0: print(i) 这段程序将打印出1~19之间能被3或5整除的数字。我们将不使用任何Python内建类型及方法来实现上面程序的功能。
-1 数字 数字的特征可以简单的描述为某一个动作的迭代。比如吃了6个苹果，6就表示重复的进行了n次的吃这个动作。相同的，我们也可以在程序中用某一个函数被调用了几次来表示数字。
-比如数字1可以表示成如下代码：
-def one(p, x): return p(x) 依照同样的定义，我们可以这么表示2:
-def two(p, x): return p(p(x)) 那么， 如何表示0呢？ 我们传入p但是不进行调用，就可以表示0了：
-def zero(p, x): return x 用lambda表达式表示如下：
-ZERO = lambda p: lambda x: x ONE = lambda p: lambda x: p(x) TWO = lambda p: lambda x: p(p(x)) THREE = lambda p: lambda x: p(p(p(x))) 让我们来实现一个函数来将这些lambda表达式这换成Python的数字，依次来支持一些其他特性，比如使用range函数：" />
-  <meta name="description" content="我们将从下面这段程序开始：
-for i in range(1,20): if i % 3 == 0 or i % 5 == 0: print(i) 这段程序将打印出1~19之间能被3或5整除的数字。我们将不使用任何Python内建类型及方法来实现上面程序的功能。
-1 数字 数字的特征可以简单的描述为某一个动作的迭代。比如吃了6个苹果，6就表示重复的进行了n次的吃这个动作。相同的，我们也可以在程序中用某一个函数被调用了几次来表示数字。
-比如数字1可以表示成如下代码：
-def one(p, x): return p(x) 依照同样的定义，我们可以这么表示2:
-def two(p, x): return p(p(x)) 那么， 如何表示0呢？ 我们传入p但是不进行调用，就可以表示0了：
-def zero(p, x): return x 用lambda表达式表示如下：
-ZERO = lambda p: lambda x: x ONE = lambda p: lambda x: p(x) TWO = lambda p: lambda x: p(p(x)) THREE = lambda p: lambda x: p(p(p(x))) 让我们来实现一个函数来将这些lambda表达式这换成Python的数字，依次来支持一些其他特性，比如使用range函数：" />
-  <meta property="og:locale" content="zh-cn" />
-
-  
-    <style>body{font-family:bree serif,sans-serif;-webkit-font-smoothing:antialiased;margin:0 20px}article{max-width:800px;margin-left:auto;margin-right:auto}a{color:#000;text-decoration:none}a:hover{font-weight:600;text-decoration:underline}.post-ads{margin:50px 0}.markdown-body{font-size:18px;max-width:100%}.markdown-body a{text-decoration:underline;text-decoration-color:#000}.markdown-body pre{padding:16px;overflow:auto;border-radius:10px}.markdown-body code{padding:.2em .4em;font-size:85%;background-color:#f6f8fa;border-radius:6px}.markdown-body pre>code{padding:0;font-size:100%;background-color:inherit;border:0}.Chinese .markdown-body{line-height:200%}.site-date-catalog{font-size:2rem}.header-title{font-size:2rem;font-weight:700;margin-top:32px;font-family:bungee shade,sans-serif}.header-title a{text-decoration:none}.header-subtitle{color:#666}.header-items{margin:10px 0}.header-item{margin:0 5px}.header-line{width:100%;border-width:2px;border-color:#482936;border-style:solid none none none}.lang-switch{font-weight:600}#posts-list{min-height:600px}.posts-line{font-size:1.2rem;margin:12px 0}.posts-categories{font-size:.8rem;margin:auto;text-align:center}.posts-category{padding:3px 0;border:#000 2px solid;border-radius:5px}.site-footer{margin-top:50px}.site-footer-item{margin-right:12px}.post-content img{max-width:100%;display:block;margin-right:auto;margin-top:12px}.post-header{margin-bottom:50px}.post-title{font-size:2rem;font-weight:600}.post-category{display:inline;font-weight:600;padding:2px 5px;border:#000 2px solid;border-radius:5px}.post-date{font-weight:800;font-style:italic}.post-author{float:right;font-weight:600}.page-content{min-height:60%}.post-content{margin-bottom:50px}.post-content p{hyphens:auto;line-height:1.8;text-justify:ideographic;margin-bottom:1em}.related-content{border-width:3px;border-style:solid;border-color:#000;padding:0 10px;margin-bottom:50px;margin-top:100px}.related-content li{margin:5px 0}.taxonomy-term{font-size:3rem}.gallery-img{text-align:center}.gallery-img span{text-align:center}.gallery-img-desc{font-size:.8em;font-weight:800}#disqus_thread{position:relative}#disqus_thread:after{content:"";display:block;height:55px;width:100%;position:absolute;bottom:0;background:#fff}@media screen and (max-width:600px){.header-title,.header-subtitle,.header-items{text-align:center}.posts-line{font-size:16px}.markdown-body{font-size:16px}.post-title{font-size:2rem}.post-content p{letter-spacing:.05em}}@media screen and (max-width:48em){.posts-category{display:none}}</style>
-  
-  
-    <style>.container,.container-fluid{margin-right:auto;margin-left:auto}.container-fluid{padding-right:2rem;padding-left:2rem}.row{box-sizing:border-box;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-flex:0;-ms-flex:0 1 auto;flex:initial;-webkit-box-orient:horizontal;-webkit-box-direction:normal;-ms-flex-direction:row;flex-direction:row;-ms-flex-wrap:wrap;flex-wrap:wrap;margin-right:-.5rem;margin-left:-.5rem}.row.reverse{-webkit-box-orient:horizontal;-webkit-box-direction:reverse;-ms-flex-direction:row-reverse;flex-direction:row-reverse}.col.reverse{-webkit-box-orient:vertical;-webkit-box-direction:reverse;-ms-flex-direction:column-reverse;flex-direction:column-reverse}.col-xs,.col-xs-1,.col-xs-10,.col-xs-11,.col-xs-12,.col-xs-2,.col-xs-3,.col-xs-4,.col-xs-5,.col-xs-6,.col-xs-7,.col-xs-8,.col-xs-9,.col-xs-offset-0,.col-xs-offset-1,.col-xs-offset-10,.col-xs-offset-11,.col-xs-offset-12,.col-xs-offset-2,.col-xs-offset-3,.col-xs-offset-4,.col-xs-offset-5,.col-xs-offset-6,.col-xs-offset-7,.col-xs-offset-8,.col-xs-offset-9{box-sizing:border-box;-webkit-box-flex:0;-ms-flex:0 0 auto;flex:none;padding-right:.5rem;padding-left:.5rem}.col-xs{-webkit-box-flex:1;-ms-flex-positive:1;flex-grow:1;-ms-flex-preferred-size:0;flex-basis:0;max-width:100%}.col-xs-1{-ms-flex-preferred-size:8.33333333%;flex-basis:8.33333333%;max-width:8.33333333%}.col-xs-2{-ms-flex-preferred-size:16.66666667%;flex-basis:16.66666667%;max-width:16.66666667%}.col-xs-3{-ms-flex-preferred-size:25%;flex-basis:25%;max-width:25%}.col-xs-4{-ms-flex-preferred-size:33.33333333%;flex-basis:33.33333333%;max-width:33.33333333%}.col-xs-5{-ms-flex-preferred-size:41.66666667%;flex-basis:41.66666667%;max-width:41.66666667%}.col-xs-6{-ms-flex-preferred-size:50%;flex-basis:50%;max-width:50%}.col-xs-7{-ms-flex-preferred-size:58.33333333%;flex-basis:58.33333333%;max-width:58.33333333%}.col-xs-8{-ms-flex-preferred-size:66.66666667%;flex-basis:66.66666667%;max-width:66.66666667%}.col-xs-9{-ms-flex-preferred-size:75%;flex-basis:75%;max-width:75%}.col-xs-10{-ms-flex-preferred-size:83.33333333%;flex-basis:83.33333333%;max-width:83.33333333%}.col-xs-11{-ms-flex-preferred-size:91.66666667%;flex-basis:91.66666667%;max-width:91.66666667%}.col-xs-12{-ms-flex-preferred-size:100%;flex-basis:100%;max-width:100%}.col-xs-offset-0{margin-left:0}.col-xs-offset-1{margin-left:8.33333333%}.col-xs-offset-2{margin-left:16.66666667%}.col-xs-offset-3{margin-left:25%}.col-xs-offset-4{margin-left:33.33333333%}.col-xs-offset-5{margin-left:41.66666667%}.col-xs-offset-6{margin-left:50%}.col-xs-offset-7{margin-left:58.33333333%}.col-xs-offset-8{margin-left:66.66666667%}.col-xs-offset-9{margin-left:75%}.col-xs-offset-10{margin-left:83.33333333%}.col-xs-offset-11{margin-left:91.66666667%}.start-xs{-webkit-box-pack:start;-ms-flex-pack:start;justify-content:flex-start;text-align:start}.center-xs{-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;text-align:center}.end-xs{-webkit-box-pack:end;-ms-flex-pack:end;justify-content:flex-end;text-align:end}.top-xs{-webkit-box-align:start;-ms-flex-align:start;align-items:flex-start}.middle-xs{-webkit-box-align:center;-ms-flex-align:center;align-items:center}.bottom-xs{-webkit-box-align:end;-ms-flex-align:end;align-items:flex-end}.around-xs{-ms-flex-pack:distribute;justify-content:space-around}.between-xs{-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between}.first-xs{-webkit-box-ordinal-group:0;-ms-flex-order:-1;order:-1}.last-xs{-webkit-box-ordinal-group:2;-ms-flex-order:1;order:1}@media only screen and (min-width:48em){.container{width:49rem}.col-sm,.col-sm-1,.col-sm-10,.col-sm-11,.col-sm-12,.col-sm-2,.col-sm-3,.col-sm-4,.col-sm-5,.col-sm-6,.col-sm-7,.col-sm-8,.col-sm-9,.col-sm-offset-0,.col-sm-offset-1,.col-sm-offset-10,.col-sm-offset-11,.col-sm-offset-12,.col-sm-offset-2,.col-sm-offset-3,.col-sm-offset-4,.col-sm-offset-5,.col-sm-offset-6,.col-sm-offset-7,.col-sm-offset-8,.col-sm-offset-9{box-sizing:border-box;-webkit-box-flex:0;-ms-flex:0 0 auto;flex:none;padding-right:.5rem;padding-left:.5rem}.col-sm{-webkit-box-flex:1;-ms-flex-positive:1;flex-grow:1;-ms-flex-preferred-size:0;flex-basis:0;max-width:100%}.col-sm-1{-ms-flex-preferred-size:8.33333333%;flex-basis:8.33333333%;max-width:8.33333333%}.col-sm-2{-ms-flex-preferred-size:16.66666667%;flex-basis:16.66666667%;max-width:16.66666667%}.col-sm-3{-ms-flex-preferred-size:25%;flex-basis:25%;max-width:25%}.col-sm-4{-ms-flex-preferred-size:33.33333333%;flex-basis:33.33333333%;max-width:33.33333333%}.col-sm-5{-ms-flex-preferred-size:41.66666667%;flex-basis:41.66666667%;max-width:41.66666667%}.col-sm-6{-ms-flex-preferred-size:50%;flex-basis:50%;max-width:50%}.col-sm-7{-ms-flex-preferred-size:58.33333333%;flex-basis:58.33333333%;max-width:58.33333333%}.col-sm-8{-ms-flex-preferred-size:66.66666667%;flex-basis:66.66666667%;max-width:66.66666667%}.col-sm-9{-ms-flex-preferred-size:75%;flex-basis:75%;max-width:75%}.col-sm-10{-ms-flex-preferred-size:83.33333333%;flex-basis:83.33333333%;max-width:83.33333333%}.col-sm-11{-ms-flex-preferred-size:91.66666667%;flex-basis:91.66666667%;max-width:91.66666667%}.col-sm-12{-ms-flex-preferred-size:100%;flex-basis:100%;max-width:100%}.col-sm-offset-0{margin-left:0}.col-sm-offset-1{margin-left:8.33333333%}.col-sm-offset-2{margin-left:16.66666667%}.col-sm-offset-3{margin-left:25%}.col-sm-offset-4{margin-left:33.33333333%}.col-sm-offset-5{margin-left:41.66666667%}.col-sm-offset-6{margin-left:50%}.col-sm-offset-7{margin-left:58.33333333%}.col-sm-offset-8{margin-left:66.66666667%}.col-sm-offset-9{margin-left:75%}.col-sm-offset-10{margin-left:83.33333333%}.col-sm-offset-11{margin-left:91.66666667%}.start-sm{-webkit-box-pack:start;-ms-flex-pack:start;justify-content:flex-start;text-align:start}.center-sm{-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;text-align:center}.end-sm{-webkit-box-pack:end;-ms-flex-pack:end;justify-content:flex-end;text-align:end}.top-sm{-webkit-box-align:start;-ms-flex-align:start;align-items:flex-start}.middle-sm{-webkit-box-align:center;-ms-flex-align:center;align-items:center}.bottom-sm{-webkit-box-align:end;-ms-flex-align:end;align-items:flex-end}.around-sm{-ms-flex-pack:distribute;justify-content:space-around}.between-sm{-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between}.first-sm{-webkit-box-ordinal-group:0;-ms-flex-order:-1;order:-1}.last-sm{-webkit-box-ordinal-group:2;-ms-flex-order:1;order:1}}@media only screen and (min-width:64em){.container{width:65rem}.col-md,.col-md-1,.col-md-10,.col-md-11,.col-md-12,.col-md-2,.col-md-3,.col-md-4,.col-md-5,.col-md-6,.col-md-7,.col-md-8,.col-md-9,.col-md-offset-0,.col-md-offset-1,.col-md-offset-10,.col-md-offset-11,.col-md-offset-12,.col-md-offset-2,.col-md-offset-3,.col-md-offset-4,.col-md-offset-5,.col-md-offset-6,.col-md-offset-7,.col-md-offset-8,.col-md-offset-9{box-sizing:border-box;-webkit-box-flex:0;-ms-flex:0 0 auto;flex:none;padding-right:.5rem;padding-left:.5rem}.col-md{-webkit-box-flex:1;-ms-flex-positive:1;flex-grow:1;-ms-flex-preferred-size:0;flex-basis:0;max-width:100%}.col-md-1{-ms-flex-preferred-size:8.33333333%;flex-basis:8.33333333%;max-width:8.33333333%}.col-md-2{-ms-flex-preferred-size:16.66666667%;flex-basis:16.66666667%;max-width:16.66666667%}.col-md-3{-ms-flex-preferred-size:25%;flex-basis:25%;max-width:25%}.col-md-4{-ms-flex-preferred-size:33.33333333%;flex-basis:33.33333333%;max-width:33.33333333%}.col-md-5{-ms-flex-preferred-size:41.66666667%;flex-basis:41.66666667%;max-width:41.66666667%}.col-md-6{-ms-flex-preferred-size:50%;flex-basis:50%;max-width:50%}.col-md-7{-ms-flex-preferred-size:58.33333333%;flex-basis:58.33333333%;max-width:58.33333333%}.col-md-8{-ms-flex-preferred-size:66.66666667%;flex-basis:66.66666667%;max-width:66.66666667%}.col-md-9{-ms-flex-preferred-size:75%;flex-basis:75%;max-width:75%}.col-md-10{-ms-flex-preferred-size:83.33333333%;flex-basis:83.33333333%;max-width:83.33333333%}.col-md-11{-ms-flex-preferred-size:91.66666667%;flex-basis:91.66666667%;max-width:91.66666667%}.col-md-12{-ms-flex-preferred-size:100%;flex-basis:100%;max-width:100%}.col-md-offset-0{margin-left:0}.col-md-offset-1{margin-left:8.33333333%}.col-md-offset-2{margin-left:16.66666667%}.col-md-offset-3{margin-left:25%}.col-md-offset-4{margin-left:33.33333333%}.col-md-offset-5{margin-left:41.66666667%}.col-md-offset-6{margin-left:50%}.col-md-offset-7{margin-left:58.33333333%}.col-md-offset-8{margin-left:66.66666667%}.col-md-offset-9{margin-left:75%}.col-md-offset-10{margin-left:83.33333333%}.col-md-offset-11{margin-left:91.66666667%}.start-md{-webkit-box-pack:start;-ms-flex-pack:start;justify-content:flex-start;text-align:start}.center-md{-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;text-align:center}.end-md{-webkit-box-pack:end;-ms-flex-pack:end;justify-content:flex-end;text-align:end}.top-md{-webkit-box-align:start;-ms-flex-align:start;align-items:flex-start}.middle-md{-webkit-box-align:center;-ms-flex-align:center;align-items:center}.bottom-md{-webkit-box-align:end;-ms-flex-align:end;align-items:flex-end}.around-md{-ms-flex-pack:distribute;justify-content:space-around}.between-md{-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between}.first-md{-webkit-box-ordinal-group:0;-ms-flex-order:-1;order:-1}.last-md{-webkit-box-ordinal-group:2;-ms-flex-order:1;order:1}}@media only screen and (min-width:75em){.container{width:76rem}.col-lg,.col-lg-1,.col-lg-10,.col-lg-11,.col-lg-12,.col-lg-2,.col-lg-3,.col-lg-4,.col-lg-5,.col-lg-6,.col-lg-7,.col-lg-8,.col-lg-9,.col-lg-offset-0,.col-lg-offset-1,.col-lg-offset-10,.col-lg-offset-11,.col-lg-offset-12,.col-lg-offset-2,.col-lg-offset-3,.col-lg-offset-4,.col-lg-offset-5,.col-lg-offset-6,.col-lg-offset-7,.col-lg-offset-8,.col-lg-offset-9{box-sizing:border-box;-webkit-box-flex:0;-ms-flex:0 0 auto;flex:none;padding-right:.5rem;padding-left:.5rem}.col-lg{-webkit-box-flex:1;-ms-flex-positive:1;flex-grow:1;-ms-flex-preferred-size:0;flex-basis:0;max-width:100%}.col-lg-1{-ms-flex-preferred-size:8.33333333%;flex-basis:8.33333333%;max-width:8.33333333%}.col-lg-2{-ms-flex-preferred-size:16.66666667%;flex-basis:16.66666667%;max-width:16.66666667%}.col-lg-3{-ms-flex-preferred-size:25%;flex-basis:25%;max-width:25%}.col-lg-4{-ms-flex-preferred-size:33.33333333%;flex-basis:33.33333333%;max-width:33.33333333%}.col-lg-5{-ms-flex-preferred-size:41.66666667%;flex-basis:41.66666667%;max-width:41.66666667%}.col-lg-6{-ms-flex-preferred-size:50%;flex-basis:50%;max-width:50%}.col-lg-7{-ms-flex-preferred-size:58.33333333%;flex-basis:58.33333333%;max-width:58.33333333%}.col-lg-8{-ms-flex-preferred-size:66.66666667%;flex-basis:66.66666667%;max-width:66.66666667%}.col-lg-9{-ms-flex-preferred-size:75%;flex-basis:75%;max-width:75%}.col-lg-10{-ms-flex-preferred-size:83.33333333%;flex-basis:83.33333333%;max-width:83.33333333%}.col-lg-11{-ms-flex-preferred-size:91.66666667%;flex-basis:91.66666667%;max-width:91.66666667%}.col-lg-12{-ms-flex-preferred-size:100%;flex-basis:100%;max-width:100%}.col-lg-offset-0{margin-left:0}.col-lg-offset-1{margin-left:8.33333333%}.col-lg-offset-2{margin-left:16.66666667%}.col-lg-offset-3{margin-left:25%}.col-lg-offset-4{margin-left:33.33333333%}.col-lg-offset-5{margin-left:41.66666667%}.col-lg-offset-6{margin-left:50%}.col-lg-offset-7{margin-left:58.33333333%}.col-lg-offset-8{margin-left:66.66666667%}.col-lg-offset-9{margin-left:75%}.col-lg-offset-10{margin-left:83.33333333%}.col-lg-offset-11{margin-left:91.66666667%}.start-lg{-webkit-box-pack:start;-ms-flex-pack:start;justify-content:flex-start;text-align:start}.center-lg{-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;text-align:center}.end-lg{-webkit-box-pack:end;-ms-flex-pack:end;justify-content:flex-end;text-align:end}.top-lg{-webkit-box-align:start;-ms-flex-align:start;align-items:flex-start}.middle-lg{-webkit-box-align:center;-ms-flex-align:center;align-items:center}.bottom-lg{-webkit-box-align:end;-ms-flex-align:end;align-items:flex-end}.around-lg{-ms-flex-pack:distribute;justify-content:space-around}.between-lg{-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between}.first-lg{-webkit-box-ordinal-group:0;-ms-flex-order:-1;order:-1}.last-lg{-webkit-box-ordinal-group:2;-ms-flex-order:1;order:1}}</style>
-  
-
-  
-
-  <link href="/index.xml" rel="alternate" type="application/rss+xml"
-    title="sllt的博客">
-  
-  <link rel="preconnect" href="https://fonts.gstatic.com">
-  <link href="https://fonts.googleapis.com/css?family=Bree+Serif|Bungee+Shade" rel="stylesheet">
-  
-  
-
-  
-  
-</head>
-
-
-<body>
-  <article class="post Chinese" id="article">
-    <div class="row">
-      <div class="col-xs-12">
-        <div class="site-header">
-          
-<header>
-  <div class="header-title">
-    <a href="/"
-      >sllt&#39;s blog</a
-    >
-  </div>
-  <div class="header-subtitle"></div>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>使用Python模拟Lambda演算 — sllt</title><meta name="description" content="我们将从下面这段程序开始：
+python Copy 1for i in range(1, 20): 2 if i % 3 == 0 or i % 5 == 0: 3 print(i) 这段程序会打印出 1 到 19 之间能被 3 或 5 整除的数字：
+text Copy 13 25 36 49 510 612 715 …" />
+  <script>
+    (function () {
+      var saved = localStorage.getItem('blog_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', saved);
+    })();
+  </script>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script></head>
+<body><aside class="margin-toc" aria-label="Table of Contents">
+    <div class="margin-toc-title">On this page</div>
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-数字与基础算术">1. 数字与基础算术</a>
+      <ul>
+        <li><a href="#用调用次数表示自然数">用“调用次数”表示自然数</a></li>
+        <li><a href="#辅助函数-to_integer">辅助函数 <code>to_integer</code></a></li>
+        <li><a href="#后继加法与乘法">后继、加法与乘法</a></li>
+        <li><a href="#第一次替换消灭数字字面量">第一次替换：消灭数字字面量</a></li>
+      </ul>
+    </li>
+    <li><a href="#2-布尔值条件分支与逻辑运算">2. 布尔值、条件分支与逻辑运算</a>
+      <ul>
+        <li><a href="#布尔值的本质是二选一">布尔值的本质是“二选一”</a></li>
+        <li><a href="#条件选择-if">条件选择 <code>IF</code></a></li>
+        <li><a href="#逻辑运算notandor">逻辑运算：<code>NOT</code>、<code>AND</code>、<code>OR</code></a></li>
+      </ul>
+    </li>
+    <li><a href="#3-判零有序对与大小比较">3. 判零、有序对与大小比较</a>
+      <ul>
+        <li><a href="#判零函数-is_zero">判零函数 <code>IS_ZERO</code></a></li>
+        <li><a href="#用有序对pair巧妙实现减一">用有序对（Pair）巧妙实现“减一”</a></li>
+        <li><a href="#小于等于-leq-与相等-eq">小于等于 <code>LEQ</code> 与相等 <code>EQ</code></a></li>
+      </ul>
+    </li>
+    <li><a href="#4-递归z-组合子与取余运算">4. 递归、Z 组合子与取余运算</a>
+      <ul>
+        <li><a href="#障碍一python-的及早求值与惰性分支">障碍一：Python 的及早求值与惰性分支</a></li>
+        <li><a href="#障碍二匿名函数如何递归从自应用到-z-组合子">障碍二：匿名函数如何递归（从自应用到 Z 组合子）</a></li>
+      </ul>
+    </li>
+    <li><a href="#5-列表与区间-range">5. 列表与区间 <code>RANGE</code></a>
+      <ul>
+        <li><a href="#用有序对构造链表">用有序对构造链表</a></li>
+        <li><a href="#实现区间函数-range">实现区间函数 <code>RANGE</code></a></li>
+        <li><a href="#第二次替换接管区间取余与逻辑判断">第二次替换：接管区间、取余与逻辑判断</a></li>
+      </ul>
+    </li>
+    <li><a href="#6-高阶遍历与最终组合">6. 高阶遍历与最终组合</a>
+      <ul>
+        <li><a href="#filtermap-与-each"><code>FILTER</code>、<code>MAP</code> 与 <code>EACH</code></a></li>
+        <li><a href="#最终形态">最终形态</a></li>
+        <li><a href="#如果连变量名都不允许用呢">如果连变量名都不允许用呢？</a></li>
+      </ul>
+    </li>
+    <li><a href="#7-完整代码">7. 完整代码</a></li>
+  </ul>
+</nav>
+  </aside>
+<div class="wrapper">
+    <header class="site-header">
+  <a href="/" class="site-brand">
+    <span class="brand-mark">s</span>
+    <span>sllt</span>
+  </a>
+  <nav class="site-nav">
+    <a href="/" class="active">Posts</a>
+    <a href="/tags/">Tags</a>
+    <a href="/about/">About</a>
+    <button class="theme-btn" data-action="theme" type="button" aria-label="Toggle theme"></button>
+  </nav>
 </header>
-<div class="row end-md center-xs header-items">
-  
-</div>
-<div class="row end-xs">
-   
-</div>
-<div class="header-line"></div>
 
+    <a href="/" class="back-nav">← All posts</a>
+
+<main>
+  <article>
+    <header class="article-header">
+      <div class="article-meta">
+        <time datetime="2016-04-24">2016-04-24</time>
+        <span>·</span>
+        <span>12 min read</span>
+        <span>·</span>
+        <div class="article-tags">
+          <a href="/tags/#python" class="meta-tag">#python</a>
+          <a href="/tags/#lambda-calculus" class="meta-tag">#lambda-calculus</a>
+          <a href="/tags/#church-encoding" class="meta-tag">#church-encoding</a>
+          <a href="/tags/#lambda" class="meta-tag">#lambda</a>
         </div>
-        <header class="post-header">
-          <h1 class="post-title">使用Python模拟Lambda演算</h1>
-          
-          <div class="row post-desc">
-            <div class="col-xs-6">
-              
-              <time class="post-date" datetime="2016-04-24 15:34:47 CST">
-                24 Apr 2016
-              </time>
-              
-            </div>
-            <div class="col-xs-6">
-              
-              <div class="post-author">
-                <a target="_blank" href="https://github.com/sllt">@sllt</a>
-              </div>
-              
-            </div>
-          </div>
-          
-        </header>
-
-        <div class="post-content markdown-body">
-          
-          <p>我们将从下面这段程序开始：</p>
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-python" data-lang="python"><span style="color:#204a87;font-weight:bold">for</span> <span style="color:#000">i</span> <span style="color:#204a87;font-weight:bold">in</span> <span style="color:#204a87">range</span><span style="color:#000;font-weight:bold">(</span><span style="color:#0000cf;font-weight:bold">1</span><span style="color:#000;font-weight:bold">,</span><span style="color:#0000cf;font-weight:bold">20</span><span style="color:#000;font-weight:bold">):</span>
-    <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">i</span> <span style="color:#ce5c00;font-weight:bold">%</span> <span style="color:#0000cf;font-weight:bold">3</span> <span style="color:#ce5c00;font-weight:bold">==</span> <span style="color:#0000cf;font-weight:bold">0</span> <span style="color:#204a87;font-weight:bold">or</span> <span style="color:#000">i</span> <span style="color:#ce5c00;font-weight:bold">%</span> <span style="color:#0000cf;font-weight:bold">5</span> <span style="color:#ce5c00;font-weight:bold">==</span> <span style="color:#0000cf;font-weight:bold">0</span><span style="color:#000;font-weight:bold">:</span>
-        <span style="color:#204a87;font-weight:bold">print</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">i</span><span style="color:#000;font-weight:bold">)</span>
-</code></pre></div><p>这段程序将打印出1~19之间能被3或5整除的数字。我们将不使用任何Python内建类型及方法来实现上面程序的功能。</p>
-<h3 id="1-数字">1 数字</h3>
-<p>数字的特征可以简单的描述为某一个动作的迭代。比如吃了6个苹果，6就表示重复的进行了n次的吃这个动作。相同的，我们也可以在程序中用某一个函数被调用了几次来表示数字。</p>
-<p>比如数字<code>1</code>可以表示成如下代码：</p>
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-python" data-lang="python"><span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">one</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">p</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">x</span><span style="color:#000;font-weight:bold">):</span>
-  <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#000">p</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">x</span><span style="color:#000;font-weight:bold">)</span>
-</code></pre></div><p>依照同样的定义，我们可以这么表示<code>2</code>:</p>
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-python" data-lang="python"><span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">two</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">p</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">x</span><span style="color:#000;font-weight:bold">):</span>
-   <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#000">p</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">p</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">x</span><span style="color:#000;font-weight:bold">))</span>
-</code></pre></div><p>那么， 如何表示<code>0</code>呢？ 我们传入<code>p</code>但是不进行调用，就可以表示0了：</p>
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-python" data-lang="python"><span style="color:#204a87;font-weight:bold">def</span> <span style="color:#000">zero</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">p</span><span style="color:#000;font-weight:bold">,</span> <span style="color:#000">x</span><span style="color:#000;font-weight:bold">):</span>
-    <span style="color:#204a87;font-weight:bold">return</span> <span style="color:#000">x</span>
-</code></pre></div><p>用<code>lambda</code>表达式表示如下：</p>
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-python" data-lang="python"><span style="color:#000">ZERO</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#204a87;font-weight:bold">lambda</span> <span style="color:#000">p</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">lambda</span> <span style="color:#000">x</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">x</span>
-<span style="color:#000">ONE</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#204a87;font-weight:bold">lambda</span> <span style="color:#000">p</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">lambda</span> <span style="color:#000">x</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">p</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">x</span><span style="color:#000;font-weight:bold">)</span>
-<span style="color:#000">TWO</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#204a87;font-weight:bold">lambda</span> <span style="color:#000">p</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">lambda</span> <span style="color:#000">x</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">p</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">p</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">x</span><span style="color:#000;font-weight:bold">))</span>
-<span style="color:#000">THREE</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#204a87;font-weight:bold">lambda</span> <span style="color:#000">p</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">lambda</span> <span style="color:#000">x</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">p</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">p</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">p</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">x</span><span style="color:#000;font-weight:bold">)))</span>
-</code></pre></div><p>让我们来实现一个函数来将这些lambda表达式这换成Python的数字，依次来支持一些其他特性，比如使用<code>range</code>函数：</p>
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-python" data-lang="python"><span style="color:#000">to_integer</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#204a87;font-weight:bold">lambda</span> <span style="color:#000">n</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">n</span><span style="color:#000;font-weight:bold">(</span><span style="color:#204a87;font-weight:bold">lambda</span> <span style="color:#000">x</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">x</span><span style="color:#ce5c00;font-weight:bold">+</span><span style="color:#0000cf;font-weight:bold">1</span><span style="color:#000;font-weight:bold">)(</span><span style="color:#0000cf;font-weight:bold">0</span><span style="color:#000;font-weight:bold">)</span>
-</code></pre></div><p>同样的，<code>5</code>、<code>20</code>可以这么表示：</p>
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-python" data-lang="python"><span style="color:#000">FIVE</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#204a87;font-weight:bold">lambda</span> <span style="color:#000">p</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">lambda</span> <span style="color:#000">x</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">p</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">p</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">p</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">p</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">p</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">x</span><span style="color:#000;font-weight:bold">)))))</span>
-
-<span style="color:#000">TWENTY</span> <span style="color:#ce5c00;font-weight:bold">=</span> <span style="color:#204a87;font-weight:bold">lambda</span> <span style="color:#000">p</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#204a87;font-weight:bold">lambda</span> <span style="color:#000">x</span><span style="color:#000;font-weight:bold">:</span> <span style="color:#000">p</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">p</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">p</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">p</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">p</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">p</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">p</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">p</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">p</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">p</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">p</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">p</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">p</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">p</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">p</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">p</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">p</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">p</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">p</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">p</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">x</span><span style="color:#000;font-weight:bold">))))))))))))))))))))</span>
-</code></pre></div><p>现在，我们的程序可以这么表示：</p>
-<div class="highlight"><pre style="background-color:#f8f8f8;-moz-tab-size:2;-o-tab-size:2;tab-size:2"><code class="language-python" data-lang="python"><span style="color:#204a87;font-weight:bold">for</span> <span style="color:#000">i</span> <span style="color:#204a87;font-weight:bold">in</span> <span style="color:#204a87">range</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">to_integer</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">ONE</span><span style="color:#000;font-weight:bold">),</span> <span style="color:#000">to_integer</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">TWENTY</span><span style="color:#000;font-weight:bold">)):</span>
-    <span style="color:#204a87;font-weight:bold">if</span> <span style="color:#000">i</span> <span style="color:#ce5c00;font-weight:bold">%</span> <span style="color:#000">to_integer</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">THREE</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#ce5c00;font-weight:bold">==</span> <span style="color:#000">to_integer</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">ZERO</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#204a87;font-weight:bold">or</span> <span style="color:#000">i</span> <span style="color:#ce5c00;font-weight:bold">%</span> <span style="color:#000">to_integer</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">FIVE</span><span style="color:#000;font-weight:bold">)</span> <span style="color:#ce5c00;font-weight:bold">==</span> <span style="color:#000">to_integer</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">ZERO</span><span style="color:#000;font-weight:bold">):</span>
-        <span style="color:#204a87;font-weight:bold">print</span><span style="color:#000;font-weight:bold">(</span><span style="color:#000">i</span><span style="color:#000;font-weight:bold">)</span>
-</code></pre></div><h3 id="2-布尔值">2 布尔值</h3>
-<p>待写&hellip;</p>
-
-        </div>
-
-        <div class="row middle-xs">
-          <div class="col-xs-12">
-            
-            <div class="post-category">
-              <a href="/categories/python/">
-                python
-              </a>
-            </div>
-            
-            <div class="post-category">
-              <a href="/categories/lambda/">
-                lambda
-              </a>
-            </div>
-            
-          </div>
-        </div>
-        
-          <div class="row">
-            <div class="col-xs-12">
-              
-            </div>
-          </div>
-
-          
-
-
-
-          
-          
-          <div style="height: 50px;"></div>
-          
-        
-
-        <div class="site-footer">
-  
-  
-</div>
-
       </div>
+      <h1 class="article-title">使用Python模拟Lambda演算</h1>
+    </header>
+    <details class="inline-toc">
+      <summary>目录 · Table of Contents</summary>
+      <nav class="toc-nav">
+  <ul>
+    <li><a href="#1-数字与基础算术">1. 数字与基础算术</a>
+      <ul>
+        <li><a href="#用调用次数表示自然数">用“调用次数”表示自然数</a></li>
+        <li><a href="#辅助函数-to_integer">辅助函数 <code>to_integer</code></a></li>
+        <li><a href="#后继加法与乘法">后继、加法与乘法</a></li>
+        <li><a href="#第一次替换消灭数字字面量">第一次替换：消灭数字字面量</a></li>
+      </ul>
+    </li>
+    <li><a href="#2-布尔值条件分支与逻辑运算">2. 布尔值、条件分支与逻辑运算</a>
+      <ul>
+        <li><a href="#布尔值的本质是二选一">布尔值的本质是“二选一”</a></li>
+        <li><a href="#条件选择-if">条件选择 <code>IF</code></a></li>
+        <li><a href="#逻辑运算notandor">逻辑运算：<code>NOT</code>、<code>AND</code>、<code>OR</code></a></li>
+      </ul>
+    </li>
+    <li><a href="#3-判零有序对与大小比较">3. 判零、有序对与大小比较</a>
+      <ul>
+        <li><a href="#判零函数-is_zero">判零函数 <code>IS_ZERO</code></a></li>
+        <li><a href="#用有序对pair巧妙实现减一">用有序对（Pair）巧妙实现“减一”</a></li>
+        <li><a href="#小于等于-leq-与相等-eq">小于等于 <code>LEQ</code> 与相等 <code>EQ</code></a></li>
+      </ul>
+    </li>
+    <li><a href="#4-递归z-组合子与取余运算">4. 递归、Z 组合子与取余运算</a>
+      <ul>
+        <li><a href="#障碍一python-的及早求值与惰性分支">障碍一：Python 的及早求值与惰性分支</a></li>
+        <li><a href="#障碍二匿名函数如何递归从自应用到-z-组合子">障碍二：匿名函数如何递归（从自应用到 Z 组合子）</a></li>
+      </ul>
+    </li>
+    <li><a href="#5-列表与区间-range">5. 列表与区间 <code>RANGE</code></a>
+      <ul>
+        <li><a href="#用有序对构造链表">用有序对构造链表</a></li>
+        <li><a href="#实现区间函数-range">实现区间函数 <code>RANGE</code></a></li>
+        <li><a href="#第二次替换接管区间取余与逻辑判断">第二次替换：接管区间、取余与逻辑判断</a></li>
+      </ul>
+    </li>
+    <li><a href="#6-高阶遍历与最终组合">6. 高阶遍历与最终组合</a>
+      <ul>
+        <li><a href="#filtermap-与-each"><code>FILTER</code>、<code>MAP</code> 与 <code>EACH</code></a></li>
+        <li><a href="#最终形态">最终形态</a></li>
+        <li><a href="#如果连变量名都不允许用呢">如果连变量名都不允许用呢？</a></li>
+      </ul>
+    </li>
+    <li><a href="#7-完整代码">7. 完整代码</a></li>
+  </ul>
+</nav>
+    </details>
+
+    <div class="prose">
+      <p>我们将从下面这段程序开始：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
     </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">for i in range(1, 20):</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">    if i % 3 == 0 or i % 5 == 0:</span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc">        print(i)</span></div>
+  </div>
+</div>
+<p>这段程序会打印出 1 到 19 之间能被 3 或 5 整除的数字：</p>
+<div class="code-block" data-lang="text">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">text</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">3</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">5</span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc">6</span></div>
+    <div class="code-line"><span class="ln">4</span><span class="lc">9</span></div>
+    <div class="code-line"><span class="ln">5</span><span class="lc">10</span></div>
+    <div class="code-line"><span class="ln">6</span><span class="lc">12</span></div>
+    <div class="code-line"><span class="ln">7</span><span class="lc">15</span></div>
+    <div class="code-line"><span class="ln">8</span><span class="lc">18</span></div>
+  </div>
+</div>
+<p>如果我们定下一个极端的限制：<strong>不允许使用 Python 内置的数字、布尔值、列表，不允许使用 <code>+</code>、<code>-</code>、<code>%</code>、<code>==</code>、<code>or</code> 等运算符，也不允许使用 <code>if</code>、<code>for</code>、<code>range</code> 甚至 <code>def</code> 具名函数——唯一允许使用的只有单参数的匿名函数 <code>lambda x: ...</code> 以及函数调用 <code>f(x)</code></strong>，还能实现上面这段程序吗？</p>
+<p>这正是阿隆佐·邱奇（Alonzo Church）在 20 世纪 30 年代提出 <strong>Lambda 演算（λ-calculus）</strong> 时所展示的核心思想：在只有“函数定义”与“函数调用”的世界里，函数本身就足以编码自然数、布尔值、算术运算、条件分支、递归乃至数据结构。这种仅用函数来构造数据与控制流的方法称为<strong>邱奇编码（Church Encoding）</strong>。</p>
+<p>接下来，我们就以开头的 3 行代码为主线，每用 <code>lambda</code> 造出一个零件，就立刻替换掉原程序中的一部分，直到整段程序的计算过程完全由函数构成。</p>
+<p>完整代码可以在文末查看，也可以直接下载 <a href="/code/lambda_calculus.py"><code>lambda_calculus.py</code></a>。</p>
+<h2 id="1-数字与基础算术">1. 数字与基础算术</h2>
+<h3 id="用调用次数表示自然数">用“调用次数”表示自然数</h3>
+<p>数字的本质可以简单地描述为某一个动作的重复次数。比如“吃了 6 个苹果”，<code>6</code> 就代表重复执行了 6 次“吃”这个动作。同样地，在程序里，我们可以用<strong>某个函数 <code>p</code> 被调用了几次</strong>来表示数字。</p>
+<p>比如数字 <code>1</code> 表示对初始值 <code>x</code> 调用 1 次 <code>p</code>：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">def one(p, x):</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">    return p(x)</span></div>
+  </div>
+</div>
+<p>依照同样的定义，数字 <code>2</code> 就是调用 2 次 <code>p</code>：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">def two(p, x):</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">    return p(p(x))</span></div>
+  </div>
+</div>
+<p>那么如何表示 <code>0</code> 呢？传入函数 <code>p</code> 但一次都不调用，直接返回 <code>x</code>，就表示 <code>0</code> 了：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">def zero(p, x):</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">    return x</span></div>
+  </div>
+</div>
+<p>在 Lambda 演算中，每个函数只接收<strong>一个</strong>参数。如果要接收多个参数（例如 <code>p</code> 和 <code>x</code>），就让外层函数先接收 <code>p</code>，并返回一个接收 <code>x</code> 的新函数（即<strong>柯里化，Currying</strong>）。用 Python 的 <code>lambda</code> 表达式写出来就是：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">ZERO  = lambda p: lambda x: x</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">ONE   = lambda p: lambda x: p(x)</span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc">TWO   = lambda p: lambda x: p(p(x))</span></div>
+    <div class="code-line"><span class="ln">4</span><span class="lc">THREE = lambda p: lambda x: p(p(p(x)))</span></div>
+  </div>
+</div>
+<p>调用时依次传入两个参数即可，例如 <code>THREE(p)(x)</code> 会先算出 <code>THREE(p)</code> 得到一个新函数，再把 <code>x</code> 传进去，最终返回 <code>p(p(p(x)))</code>。</p>
+<h3 id="辅助函数-to_integer">辅助函数 <code>to_integer</code></h3>
+<p>由于 <code>ZERO</code>、<code>ONE</code>、<code>TWO</code> 本质上都是函数，直接打印它们只会看到 <code>&lt;function &lt;lambda&gt; at 0x...&gt;</code>。为了验证这些函数的确表示对应的数字，也为了让它们能暂时嵌回原 Python 程序中充当“脚手架”，我们可以写一个辅助函数 <code>to_integer</code>，把 <code>lambda x: x + 1</code> 当作 <code>p</code>、<code>0</code> 当作初始值 <code>x</code> 传进去：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">to_integer = lambda n: n(lambda x: x &#43; 1)(0)</span></div>
+  </div>
+</div>
+<p>一个数字 <code>n</code> 内部把 <code>p</code> 调用了多少次，<code>0</code> 就会被加一多少次：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">&gt;&gt;&gt; to_integer(ZERO)</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">0</span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc">&gt;&gt;&gt; to_integer(THREE)</span></div>
+    <div class="code-line"><span class="ln">4</span><span class="lc">3</span></div>
+  </div>
+</div>
+<h3 id="后继加法与乘法">后继、加法与乘法</h3>
+<p>如果继续按上面的方式手写原程序里用到的 <code>5</code> 和 <code>20</code>，代码会变成这样：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">FIVE = lambda p: lambda x: p(p(p(p(p(x)))))</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc">TWENTY = lambda p: lambda x: p(p(p(p(p(p(p(p(p(p(p(p(p(p(p(p(p(p(p(p(x))))))))))))))))))))</span></div>
+  </div>
+</div>
+<p>手写 20 层括号已经让人眼花缭乱了。与其数括号，不如直接用函数实现“加一”和算术运算：</p>
+<ul>
+<li>
+<p><strong>后继函数 <code>SUCC</code>（加 1）</strong>：既然 <code>n(p)(x)</code> 已经调用了 <code>n</code> 次 <code>p</code>，那么在结果外面再套一层 <code>p(...)</code>，就等于调用了 <code>n + 1</code> 次：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">SUCC = lambda n: lambda p: lambda x: p(n(p)(x))</span></div>
+  </div>
+</div>
+</li>
+<li>
+<p><strong>加法 <code>ADD</code>（<code>m + n</code>）</strong>：对数字 <code>m</code> 重复调用 <code>n</code> 次“加 1”函数 <code>SUCC</code>，得到的就是 <code>m + n</code>：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">ADD = lambda m: lambda n: n(SUCC)(m)</span></div>
+  </div>
+</div>
+</li>
+<li>
+<p><strong>乘法 <code>MULTIPLY</code>（<code>m * n</code>）</strong>：<code>n(p)</code> 是一个“把 <code>p</code> 调用 <code>n</code> 次”的新函数；再把 <code>n(p)</code> 传给 <code>m</code>，相当于将“调用 <code>n</code> 次 <code>p</code>”这个动作重复执行 <code>m</code> 次，一共调用 <code>m * n</code> 次：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">MULTIPLY = lambda m: lambda n: lambda p: m(n(p))</span></div>
+  </div>
+</div>
+</li>
+<li>
+<p><strong>幂运算 <code>POWER</code>（<code>m ** n</code>）</strong>：将 <code>m</code> 自身重复应用 <code>n</code> 次：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">POWER = lambda m: lambda n: n(m)</span></div>
+  </div>
+</div>
+</li>
+</ul>
+<p>有了 <code>SUCC</code> 和 <code>MULTIPLY</code>，我们就不需要手写长串嵌套括号了：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">ONE    = SUCC(ZERO)</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">TWO    = SUCC(ONE)</span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc">THREE  = SUCC(TWO)</span></div>
+    <div class="code-line"><span class="ln">4</span><span class="lc">FOUR   = SUCC(THREE)</span></div>
+    <div class="code-line"><span class="ln">5</span><span class="lc">FIVE   = SUCC(FOUR)</span></div>
+    <div class="code-line"><span class="ln">6</span><span class="lc">TEN    = MULTIPLY(TWO)(FIVE)</span></div>
+    <div class="code-line"><span class="ln">7</span><span class="lc">TWENTY = MULTIPLY(FOUR)(FIVE)</span></div>
+    <div class="code-line"><span class="ln">8</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">9</span><span class="lc">&gt;&gt;&gt; to_integer(TWENTY)</span></div>
+    <div class="code-line"><span class="ln">10</span><span class="lc">20</span></div>
+    <div class="code-line"><span class="ln">11</span><span class="lc">&gt;&gt;&gt; to_integer(ADD(TEN)(FIVE))</span></div>
+    <div class="code-line"><span class="ln">12</span><span class="lc">15</span></div>
+  </div>
+</div>
+<h3 id="第一次替换消灭数字字面量">第一次替换：消灭数字字面量</h3>
+<p>现在，我们可以把原程序里的所有数字都替换成刚刚定义的 <code>lambda</code> 函数：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">for i in range(to_integer(ONE), to_integer(TWENTY)):</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">    if i % to_integer(THREE) == to_integer(ZERO) or i % to_integer(FIVE) == to_integer(ZERO):</span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc">        print(i)</span></div>
+  </div>
+</div>
+<p>运行结果与原程序完全一致。</p>
+<hr>
+<h2 id="2-布尔值条件分支与逻辑运算">2. 布尔值、条件分支与逻辑运算</h2>
+<h3 id="布尔值的本质是二选一">布尔值的本质是“二选一”</h3>
+<p>接下来我们要替换程序中的布尔值、<code>if</code> 和 <code>or</code>。</p>
+<p>先思考一个问题：我们在程序里为什么需要 <code>True</code> 和 <code>False</code>？归根结底，布尔值的唯一用途就是在两个分支中<strong>做出选择</strong>——如果为真就选第一个分支，如果为假就选第二个分支。</p>
+<p>因此，我们可以直接把布尔值定义成接收两个参数、并返回其中一个参数的选择函数：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">TRUE  = lambda x: lambda y: x</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">FALSE = lambda x: lambda y: y</span></div>
+  </div>
+</div>
+<ul>
+<li><code>TRUE</code> 接收两个参数 <code>x</code> 和 <code>y</code>，永远返回第一个参数 <code>x</code>；</li>
+<li><code>FALSE</code> 接收两个参数 <code>x</code> 和 <code>y</code>，永远返回第二个参数 <code>y</code>。</li>
+</ul>
+<p>同样写一个辅助函数 <code>to_boolean</code> 来观察它们：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">to_boolean = lambda b: b(True)(False)</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc">&gt;&gt;&gt; to_boolean(TRUE)</span></div>
+    <div class="code-line"><span class="ln">4</span><span class="lc">True</span></div>
+    <div class="code-line"><span class="ln">5</span><span class="lc">&gt;&gt;&gt; to_boolean(FALSE)</span></div>
+    <div class="code-line"><span class="ln">6</span><span class="lc">False</span></div>
+  </div>
+</div>
+<h3 id="条件选择-if">条件选择 <code>IF</code></h3>
+<p>既然 <code>TRUE</code> 和 <code>FALSE</code> 自己就已经会做“二选一”了，那么 <code>IF(b)(x)(y)</code> 要做的事情其实非常简单——直接把真分支 <code>x</code> 和假分支 <code>y</code> 交给布尔值 <code>b</code> 去选：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">IF = lambda b: lambda x: lambda y: b(x)(y)</span></div>
+  </div>
+</div>
+<p>仔细看 <code>lambda x: lambda y: b(x)(y)</code>：它接收 <code>x</code> 和 <code>y</code> 并原封不动地传给 <code>b</code>，这和 <code>b</code> 本身的行为完全等价（在 Lambda 演算中称为 η-归约）。因此 <code>IF</code> 可以直接化简为恒等函数：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">IF = lambda b: b</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc">&gt;&gt;&gt; IF(TRUE)(&#34;happy&#34;)(&#34;sad&#34;)</span></div>
+    <div class="code-line"><span class="ln">4</span><span class="lc">&#39;happy&#39;</span></div>
+    <div class="code-line"><span class="ln">5</span><span class="lc">&gt;&gt;&gt; IF(FALSE)(&#34;happy&#34;)(&#34;sad&#34;)</span></div>
+    <div class="code-line"><span class="ln">6</span><span class="lc">&#39;sad&#39;</span></div>
+  </div>
+</div>
+<h3 id="逻辑运算notandor">逻辑运算：<code>NOT</code>、<code>AND</code>、<code>OR</code></h3>
+<p>理解了布尔值就是“选择器”之后，逻辑取反、逻辑与、逻辑或就完全不需要死记硬背，顺着“怎么选”就能写出来：</p>
+<ul>
+<li>
+<p><strong><code>NOT(b)</code></strong>：如果 <code>b</code> 为真，就选第 1 个参数 <code>FALSE</code>；如果 <code>b</code> 为假，就选第 2 个参数 <code>TRUE</code>：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">NOT = lambda b: b(FALSE)(TRUE)</span></div>
+  </div>
+</div>
+</li>
+<li>
+<p><strong><code>AND(a)(b)</code></strong>：如果 <code>a</code> 为真，最终结果取决于 <code>b</code>（选第 1 个参数 <code>b</code>）；如果 <code>a</code> 为假，结果必定为假（选第 2 个参数 <code>FALSE</code>）：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">AND = lambda a: lambda b: a(b)(FALSE)</span></div>
+  </div>
+</div>
+</li>
+<li>
+<p><strong><code>OR(a)(b)</code></strong>：如果 <code>a</code> 为真，结果必定为真（选第 1 个参数 <code>TRUE</code>）；如果 <code>a</code> 为假，最终结果取决于 <code>b</code>（选第 2 个参数 <code>b</code>）：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">OR = lambda a: lambda b: a(TRUE)(b)</span></div>
+  </div>
+</div>
+</li>
+</ul>
+<p>验证一下：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">&gt;&gt;&gt; to_boolean(NOT(TRUE))</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">False</span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc">&gt;&gt;&gt; to_boolean(AND(TRUE)(FALSE))</span></div>
+    <div class="code-line"><span class="ln">4</span><span class="lc">False</span></div>
+    <div class="code-line"><span class="ln">5</span><span class="lc">&gt;&gt;&gt; to_boolean(OR(FALSE)(TRUE))</span></div>
+    <div class="code-line"><span class="ln">6</span><span class="lc">True</span></div>
+  </div>
+</div>
+<hr>
+<h2 id="3-判零有序对与大小比较">3. 判零、有序对与大小比较</h2>
+<h3 id="判零函数-is_zero">判零函数 <code>IS_ZERO</code></h3>
+<p>原程序里有 <code>i % 3 == 0</code>。怎样判断一个数字 <code>n</code> 是不是 <code>ZERO</code>？</p>
+<p>回顾数字的定义：<code>n(p)(x)</code> 会从初始值 <code>x</code> 出发，把函数 <code>p</code> 重复调用 <code>n</code> 次。
+如果我们把初始值 <code>x</code> 设为 <code>TRUE</code>，而把函数 <code>p</code> 设为 <code>lambda _: FALSE</code>（不管传入什么，永远返回 <code>FALSE</code>）：</p>
+<ul>
+<li>当 <code>n</code> 是 <code>ZERO</code> 时，<code>p</code> 一次都不会被调用，直接返回初始值 <code>TRUE</code>；</li>
+<li>当 <code>n</code> 大于 0 时，<code>p</code> 至少被调用一次，结果就永远变成了 <code>FALSE</code>。</li>
+</ul>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">IS_ZERO = lambda n: n(lambda _: FALSE)(TRUE)</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc">&gt;&gt;&gt; to_boolean(IS_ZERO(ZERO))</span></div>
+    <div class="code-line"><span class="ln">4</span><span class="lc">True</span></div>
+    <div class="code-line"><span class="ln">5</span><span class="lc">&gt;&gt;&gt; to_boolean(IS_ZERO(THREE))</span></div>
+    <div class="code-line"><span class="ln">6</span><span class="lc">False</span></div>
+  </div>
+</div>
+<h3 id="用有序对pair巧妙实现减一">用有序对（Pair）巧妙实现“减一”</h3>
+<p>除了判零，后面的取余 <code>%</code> 和区间 <code>range</code> 都需要比较两个数的大小（<code>m &lt;= n</code>）。
+由于我们只表示自然数（最小为 0，没有负数），如果定义减法 <code>m - n</code> 在不够减时返回 <code>0</code>，那么 <strong><code>m &lt;= n</code> 就等价于 <code>m - n == 0</code></strong>！</p>
+<p>而减法 <code>SUB(m)(n)</code> 就是对 <code>m</code> 重复调用 <code>n</code> 次“减一”函数（前驱函数 <code>PRED</code>）。
+问题是：<strong>加一（<code>SUCC</code>）很容易，只要多调用一次 <code>p</code>；但“减一”（<code>PRED</code>）该怎么做？</strong> 一个数字 <code>n</code> 只知道把函数重复执行 <code>n</code> 次，一旦执行了，我们没法让时光倒流去“撤销最后一次调用”。</p>
+<p>数学家斯蒂芬·克莱尼（Stephen Kleene）在看牙医时想出了一个极其漂亮的方法——<strong>用有序对（Pair）做滑动窗口</strong>。</p>
+<p>我们先造出最基础的复合数据结构 <code>PAIR</code>。它把两个值 <code>x</code> 和 <code>y</code> 保存在闭包里，等待一个选择器函数 <code>f</code>（比如 <code>TRUE</code> 或 <code>FALSE</code>）来取出左边或右边的值：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">PAIR  = lambda x: lambda y: lambda f: f(x)(y)</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">LEFT  = lambda p: p(TRUE)</span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc">RIGHT = lambda p: p(FALSE)</span></div>
+    <div class="code-line"><span class="ln">4</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">5</span><span class="lc">&gt;&gt;&gt; LEFT(PAIR(&#34;hello&#34;)(&#34;world&#34;))</span></div>
+    <div class="code-line"><span class="ln">6</span><span class="lc">&#39;hello&#39;</span></div>
+    <div class="code-line"><span class="ln">7</span><span class="lc">&gt;&gt;&gt; RIGHT(PAIR(&#34;hello&#34;)(&#34;world&#34;))</span></div>
+    <div class="code-line"><span class="ln">8</span><span class="lc">&#39;world&#39;</span></div>
+  </div>
+</div>
+<p>现在，想象一个装有两个数字的滑动窗口 <code>(左, 右)</code>，初始状态是 <code>(0, 0)</code>。
+我们定义一个滑动函数 <code>SLIDE</code>：每次接收当前有序对 <code>(a, b)</code>，返回一个新的有序对 <code>(b, b + 1)</code>（即把原来的右值移到左边，右边放上“右值 + 1”）：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">SLIDE = lambda p: PAIR(RIGHT(p))(SUCC(RIGHT(p)))</span></div>
+  </div>
+</div>
+<p>看看从 <code>(0, 0)</code> 开始，连续调用 <code>SLIDE</code> 会发生什么：</p>
+<div class="code-block" data-lang="text">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">text</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">调用 0 次： (0, 0)  -&gt; 左边是 0</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">调用 1 次： (0, 1)  -&gt; 左边是 0</span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc">调用 2 次： (1, 2)  -&gt; 左边是 1</span></div>
+    <div class="code-line"><span class="ln">4</span><span class="lc">调用 3 次： (2, 3)  -&gt; 左边是 2</span></div>
+    <div class="code-line"><span class="ln">5</span><span class="lc">...</span></div>
+    <div class="code-line"><span class="ln">6</span><span class="lc">调用 n 次： (n-1, n) -&gt; 左边恰好是 n - 1！</span></div>
+  </div>
+</div>
+<p>也就是说，让数字 <code>n</code> 对初始有序对 <code>PAIR(ZERO)(ZERO)</code> 重复执行 <code>n</code> 次 <code>SLIDE</code>，最后取<strong>左边</strong>的元素，就得到了 <code>n - 1</code>（且 <code>0</code> 的前驱依然是 <code>0</code>）：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">PRED = lambda n: LEFT(n(SLIDE)(PAIR(ZERO)(ZERO)))</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">SUB  = lambda m: lambda n: n(PRED)(m)</span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">4</span><span class="lc">&gt;&gt;&gt; to_integer(PRED(FIVE))</span></div>
+    <div class="code-line"><span class="ln">5</span><span class="lc">4</span></div>
+    <div class="code-line"><span class="ln">6</span><span class="lc">&gt;&gt;&gt; to_integer(SUB(TWENTY)(FIVE))</span></div>
+    <div class="code-line"><span class="ln">7</span><span class="lc">15</span></div>
+    <div class="code-line"><span class="ln">8</span><span class="lc">&gt;&gt;&gt; to_integer(SUB(THREE)(FIVE))</span></div>
+    <div class="code-line"><span class="ln">9</span><span class="lc">0</span></div>
+  </div>
+</div>
+<h3 id="小于等于-leq-与相等-eq">小于等于 <code>LEQ</code> 与相等 <code>EQ</code></h3>
+<p>有了减法 <code>SUB</code> 和判零 <code>IS_ZERO</code>，大小比较就水到渠成了：</p>
+<ul>
+<li><strong>小于等于 <code>LEQ</code>（<code>m &lt;= n</code>）</strong>：检查 <code>m - n</code> 是否为 <code>0</code>；</li>
+<li><strong>相等 <code>EQ</code>（<code>m == n</code>）</strong>：同时满足 <code>m &lt;= n</code> 且 <code>n &lt;= m</code>。</li>
+</ul>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">LEQ = lambda m: lambda n: IS_ZERO(SUB(m)(n))</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">EQ  = lambda m: lambda n: AND(LEQ(m)(n))(LEQ(n)(m))</span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">4</span><span class="lc">&gt;&gt;&gt; to_boolean(LEQ(THREE)(FIVE))</span></div>
+    <div class="code-line"><span class="ln">5</span><span class="lc">True</span></div>
+    <div class="code-line"><span class="ln">6</span><span class="lc">&gt;&gt;&gt; to_boolean(EQ(FIVE)(FIVE))</span></div>
+    <div class="code-line"><span class="ln">7</span><span class="lc">True</span></div>
+    <div class="code-line"><span class="ln">8</span><span class="lc">&gt;&gt;&gt; to_boolean(EQ(THREE)(FIVE))</span></div>
+    <div class="code-line"><span class="ln">9</span><span class="lc">False</span></div>
+  </div>
+</div>
+<hr>
+<h2 id="4-递归z-组合子与取余运算">4. 递归、Z 组合子与取余运算</h2>
+<p>接下来要替换原程序里的取余运算 <code>i % 3</code> 和 <code>i % 5</code>。</p>
+<p>在没有内置除法和取余运算符的情况下，求 <code>m % n</code> 最直接的办法是<strong>重复相减</strong>：只要除数 <code>n &lt;= m</code>，就从 <code>m</code> 中减去一个 <code>n</code>，然后对剩下的数继续取余；当 <code>m &lt; n</code> 时，剩下的 <code>m</code> 就是余数。</p>
+<p>如果用普通 Python 函数来写，它是一个非常简单的递归函数：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">def mod(m, n):</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">    if n &lt;= m:</span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc">        return mod(m - n, n)</span></div>
+    <div class="code-line"><span class="ln">4</span><span class="lc">    else:</span></div>
+    <div class="code-line"><span class="ln">5</span><span class="lc">        return m</span></div>
+  </div>
+</div>
+<p>但如果我们直接把它改写成 <code>lambda</code>：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc"># 错误示范！</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">MOD = lambda m: lambda n: IF(LEQ(n)(m))(MOD(SUB(m)(n))(n))(m)</span></div>
+  </div>
+</div>
+<p>这段代码不仅违反了“不依赖变量名自引用”的规则，而且在 Python 里一运行就会立刻无限递归崩溃！原因有两个，我们逐一解决。</p>
+<h3 id="障碍一python-的及早求值与惰性分支">障碍一：Python 的及早求值与惰性分支</h3>
+<p>Python 采用<strong>严格求值（应用序，Applicative Order）</strong>：在调用任何函数之前，Python 会先把括号里的实参全部算出来。</p>
+<p>当我们写下 <code>IF(条件)(真分支)(假分支)</code> 时，还没等 <code>IF</code> 根据条件做出选择，Python 就已经把 <code>真分支</code> 和 <code>假分支</code> 统统执行了一遍！而在 <code>MOD</code> 中，<code>真分支</code> 包含递归调用 <code>MOD(SUB(m)(n))(n)</code>，这会导致不管 <code>LEQ(n)(m)</code> 是真是假，递归都会永无止境地进行下去。</p>
+<p>解决办法是<strong>延迟求值（Thunk）</strong>：把两个分支都用一层 <code>lambda _: ...</code> 包裹成函数。函数定义本身不会立即执行内部代码；等 <code>IF(条件)</code> 选出正确的那个分支函数之后，我们在最末尾再传一个占位的参数（例如 <code>(ZERO)</code>）去触发它：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">IF(LEQ(n)(m))(</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">    lambda _: ...  # 只有条件为 TRUE 时才会被调用</span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc">)(</span></div>
+    <div class="code-line"><span class="ln">4</span><span class="lc">    lambda _: m    # 只有条件为 FALSE 时才会被调用</span></div>
+    <div class="code-line"><span class="ln">5</span><span class="lc">)(ZERO)</span></div>
+  </div>
+</div>
+<h3 id="障碍二匿名函数如何递归从自应用到-z-组合子">障碍二：匿名函数如何递归（从自应用到 Z 组合子）</h3>
+<p>在纯粹的 Lambda 演算中，所有函数都是匿名的，函数体内部不能通过全局变量名 <code>MOD</code> 来调用自己。那没有名字的函数怎么递归？</p>
+<p><strong>第一步：把自己当作参数传给自己。</strong>
+既然不能从外部作用域找名字，我们可以给函数多加一个参数 <code>self</code>，在调用时把函数自己传进去：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">MOD_STEP = lambda self: lambda m: lambda n: IF(LEQ(n)(m))(</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">    lambda _: self(self)(SUB(m)(n))(n)</span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc">)(</span></div>
+    <div class="code-line"><span class="ln">4</span><span class="lc">    lambda _: m</span></div>
+    <div class="code-line"><span class="ln">5</span><span class="lc">)(ZERO)</span></div>
+    <div class="code-line"><span class="ln">6</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">7</span><span class="lc">&gt;&gt;&gt; to_integer(MOD_STEP(MOD_STEP)(TWENTY)(THREE))</span></div>
+    <div class="code-line"><span class="ln">8</span><span class="lc">2</span></div>
+  </div>
+</div>
+<p>看，<code>MOD_STEP</code> 内部完全没有引用任何外部函数名，仅仅靠 <code>self(self)</code> 就实现了递归！</p>
+<p><strong>第二步：把 <code>self(self)</code> 抽离成通用工具——Z 组合子。</strong>
+每次写递归函数都要手动传 <code>self(self)</code> 有些繁琐。在 Lambda 演算中，可以把这种“自我复制并传入”的模式提取成一个高阶函数，也就是著名的 <strong>Y 组合子（Y Combinator）</strong>：</p>
+<div class="code-block" data-lang="text">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">text</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">Y = λf. (λx. f (x x)) (λx. f (x x))</span></div>
+  </div>
+</div>
+<p>不过，和前面的 <code>IF</code> 一样，如果直接在严格求值的 Python 中写 <code>f(x(x))</code>，<code>x(x)</code> 会立刻无限展开。我们只需用同样的技巧，把 <code>x(x)</code> 用一层 <code>lambda y: x(x)(y)</code> 包起来延迟执行，就得到了适用于严格求值语言的 <strong>Z 组合子（Z Combinator）</strong>：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">Z = lambda f: (lambda x: f(lambda y: x(x)(y)))(lambda x: f(lambda y: x(x)(y)))</span></div>
+  </div>
+</div>
+<p>有了 <code>Z</code> 组合子，任何需要递归的函数只需写成 <code>Z(lambda recurse: ...)</code>，在函数体内直接调用 <code>recurse</code> 即可：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">MOD = Z(</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">    lambda recurse: lambda m: lambda n: IF(LEQ(n)(m))(</span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc">        lambda _: recurse(SUB(m)(n))(n)</span></div>
+    <div class="code-line"><span class="ln">4</span><span class="lc">    )(</span></div>
+    <div class="code-line"><span class="ln">5</span><span class="lc">        lambda _: m</span></div>
+    <div class="code-line"><span class="ln">6</span><span class="lc">    )(ZERO)</span></div>
+    <div class="code-line"><span class="ln">7</span><span class="lc">)</span></div>
+    <div class="code-line"><span class="ln">8</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">9</span><span class="lc">&gt;&gt;&gt; to_integer(MOD(TWENTY)(THREE))</span></div>
+    <div class="code-line"><span class="ln">10</span><span class="lc">2</span></div>
+    <div class="code-line"><span class="ln">11</span><span class="lc">&gt;&gt;&gt; to_integer(MOD(TWENTY)(FIVE))</span></div>
+    <div class="code-line"><span class="ln">12</span><span class="lc">0</span></div>
+  </div>
+</div>
+<p>再顺手定义判断整除的函数 <code>IS_DIVISIBLE_BY</code>（余数是否为 0）：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">IS_DIVISIBLE_BY = lambda d: lambda n: IS_ZERO(MOD(n)(d))</span></div>
+  </div>
+</div>
+<hr>
+<h2 id="5-列表与区间-range">5. 列表与区间 <code>RANGE</code></h2>
+<p>现在回头看最初的程序：数字、<code>%</code>、<code>== 0</code>、<code>or</code>、<code>if</code> 的替代品都已经齐备，只剩下 <code>range(1, 20)</code> 和 <code>for</code> 循环了。为了替换它们，我们需要用函数构造出<strong>列表（链表）</strong>。</p>
+<h3 id="用有序对构造链表">用有序对构造链表</h3>
+<p>前面在第 3 节我们已经实现了有序对 <code>PAIR</code>、<code>LEFT</code> 和 <code>RIGHT</code>。链表可以自然地建立在 <code>PAIR</code> 之上。</p>
+<p>我们可以把链表的每个节点表示成两层 <code>PAIR</code>：</p>
+<div class="code-block" data-lang="text">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">text</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">PAIR(是否为空)(PAIR(当前首元素)(剩余子链表))</span></div>
+  </div>
+</div>
+<ul>
+<li><strong>空列表 <code>EMPTY</code></strong>：第一个位置放 <code>TRUE</code> 表示列表为空（第二个位置放什么都可以，我们放 <code>TRUE</code>）；</li>
+<li><strong>在头部插入元素 <code>UNSHIFT</code></strong>：接收原列表 <code>l</code> 和新元素 <code>x</code>，返回一个新节点——第一个位置放 <code>FALSE</code>（表示非空），第二个位置放 <code>PAIR(x)(l)</code>；</li>
+<li><strong>判空 <code>IS_EMPTY</code></strong>：直接取外层 <code>PAIR</code> 的左值 <code>LEFT</code>；</li>
+<li><strong>取首元素 <code>FIRST</code></strong>：先用 <code>RIGHT</code> 取出内层 <code>PAIR</code>，再用 <code>LEFT</code> 取出首元素；</li>
+<li><strong>取剩余列表 <code>REST</code></strong>：先用 <code>RIGHT</code> 取出内层 <code>PAIR</code>，再用 <code>RIGHT</code> 取出剩余列表。</li>
+</ul>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">EMPTY    = PAIR(TRUE)(TRUE)</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">UNSHIFT  = lambda l: lambda x: PAIR(FALSE)(PAIR(x)(l))</span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc">IS_EMPTY = LEFT</span></div>
+    <div class="code-line"><span class="ln">4</span><span class="lc">FIRST    = lambda l: LEFT(RIGHT(l))</span></div>
+    <div class="code-line"><span class="ln">5</span><span class="lc">REST     = lambda l: RIGHT(RIGHT(l))</span></div>
+  </div>
+</div>
+<p>写一个辅助函数 <code>to_list</code>，方便把我们的链表转换成 Python 列表来观察：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">def to_list(l):</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">    result = []</span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc">    while not to_boolean(IS_EMPTY(l)):</span></div>
+    <div class="code-line"><span class="ln">4</span><span class="lc">        result.append(FIRST(l))</span></div>
+    <div class="code-line"><span class="ln">5</span><span class="lc">        l = REST(l)</span></div>
+    <div class="code-line"><span class="ln">6</span><span class="lc">    return result</span></div>
+  </div>
+</div>
+<p>测试一下构造列表 <code>[1, 2, 3]</code>：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">&gt;&gt;&gt; my_list = UNSHIFT(UNSHIFT(UNSHIFT(EMPTY)(THREE))(TWO))(ONE)</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">&gt;&gt;&gt; [to_integer(x) for x in to_list(my_list)]</span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc">[1, 2, 3]</span></div>
+  </div>
+</div>
+<h3 id="实现区间函数-range">实现区间函数 <code>RANGE</code></h3>
+<p>有了链表和 <code>Z</code> 组合子，我们可以递归地生成从 <code>m</code> 到 <code>n</code>（包含首尾）的数字列表：</p>
+<ul>
+<li>如果 <code>m &lt;= n</code>，就先递归生成 <code>m + 1</code> 到 <code>n</code> 的列表，再用 <code>UNSHIFT</code> 把 <code>m</code> 插到最前面；</li>
+<li>否则返回 <code>EMPTY</code>。</li>
+</ul>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">RANGE = Z(</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">    lambda recurse: lambda m: lambda n: IF(LEQ(m)(n))(</span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc">        lambda _: UNSHIFT(recurse(SUCC(m))(n))(m)</span></div>
+    <div class="code-line"><span class="ln">4</span><span class="lc">    )(</span></div>
+    <div class="code-line"><span class="ln">5</span><span class="lc">        lambda _: EMPTY</span></div>
+    <div class="code-line"><span class="ln">6</span><span class="lc">    )(ZERO)</span></div>
+    <div class="code-line"><span class="ln">7</span><span class="lc">)</span></div>
+    <div class="code-line"><span class="ln">8</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">9</span><span class="lc">&gt;&gt;&gt; [to_integer(x) for x in to_list(RANGE(ONE)(FIVE))]</span></div>
+    <div class="code-line"><span class="ln">10</span><span class="lc">[1, 2, 3, 4, 5]</span></div>
+  </div>
+</div>
+<p>原程序中的 <code>range(1, 20)</code> 包含 <code>1</code> 到 <code>19</code>，用我们的函数表示就是 <code>RANGE(ONE)(PRED(TWENTY))</code>。</p>
+<h3 id="第二次替换接管区间取余与逻辑判断">第二次替换：接管区间、取余与逻辑判断</h3>
+<p>现在，把 <code>RANGE</code>、<code>MOD</code>、<code>IS_ZERO</code> 和 <code>OR</code> 全部换进原程序中：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">for i in to_list(RANGE(ONE)(PRED(TWENTY))):</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">    if to_boolean(OR(IS_ZERO(MOD(i)(THREE)))(IS_ZERO(MOD(i)(FIVE)))):</span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc">        print(to_integer(i))</span></div>
+  </div>
+</div>
+<p>注意看这段代码：此时的循环变量 <code>i</code> 已经不再是 Python 的 <code>int</code>，而是纯粹的邱奇数！整个条件判断与取余运算完全在 <code>lambda</code> 的世界里完成，只剩下最外层的 <code>for ... in to_list(...)</code> 和 <code>if to_boolean(...)</code> 还在借用 Python 的语法。</p>
+<hr>
+<h2 id="6-高阶遍历与最终组合">6. 高阶遍历与最终组合</h2>
+<p>最后一步，我们把仅剩的 Python <code>for</code> 循环和 <code>if</code> 语句也替换成列表的高阶函数。</p>
+<h3 id="filtermap-与-each"><code>FILTER</code>、<code>MAP</code> 与 <code>EACH</code></h3>
+<p>在函数式编程中，“遍历列表并挑选出满足条件的元素”就是 <code>FILTER</code>：</p>
+<ul>
+<li>如果列表 <code>l</code> 为空，返回 <code>EMPTY</code>；</li>
+<li>如果首元素 <code>FIRST(l)</code> 满足条件 <code>f(FIRST(l))</code>，就将它保留在结果列表头部，并继续过滤剩余列表 <code>REST(l)</code>；</li>
+<li>否则跳过首元素，直接过滤 <code>REST(l)</code>。</li>
+</ul>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">FILTER = Z(</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">    lambda recurse: lambda f: lambda l: IF(IS_EMPTY(l))(</span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc">        lambda _: EMPTY</span></div>
+    <div class="code-line"><span class="ln">4</span><span class="lc">    )(</span></div>
+    <div class="code-line"><span class="ln">5</span><span class="lc">        lambda _: IF(f(FIRST(l)))(</span></div>
+    <div class="code-line"><span class="ln">6</span><span class="lc">            lambda _: UNSHIFT(recurse(f)(REST(l)))(FIRST(l))</span></div>
+    <div class="code-line"><span class="ln">7</span><span class="lc">        )(</span></div>
+    <div class="code-line"><span class="ln">8</span><span class="lc">            lambda _: recurse(f)(REST(l))</span></div>
+    <div class="code-line"><span class="ln">9</span><span class="lc">        )(ZERO)</span></div>
+    <div class="code-line"><span class="ln">10</span><span class="lc">    )(ZERO)</span></div>
+    <div class="code-line"><span class="ln">11</span><span class="lc">)</span></div>
+  </div>
+</div>
+<p>同样地，我们可以实现映射函数 <code>MAP</code> 和依次对每个元素执行动作的遍历函数 <code>EACH</code>：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">MAP = Z(</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">    lambda recurse: lambda l: lambda f: IF(IS_EMPTY(l))(</span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc">        lambda _: EMPTY</span></div>
+    <div class="code-line"><span class="ln">4</span><span class="lc">    )(</span></div>
+    <div class="code-line"><span class="ln">5</span><span class="lc">        lambda _: UNSHIFT(recurse(REST(l))(f))(f(FIRST(l)))</span></div>
+    <div class="code-line"><span class="ln">6</span><span class="lc">    )(ZERO)</span></div>
+    <div class="code-line"><span class="ln">7</span><span class="lc">)</span></div>
+    <div class="code-line"><span class="ln">8</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">9</span><span class="lc">EACH = Z(</span></div>
+    <div class="code-line"><span class="ln">10</span><span class="lc">    lambda recurse: lambda l: lambda f: IF(IS_EMPTY(l))(</span></div>
+    <div class="code-line"><span class="ln">11</span><span class="lc">        lambda _: ZERO</span></div>
+    <div class="code-line"><span class="ln">12</span><span class="lc">    )(</span></div>
+    <div class="code-line"><span class="ln">13</span><span class="lc">        lambda _: (lambda _: recurse(REST(l))(f))(f(FIRST(l)))</span></div>
+    <div class="code-line"><span class="ln">14</span><span class="lc">    )(ZERO)</span></div>
+    <div class="code-line"><span class="ln">15</span><span class="lc">)</span></div>
+  </div>
+</div>
+<h3 id="最终形态">最终形态</h3>
+<p>现在，最初的 3 行 Python 程序终于可以彻底摆脱 <code>range</code>、<code>%</code>、<code>==</code>、<code>or</code>、<code>if</code> 和 <code>for</code> 了：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">IS_DIVISIBLE_BY = lambda d: lambda n: IS_ZERO(MOD(n)(d))</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">WANTED = lambda n: OR(IS_DIVISIBLE_BY(THREE)(n))(IS_DIVISIBLE_BY(FIVE)(n))</span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">4</span><span class="lc">NUMBERS = RANGE(ONE)(PRED(TWENTY))</span></div>
+    <div class="code-line"><span class="ln">5</span><span class="lc">RESULT  = FILTER(WANTED)(NUMBERS)</span></div>
+    <div class="code-line"><span class="ln">6</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">7</span><span class="lc">EACH(RESULT)(lambda n: print(to_integer(n)))</span></div>
+  </div>
+</div>
+<p>运行它，依然会打印出熟悉的：</p>
+<div class="code-block" data-lang="text">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">text</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">3</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">5</span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc">6</span></div>
+    <div class="code-line"><span class="ln">4</span><span class="lc">9</span></div>
+    <div class="code-line"><span class="ln">5</span><span class="lc">10</span></div>
+    <div class="code-line"><span class="ln">6</span><span class="lc">12</span></div>
+    <div class="code-line"><span class="ln">7</span><span class="lc">15</span></div>
+    <div class="code-line"><span class="ln">8</span><span class="lc">18</span></div>
+  </div>
+</div>
+<h3 id="如果连变量名都不允许用呢">如果连变量名都不允许用呢？</h3>
+<p>你可能会问：上面的代码里不是还用了 <code>ZERO = ...</code>、<code>SUCC = ...</code>、<code>MOD = ...</code> 这些 Python 变量赋值语句吗？</p>
+<p>其实，我们给函数起大写名字纯粹是为了人类阅读方便。因为有了 <code>Z</code> 组合子，上面定义的每一个函数都是<strong>非自引用</strong>的；而在 Lambda 演算中，先绑定变量 <code>NAME = expr</code> 再在 <code>body</code> 中使用 <code>NAME</code>，完全等价于一次匿名函数调用：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">(lambda NAME: body)(expr)</span></div>
+  </div>
+</div>
+<p>如果我们把所有大写名字全部按定义展开（内联替换），整段程序就会化为一个只包含 <code>lambda</code>、参数名和括号的单一表达式（仅在最外层用 <code>print</code> 和 <code>to_integer</code> 观察结果）：</p>
+<div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">(lambda Z:</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">    (lambda TRUE: lambda FALSE:</span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc">        (lambda PAIR: lambda LEFT: lambda RIGHT:</span></div>
+    <div class="code-line"><span class="ln">4</span><span class="lc">            (lambda ZERO: lambda SUCC:</span></div>
+    <div class="code-line"><span class="ln">5</span><span class="lc">                (lambda ONE: lambda TWO: lambda THREE: lambda FOUR: lambda FIVE:</span></div>
+    <div class="code-line"><span class="ln">6</span><span class="lc">                    (lambda TWENTY:</span></div>
+    <div class="code-line"><span class="ln">7</span><span class="lc">                        (lambda PRED: lambda SUB: lambda IS_ZERO:</span></div>
+    <div class="code-line"><span class="ln">8</span><span class="lc">                            (lambda LEQ:</span></div>
+    <div class="code-line"><span class="ln">9</span><span class="lc">                                (lambda MOD: lambda RANGE: lambda FILTER: lambda EACH:</span></div>
+    <div class="code-line"><span class="ln">10</span><span class="lc">                                    EACH(</span></div>
+    <div class="code-line"><span class="ln">11</span><span class="lc">                                        FILTER(</span></div>
+    <div class="code-line"><span class="ln">12</span><span class="lc">                                            lambda n: (IS_ZERO(MOD(n)(THREE)))(TRUE)(IS_ZERO(MOD(n)(FIVE)))</span></div>
+    <div class="code-line"><span class="ln">13</span><span class="lc">                                        )(RANGE(ONE)(PRED(TWENTY)))</span></div>
+    <div class="code-line"><span class="ln">14</span><span class="lc">                                    )(lambda n: print(n(lambda x: x &#43; 1)(0)))</span></div>
+    <div class="code-line"><span class="ln">15</span><span class="lc">                                )(</span></div>
+    <div class="code-line"><span class="ln">16</span><span class="lc">                                    Z(lambda r: lambda m: lambda n: LEQ(n)(m)(lambda _: r(SUB(m)(n))(n))(lambda _: m)(ZERO))</span></div>
+    <div class="code-line"><span class="ln">17</span><span class="lc">                                )(</span></div>
+    <div class="code-line"><span class="ln">18</span><span class="lc">                                    Z(lambda r: lambda m: lambda n: LEQ(m)(n)(lambda _: PAIR(FALSE)(PAIR(m)(r(SUCC(m))(n))))(lambda _: PAIR(TRUE)(TRUE))(ZERO))</span></div>
+    <div class="code-line"><span class="ln">19</span><span class="lc">                                )(</span></div>
+    <div class="code-line"><span class="ln">20</span><span class="lc">                                    Z(lambda r: lambda f: lambda l: LEFT(l)(lambda _: PAIR(TRUE)(TRUE))(lambda _: f(LEFT(RIGHT(l)))(lambda _: PAIR(FALSE)(PAIR(LEFT(RIGHT(l)))(r(f)(RIGHT(RIGHT(l))))))(lambda _: r(f)(RIGHT(RIGHT(l))))(ZERO))(ZERO))</span></div>
+    <div class="code-line"><span class="ln">21</span><span class="lc">                                )(</span></div>
+    <div class="code-line"><span class="ln">22</span><span class="lc">                                    Z(lambda r: lambda l: lambda f: LEFT(l)(lambda _: ZERO)(lambda _: (lambda _: r(RIGHT(RIGHT(l)))(f))(f(LEFT(RIGHT(l)))))(ZERO))</span></div>
+    <div class="code-line"><span class="ln">23</span><span class="lc">                                )</span></div>
+    <div class="code-line"><span class="ln">24</span><span class="lc">                            )(lambda m: lambda n: IS_ZERO(SUB(m)(n)))</span></div>
+    <div class="code-line"><span class="ln">25</span><span class="lc">                        )(</span></div>
+    <div class="code-line"><span class="ln">26</span><span class="lc">                            lambda n: LEFT(n(lambda p: PAIR(RIGHT(p))(SUCC(RIGHT(p))))(PAIR(ZERO)(ZERO)))</span></div>
+    <div class="code-line"><span class="ln">27</span><span class="lc">                        )(</span></div>
+    <div class="code-line"><span class="ln">28</span><span class="lc">                            lambda m: lambda n: n(lambda k: LEFT(k(lambda p: PAIR(RIGHT(p))(SUCC(RIGHT(p))))(PAIR(ZERO)(ZERO))))(m)</span></div>
+    <div class="code-line"><span class="ln">29</span><span class="lc">                        )(</span></div>
+    <div class="code-line"><span class="ln">30</span><span class="lc">                            lambda n: n(lambda _: FALSE)(TRUE)</span></div>
+    <div class="code-line"><span class="ln">31</span><span class="lc">                        )</span></div>
+    <div class="code-line"><span class="ln">32</span><span class="lc">                    )(lambda p: FOUR(FIVE(p)))</span></div>
+    <div class="code-line"><span class="ln">33</span><span class="lc">                )(SUCC(ZERO))(SUCC(SUCC(ZERO)))(SUCC(SUCC(SUCC(ZERO))))(SUCC(SUCC(SUCC(SUCC(ZERO)))))(SUCC(SUCC(SUCC(SUCC(SUCC(ZERO))))))</span></div>
+    <div class="code-line"><span class="ln">34</span><span class="lc">            )(lambda p: lambda x: x)(lambda n: lambda p: lambda x: p(n(p)(x)))</span></div>
+    <div class="code-line"><span class="ln">35</span><span class="lc">        )(lambda x: lambda y: lambda f: f(x)(y))(lambda p: p(TRUE))(lambda p: p(FALSE))</span></div>
+    <div class="code-line"><span class="ln">36</span><span class="lc">    )(lambda x: lambda y: x)(lambda x: lambda y: y)</span></div>
+    <div class="code-line"><span class="ln">37</span><span class="lc">)(lambda f: (lambda x: f(lambda y: x(x)(y)))(lambda x: f(lambda y: x(x)(y))))</span></div>
+  </div>
+</div>
+<p>你可以把上面这整段表达式直接粘贴进 Python 解释器运行——除了最后一行用来把结果打印到屏幕上的 <code>print(n(lambda x: x + 1)(0))</code>，整段计算过程里没有任何数字、布尔值、运算符、条件语句或循环，却完整地算出了 1 到 19 之间所有能被 3 或 5 整除的数。</p>
+<hr>
+<h2 id="7-完整代码">7. 完整代码</h2>
+<p>下面是整理后的完整 <a href="/code/lambda_calculus.py"><code>lambda_calculus.py</code></a>：</p>
+<details class="code-details">
+  <summary>展开完整 lambda_calculus.py</summary>
+  <div class="code-block" data-lang="python">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">python</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">#!/usr/bin/env python3</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">&#34;&#34;&#34;Simulating Lambda Calculus (Church Encoding) in Python.&#34;&#34;&#34;</span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">4</span><span class="lc"># 1. Numbers &amp; Arithmetic ------------------------------------------------</span></div>
+    <div class="code-line"><span class="ln">5</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">6</span><span class="lc">ZERO = lambda p: lambda x: x</span></div>
+    <div class="code-line"><span class="ln">7</span><span class="lc">SUCC = lambda n: lambda p: lambda x: p(n(p)(x))</span></div>
+    <div class="code-line"><span class="ln">8</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">9</span><span class="lc">ONE = SUCC(ZERO)</span></div>
+    <div class="code-line"><span class="ln">10</span><span class="lc">TWO = SUCC(ONE)</span></div>
+    <div class="code-line"><span class="ln">11</span><span class="lc">THREE = SUCC(TWO)</span></div>
+    <div class="code-line"><span class="ln">12</span><span class="lc">FOUR = SUCC(THREE)</span></div>
+    <div class="code-line"><span class="ln">13</span><span class="lc">FIVE = SUCC(FOUR)</span></div>
+    <div class="code-line"><span class="ln">14</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">15</span><span class="lc">ADD = lambda m: lambda n: n(SUCC)(m)</span></div>
+    <div class="code-line"><span class="ln">16</span><span class="lc">MULTIPLY = lambda m: lambda n: lambda p: m(n(p))</span></div>
+    <div class="code-line"><span class="ln">17</span><span class="lc">POWER = lambda m: lambda n: n(m)</span></div>
+    <div class="code-line"><span class="ln">18</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">19</span><span class="lc">TEN = MULTIPLY(TWO)(FIVE)</span></div>
+    <div class="code-line"><span class="ln">20</span><span class="lc">TWENTY = MULTIPLY(FOUR)(FIVE)</span></div>
+    <div class="code-line"><span class="ln">21</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">22</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">23</span><span class="lc"># 2. Booleans &amp; Conditionals ---------------------------------------------</span></div>
+    <div class="code-line"><span class="ln">24</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">25</span><span class="lc">TRUE = lambda x: lambda y: x</span></div>
+    <div class="code-line"><span class="ln">26</span><span class="lc">FALSE = lambda x: lambda y: y</span></div>
+    <div class="code-line"><span class="ln">27</span><span class="lc">IF = lambda b: b</span></div>
+    <div class="code-line"><span class="ln">28</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">29</span><span class="lc">NOT = lambda b: b(FALSE)(TRUE)</span></div>
+    <div class="code-line"><span class="ln">30</span><span class="lc">AND = lambda a: lambda b: a(b)(FALSE)</span></div>
+    <div class="code-line"><span class="ln">31</span><span class="lc">OR = lambda a: lambda b: a(TRUE)(b)</span></div>
+    <div class="code-line"><span class="ln">32</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">33</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">34</span><span class="lc"># 3. Pairs, Predecessor &amp; Predicates -------------------------------------</span></div>
+    <div class="code-line"><span class="ln">35</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">36</span><span class="lc">PAIR = lambda x: lambda y: lambda f: f(x)(y)</span></div>
+    <div class="code-line"><span class="ln">37</span><span class="lc">LEFT = lambda p: p(TRUE)</span></div>
+    <div class="code-line"><span class="ln">38</span><span class="lc">RIGHT = lambda p: p(FALSE)</span></div>
+    <div class="code-line"><span class="ln">39</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">40</span><span class="lc">SLIDE = lambda p: PAIR(RIGHT(p))(SUCC(RIGHT(p)))</span></div>
+    <div class="code-line"><span class="ln">41</span><span class="lc">PRED = lambda n: LEFT(n(SLIDE)(PAIR(ZERO)(ZERO)))</span></div>
+    <div class="code-line"><span class="ln">42</span><span class="lc">SUB = lambda m: lambda n: n(PRED)(m)</span></div>
+    <div class="code-line"><span class="ln">43</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">44</span><span class="lc">IS_ZERO = lambda n: n(lambda _: FALSE)(TRUE)</span></div>
+    <div class="code-line"><span class="ln">45</span><span class="lc">LEQ = lambda m: lambda n: IS_ZERO(SUB(m)(n))</span></div>
+    <div class="code-line"><span class="ln">46</span><span class="lc">EQ = lambda m: lambda n: AND(LEQ(m)(n))(LEQ(n)(m))</span></div>
+    <div class="code-line"><span class="ln">47</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">48</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">49</span><span class="lc"># 4. Recursion (Z Combinator) &amp; Modulo -----------------------------------</span></div>
+    <div class="code-line"><span class="ln">50</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">51</span><span class="lc">Z = lambda f: (lambda x: f(lambda y: x(x)(y)))(lambda x: f(lambda y: x(x)(y)))</span></div>
+    <div class="code-line"><span class="ln">52</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">53</span><span class="lc">MOD = Z(</span></div>
+    <div class="code-line"><span class="ln">54</span><span class="lc">    lambda recurse: lambda m: lambda n: IF(LEQ(n)(m))(</span></div>
+    <div class="code-line"><span class="ln">55</span><span class="lc">        lambda _: recurse(SUB(m)(n))(n)</span></div>
+    <div class="code-line"><span class="ln">56</span><span class="lc">    )(</span></div>
+    <div class="code-line"><span class="ln">57</span><span class="lc">        lambda _: m</span></div>
+    <div class="code-line"><span class="ln">58</span><span class="lc">    )(ZERO)</span></div>
+    <div class="code-line"><span class="ln">59</span><span class="lc">)</span></div>
+    <div class="code-line"><span class="ln">60</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">61</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">62</span><span class="lc"># 5. Lists, Range &amp; High-Order List Operations ---------------------------</span></div>
+    <div class="code-line"><span class="ln">63</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">64</span><span class="lc"># A list node is encoded as PAIR(is_empty)(PAIR(head)(tail)).</span></div>
+    <div class="code-line"><span class="ln">65</span><span class="lc">EMPTY = PAIR(TRUE)(TRUE)</span></div>
+    <div class="code-line"><span class="ln">66</span><span class="lc">UNSHIFT = lambda l: lambda x: PAIR(FALSE)(PAIR(x)(l))</span></div>
+    <div class="code-line"><span class="ln">67</span><span class="lc">IS_EMPTY = LEFT</span></div>
+    <div class="code-line"><span class="ln">68</span><span class="lc">FIRST = lambda l: LEFT(RIGHT(l))</span></div>
+    <div class="code-line"><span class="ln">69</span><span class="lc">REST = lambda l: RIGHT(RIGHT(l))</span></div>
+    <div class="code-line"><span class="ln">70</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">71</span><span class="lc">RANGE = Z(</span></div>
+    <div class="code-line"><span class="ln">72</span><span class="lc">    lambda recurse: lambda m: lambda n: IF(LEQ(m)(n))(</span></div>
+    <div class="code-line"><span class="ln">73</span><span class="lc">        lambda _: UNSHIFT(recurse(SUCC(m))(n))(m)</span></div>
+    <div class="code-line"><span class="ln">74</span><span class="lc">    )(</span></div>
+    <div class="code-line"><span class="ln">75</span><span class="lc">        lambda _: EMPTY</span></div>
+    <div class="code-line"><span class="ln">76</span><span class="lc">    )(ZERO)</span></div>
+    <div class="code-line"><span class="ln">77</span><span class="lc">)</span></div>
+    <div class="code-line"><span class="ln">78</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">79</span><span class="lc">FILTER = Z(</span></div>
+    <div class="code-line"><span class="ln">80</span><span class="lc">    lambda recurse: lambda f: lambda l: IF(IS_EMPTY(l))(</span></div>
+    <div class="code-line"><span class="ln">81</span><span class="lc">        lambda _: EMPTY</span></div>
+    <div class="code-line"><span class="ln">82</span><span class="lc">    )(</span></div>
+    <div class="code-line"><span class="ln">83</span><span class="lc">        lambda _: IF(f(FIRST(l)))(</span></div>
+    <div class="code-line"><span class="ln">84</span><span class="lc">            lambda _: UNSHIFT(recurse(f)(REST(l)))(FIRST(l))</span></div>
+    <div class="code-line"><span class="ln">85</span><span class="lc">        )(</span></div>
+    <div class="code-line"><span class="ln">86</span><span class="lc">            lambda _: recurse(f)(REST(l))</span></div>
+    <div class="code-line"><span class="ln">87</span><span class="lc">        )(ZERO)</span></div>
+    <div class="code-line"><span class="ln">88</span><span class="lc">    )(ZERO)</span></div>
+    <div class="code-line"><span class="ln">89</span><span class="lc">)</span></div>
+    <div class="code-line"><span class="ln">90</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">91</span><span class="lc">MAP = Z(</span></div>
+    <div class="code-line"><span class="ln">92</span><span class="lc">    lambda recurse: lambda l: lambda f: IF(IS_EMPTY(l))(</span></div>
+    <div class="code-line"><span class="ln">93</span><span class="lc">        lambda _: EMPTY</span></div>
+    <div class="code-line"><span class="ln">94</span><span class="lc">    )(</span></div>
+    <div class="code-line"><span class="ln">95</span><span class="lc">        lambda _: UNSHIFT(recurse(REST(l))(f))(f(FIRST(l)))</span></div>
+    <div class="code-line"><span class="ln">96</span><span class="lc">    )(ZERO)</span></div>
+    <div class="code-line"><span class="ln">97</span><span class="lc">)</span></div>
+    <div class="code-line"><span class="ln">98</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">99</span><span class="lc">EACH = Z(</span></div>
+    <div class="code-line"><span class="ln">100</span><span class="lc">    lambda recurse: lambda l: lambda f: IF(IS_EMPTY(l))(</span></div>
+    <div class="code-line"><span class="ln">101</span><span class="lc">        lambda _: ZERO</span></div>
+    <div class="code-line"><span class="ln">102</span><span class="lc">    )(</span></div>
+    <div class="code-line"><span class="ln">103</span><span class="lc">        lambda _: (lambda _: recurse(REST(l))(f))(f(FIRST(l)))</span></div>
+    <div class="code-line"><span class="ln">104</span><span class="lc">    )(ZERO)</span></div>
+    <div class="code-line"><span class="ln">105</span><span class="lc">)</span></div>
+    <div class="code-line"><span class="ln">106</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">107</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">108</span><span class="lc"># 6. Helper Functions (Bridge to Python) ---------------------------------</span></div>
+    <div class="code-line"><span class="ln">109</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">110</span><span class="lc">to_integer = lambda n: n(lambda x: x &#43; 1)(0)</span></div>
+    <div class="code-line"><span class="ln">111</span><span class="lc">to_boolean = lambda b: b(True)(False)</span></div>
+    <div class="code-line"><span class="ln">112</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">113</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">114</span><span class="lc">def to_list(l):</span></div>
+    <div class="code-line"><span class="ln">115</span><span class="lc">    &#34;&#34;&#34;Convert a Church-encoded list into a Python list.&#34;&#34;&#34;</span></div>
+    <div class="code-line"><span class="ln">116</span><span class="lc">    result = []</span></div>
+    <div class="code-line"><span class="ln">117</span><span class="lc">    while not to_boolean(IS_EMPTY(l)):</span></div>
+    <div class="code-line"><span class="ln">118</span><span class="lc">        result.append(FIRST(l))</span></div>
+    <div class="code-line"><span class="ln">119</span><span class="lc">        l = REST(l)</span></div>
+    <div class="code-line"><span class="ln">120</span><span class="lc">    return result</span></div>
+    <div class="code-line"><span class="ln">121</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">122</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">123</span><span class="lc"># 7. Target Program: Numbers in 1..19 divisible by 3 or 5 ----------------</span></div>
+    <div class="code-line"><span class="ln">124</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">125</span><span class="lc">IS_DIVISIBLE_BY = lambda d: lambda n: IS_ZERO(MOD(n)(d))</span></div>
+    <div class="code-line"><span class="ln">126</span><span class="lc">WANTED = lambda n: OR(IS_DIVISIBLE_BY(THREE)(n))(IS_DIVISIBLE_BY(FIVE)(n))</span></div>
+    <div class="code-line"><span class="ln">127</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">128</span><span class="lc">NUMBERS = RANGE(ONE)(PRED(TWENTY))</span></div>
+    <div class="code-line"><span class="ln">129</span><span class="lc">RESULT = FILTER(WANTED)(NUMBERS)</span></div>
+    <div class="code-line"><span class="ln">130</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">131</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">132</span><span class="lc">if __name__ == &#34;__main__&#34;:</span></div>
+    <div class="code-line"><span class="ln">133</span><span class="lc">    EACH(RESULT)(lambda n: print(to_integer(n)))</span></div>
+  </div>
+</div>
+
+</details>
+
+
+    </div>
+    <nav class="post-nav" aria-label="Post navigation">
+      <a href="/posts/write-a-web-server-with-python/" class="post-nav-item prev">
+        <span class="post-nav-label">← Older</span>
+        <span class="post-nav-title">如何写一个web服务器</span>
+      </a>
+      <a href="/posts/an-experience-of-hacked-website/" class="post-nav-item next">
+        <span class="post-nav-label">Newer →</span>
+        <span class="post-nav-title">一次误打误撞的提权经历</span>
+      </a>
+    </nav>
   </article>
+</main>
 
-  
+    <footer class="site-footer"><a href="/">← Back to all posts</a>
+  <div style="display: flex; gap: 16px;">
+    <a href="/index.xml">RSS</a>
+    <a href="https://github.com/sllt" target="_blank" rel="noopener">GitHub</a>
+  </div></footer>
 
-<script>
-  
-  
-    
-    
-  
-</script>
-
-  
-
+  </div>
+  <script src="/js/app.js"></script>
 </body>
-
 </html>

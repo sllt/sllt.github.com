@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="cn" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>404 page not found — sllt</title>
+  <script>
+    (function () {
+      var saved = localStorage.getItem('blog_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', saved);
+    })();
+  </script>
+  <link rel="stylesheet" href="/css/styles.css" /></head>
+<body><div class="wrapper">
+    <header class="site-header">
+  <a href="/" class="site-brand">
+    <span class="brand-mark">s</span>
+    <span>sllt</span>
+  </a>
+  <nav class="site-nav">
+    <a href="/" class="active">Posts</a>
+    <a href="/tags/">Tags</a>
+    <a href="/about/">About</a>
+    <button class="theme-btn" data-action="theme" type="button" aria-label="Toggle theme"></button>
+  </nav>
+</header>
+
+    
+<main class="prose">
+  <h1 class="article-title">404 — Page not found</h1>
+  <p>The page you are looking for does not exist or has been moved.</p>
+  <p><a href="/">← Back to all posts</a></p>
+</main>
+
+    <footer class="site-footer"><span>© 2026 sllt</span>
+  <div style="display: flex; gap: 16px;">
+    <a href="/index.xml">RSS</a>
+    <a href="https://github.com/sllt" target="_blank" rel="noopener">GitHub</a>
+  </div></footer>
+
+  </div>
+  <script src="/js/app.js"></script>
+</body>
+</html>

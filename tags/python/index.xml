@@ -1,23 +1,33 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>python on sllt的博客</title>
+    <title>Python on sllt的博客</title>
     <link>https://blog.sllt.me/tags/python/</link>
-    <description>Recent content in python on sllt的博客</description>
-    <generator>Hugo -- gohugo.io</generator>
-    <language>zh-cn</language>
-    <lastBuildDate>Wed, 25 Nov 2015 16:14:41 +0800</lastBuildDate><atom:link href="https://blog.sllt.me/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    <description>Recent content in Python on sllt的博客</description>
+    <generator>Hugo</generator>
+    <language>cn</language>
+    <lastBuildDate>Tue, 27 Oct 2026 13:00:00 +0800</lastBuildDate>
+    <atom:link href="https://blog.sllt.me/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>使用Python模拟Lambda演算</title>
+      <link>https://blog.sllt.me/posts/lambda-calculus/</link>
+      <pubDate>Sun, 24 Apr 2016 15:34:47 +0800</pubDate>
+      <guid>https://blog.sllt.me/posts/lambda-calculus/</guid>
+      <description>我们将从下面这段程序开始：&#xA;python Copy 1for i in range(1, 20): 2 if i % 3 == 0 or i % 5 == 0: 3 print(i) 这段程序会打印出 1 到 19 之间能被 3 或 5 整除的数字：&#xA;text Copy 13 25 36 49 510 612 715 818 如果我们定下一个极端的限制：不允许使用 Python 内置的数字、布尔值、列表，不允许使用 +、-、%、==、or 等运算符，也不允许使用 if、for、range 甚至 def 具名函数——唯一允许使用的只有单参数的匿名函数 lambda x: ... 以及函数调用 f(x)，还能实现上面这段程序吗？&#xA;这正是阿隆佐·邱奇（Alonzo Church）在 20 世纪 30 年代提出 Lambda 演算（λ-calculus） 时所展示的核心思想：在只有“函数定义”与“函数调用”的世界里，函数本身就足以编码自然数、布尔值、算术运算、条件分支、递归乃至数据结构。这种仅用函数来构造数据与控制流的方法称为邱奇编码（Church Encoding）。&#xA;接下来，我们就以开头的 3 行代码为主线，每用 lambda 造出一个零件，就立刻替换掉原程序中的一部分，直到整段程序的计算过程完全由函数构成。</description>
+    </item>
     <item>
       <title>如何写一个web服务器</title>
       <link>https://blog.sllt.me/posts/write-a-web-server-with-python/</link>
       <pubDate>Wed, 25 Nov 2015 16:14:41 +0800</pubDate>
-      
       <guid>https://blog.sllt.me/posts/write-a-web-server-with-python/</guid>
-      <description>Hello, Web
-我们先来写一个简单的web服务器，思路如下：
- 等待客户端连接我们的服务器，并发送一个HTTP 请求； 解析这个请求； 找出它要请求的具体内容； 获取该数据 (或者动态生成); 将数据格式化为HTML； 返回数据。  步骤1、2、6的实现方式大致相同, 在Python中有一个叫BaseHTTPServer的模块可以帮助我们实现这些步骤。 我们仅需要实现步骤3-5, 一个简单的实现如下:
-import BaseHTTPServer class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler): &amp;#39;&amp;#39;&amp;#39;Handle HTTP requests by returning a fixed &amp;#39;page&amp;#39;.&amp;#39;&amp;#39;&amp;#39; # Page to send back. Page = &amp;#39;&amp;#39;&amp;#39;\ &amp;lt;html&amp;gt; &amp;lt;body&amp;gt; &amp;lt;p&amp;gt;Hello, web!&amp;lt;/p&amp;gt; &amp;lt;/body&amp;gt; &amp;lt;/html&amp;gt; &amp;#39;&amp;#39;&amp;#39; # Handle a GET request. def do_GET(self): self.send_response(200) self.send_header(&amp;#34;Content-Type&amp;#34;, &amp;#34;text/html&amp;#34;) self.send_header(&amp;#34;Content-Length&amp;#34;, str(len(self.Page))) self.end_headers() self.wfile.write(self.Page) #---------------------------------------------------------------------- if __name__ == &amp;#39;__main__&amp;#39;: serverAddress = (&amp;#39;&amp;#39;, 8080) server = BaseHTTPServer.HTTPServer(serverAddress, RequestHandler) server.</description>
+      <description>我们将用 Python 从零实现一个可扩展的 Web 服务器，并一步步为它加上动态页面渲染、静态文件托管、目录列表、CGI 脚本执行，以及基于责任链模式的架构重构。&#xA;完整代码可以在文末查看，也可以直接下载 web_server.py。&#xA;1. Hello, Web 先来写一个最简单的 Web 服务器。基本工作流程只有六步：&#xA;等待客户端连接服务器，并发送一个 HTTP 请求； 解析这个请求； 找出它请求的具体目标； 获取对应的数据（从磁盘读取文件，或由程序动态生成）； 将数据格式化为 HTML； 把响应写回客户端。 其中第 1、2、6 步对几乎所有 HTTP 服务器来说都是一样的，Python 标准库中的 http.server 模块（在 Python 2 中叫 BaseHTTPServer）已经帮我们处理好了底层 Socket 连接与 HTTP 报文解析。我们只需要关注第 3～5 步。&#xA;下面是一个最小实现：&#xA;python Copy 1from http.server import BaseHTTPRequestHandler, HTTPServer 2 3 4class RequestHandler(BaseHTTPRequestHandler): 5 &amp;#34;&amp;#34;&amp;#34;处理 HTTP 请求，返回一个固定的页面。&amp;#34;&amp;#34;&amp;#34; 6 7 Page = &amp;#34;&amp;#34;&amp;#34;\ 8&amp;lt;html&amp;gt; 9&amp;lt;body&amp;gt; 10&amp;lt;p&amp;gt;Hello, web!&amp;lt;/p&amp;gt; 11&amp;lt;/body&amp;gt; 12&amp;lt;/html&amp;gt; 13&amp;#34;&amp;#34;&amp;#34; 14 15 def do_GET(self): 16 content = self.</description>
     </item>
-    
+    <item>
+      <title>如何写一个Scheme解释器</title>
+      <link>https://blog.sllt.me/posts/write-a-scheme-interpreter/</link>
+      <pubDate>Tue, 17 Nov 2015 14:02:14 +0800</pubDate>
+      <guid>https://blog.sllt.me/posts/write-a-scheme-interpreter/</guid>
+      <description>本文假设你会使用 Python。&#xA;我们会分两步来构建这个解释器：&#xA;先实现一个 Scheme 语法式的简单计算器：只支持加、减、乘、除，但麻雀虽小五脏俱全——借它跑通解释器最核心的四个环节：表达式树（Pair）、语法解析（Read）、递归求值（Eval）与交互循环（REPL）； 再逐步把计算器升级为完整的 Scheme 解释器：在计算器的骨架上依次加入环境与变量（define）、特殊形式（quote、if、cond、let 等）以及自定义函数与闭包（lambda）。 关于 Scheme 语言本身的更多背景，可以参考维基百科的 Scheme 词条。完整代码可以在文末查看，也可以直接下载 scheme.py。&#xA;1. Scheme 语法式的计算器 1.1 计算器的语法与求值规则 我们先从最简单的前缀表达式计算器开始。这个简化版计算器只包含加（+）、减（-）、乘（*）、除（/）四种运算。&#xA;在 Scheme 中，所有的运算都写成 (操作符 参数1 参数2 ...) 的前缀形式。加法和乘法可以接收任意数量的参数：&#xA;scheme Copy 1scm&amp;gt; (&amp;#43; 1 2 3 4) 210 3scm&amp;gt; (&amp;#43;) 40 5scm&amp;gt; (* 1 2 3 4) 624 7scm&amp;gt; (*) 81 减法（-）有两种情况：只传入 1 个参数时，求这个数的相反数；传入 2 个及以上参数时，用第一个数依次减去后面的数，例如 (- 10 1 2 3) 等同于 10 - 1 - 2 - 3。除法（/）也是类似的规则（单参数求倒数，多参数依次相除）：</description>
+    </item>
   </channel>
 </rss>

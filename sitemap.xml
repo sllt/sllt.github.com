@@ -2,14 +2,17 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://blog.sllt.me/categories/</loc>
-    <lastmod>2016-11-09T15:02:21+08:00</lastmod>
-  </url><url>
-    <loc>https://blog.sllt.me/posts/</loc>
-    <lastmod>2016-11-09T15:02:21+08:00</lastmod>
+    <loc>https://blog.sllt.me/about/</loc>
+    <lastmod>2026-10-27T00:00:00+08:00</lastmod>
   </url><url>
     <loc>https://blog.sllt.me/</loc>
-    <lastmod>2016-11-09T15:02:21+08:00</lastmod>
+    <lastmod>2026-10-27T13:00:00+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.sllt.me/categories/</loc>
+    <lastmod>2026-10-27T13:00:00+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.sllt.me/posts/</loc>
+    <lastmod>2026-10-27T13:00:00+08:00</lastmod>
   </url><url>
     <loc>https://blog.sllt.me/categories/webshell/</loc>
     <lastmod>2016-11-09T15:02:21+08:00</lastmod>
@@ -17,23 +20,50 @@
     <loc>https://blog.sllt.me/posts/an-experience-of-hacked-website/</loc>
     <lastmod>2016-11-09T15:02:21+08:00</lastmod>
   </url><url>
+    <loc>https://blog.sllt.me/tags/church-encoding/</loc>
+    <lastmod>2026-10-27T00:25:00+08:00</lastmod>
+  </url><url>
     <loc>https://blog.sllt.me/categories/lambda/</loc>
-    <lastmod>2016-04-24T15:34:47+08:00</lastmod>
+    <lastmod>2026-10-27T00:25:00+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.sllt.me/tags/lambda-calculus/</loc>
+    <lastmod>2026-10-27T00:25:00+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.sllt.me/tags/python/</loc>
+    <lastmod>2026-10-27T13:00:00+08:00</lastmod>
   </url><url>
     <loc>https://blog.sllt.me/categories/python/</loc>
-    <lastmod>2016-04-24T15:34:47+08:00</lastmod>
+    <lastmod>2026-10-27T13:00:00+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.sllt.me/tags/</loc>
+    <lastmod>2026-10-27T13:00:00+08:00</lastmod>
   </url><url>
     <loc>https://blog.sllt.me/posts/lambda-calculus/</loc>
-    <lastmod>2016-04-24T15:34:47+08:00</lastmod>
+    <lastmod>2026-10-27T00:25:00+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.sllt.me/tags/http/</loc>
+    <lastmod>2026-10-27T13:00:00+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.sllt.me/categories/web/</loc>
+    <lastmod>2026-10-27T13:00:00+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.sllt.me/tags/web-server/</loc>
+    <lastmod>2026-10-27T13:00:00+08:00</lastmod>
   </url><url>
     <loc>https://blog.sllt.me/posts/write-a-web-server-with-python/</loc>
-    <lastmod>2015-11-25T16:14:41+08:00</lastmod>
+    <lastmod>2026-10-27T13:00:00+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.sllt.me/tags/interpreter/</loc>
+    <lastmod>2026-10-27T10:50:00+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.sllt.me/tags/scheme/</loc>
+    <lastmod>2026-10-27T10:50:00+08:00</lastmod>
   </url><url>
     <loc>https://blog.sllt.me/categories/scheme/</loc>
-    <lastmod>2015-11-17T14:02:14+08:00</lastmod>
+    <lastmod>2026-10-27T10:50:00+08:00</lastmod>
   </url><url>
     <loc>https://blog.sllt.me/posts/write-a-scheme-interpreter/</loc>
-    <lastmod>2015-11-17T14:02:14+08:00</lastmod>
+    <lastmod>2026-10-27T10:50:00+08:00</lastmod>
   </url><url>
     <loc>https://blog.sllt.me/categories/rails/</loc>
     <lastmod>2015-08-17T14:35:52+08:00</lastmod>
@@ -76,7 +106,5 @@
   </url><url>
     <loc>https://blog.sllt.me/posts/golang-sort/</loc>
     <lastmod>2014-07-29T10:32:19+08:00</lastmod>
-  </url><url>
-    <loc>https://blog.sllt.me/tags/</loc>
   </url>
 </urlset>

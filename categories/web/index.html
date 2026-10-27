@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="cn" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>web — sllt</title>
+  <script>
+    (function () {
+      var saved = localStorage.getItem('blog_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', saved);
+    })();
+  </script>
+  <link rel="stylesheet" href="/css/styles.css" /><link rel="alternate" type="application/rss&#43;xml" href="https://blog.sllt.me/categories/web/index.xml" title="sllt的博客" /></head>
+<body><div class="wrapper">
+    <header class="site-header">
+  <a href="/" class="site-brand">
+    <span class="brand-mark">s</span>
+    <span>sllt</span>
+  </a>
+  <nav class="site-nav">
+    <a href="/">Posts</a>
+    <a href="/tags/" class="active">Tags</a>
+    <a href="/about/">About</a>
+    <button class="theme-btn" data-action="theme" type="button" aria-label="Toggle theme"></button>
+  </nav>
+</header>
+
+    
+<main>
+  <div class="tag-bar">
+    <button class="tag-pill" data-filter="all" type="button">All<span>13</span></button>
+    <button class="tag-pill" data-filter="rails" type="button">#rails<span>4</span></button>
+    <button class="tag-pill" data-filter="python" type="button">#python<span>3</span></button>
+    <button class="tag-pill" data-filter="java" type="button">#java<span>2</span></button>
+    <button class="tag-pill" data-filter="webshell" type="button">#webshell<span>1</span></button>
+    <button class="tag-pill" data-filter="lambda-calculus" type="button">#lambda-calculus<span>1</span></button>
+    <button class="tag-pill" data-filter="church-encoding" type="button">#church-encoding<span>1</span></button>
+    <button class="tag-pill" data-filter="lambda" type="button">#lambda<span>1</span></button>
+    <button class="tag-pill" data-filter="http" type="button">#http<span>1</span></button>
+    <button class="tag-pill" data-filter="web-server" type="button">#web-server<span>1</span></button>
+    <button class="tag-pill active" data-filter="web" type="button">#web<span>1</span></button>
+    <button class="tag-pill" data-filter="scheme" type="button">#scheme<span>1</span></button>
+    <button class="tag-pill" data-filter="interpreter" type="button">#interpreter<span>1</span></button>
+    <button class="tag-pill" data-filter="nim" type="button">#nim<span>1</span></button>
+    <button class="tag-pill" data-filter="ruby" type="button">#ruby<span>1</span></button>
+    <button class="tag-pill" data-filter="算法" type="button">#算法<span>1</span></button>
+  </div>
+
+  <div class="post-list"><a href="/posts/an-experience-of-hacked-website/" class="post-row" data-tags="webshell" style="display: none;">
+      <span class="post-title">一次误打误撞的提权经历</span>
+      <span class="post-leader"></span>
+      <span class="post-date">2016-11-09</span>
+    </a><a href="/posts/lambda-calculus/" class="post-row" data-tags="python,lambda-calculus,church-encoding,lambda" style="display: none;">
+      <span class="post-title">使用Python模拟Lambda演算</span>
+      <span class="post-leader"></span>
+      <span class="post-date">2016-04-24</span>
+    </a><a href="/posts/write-a-web-server-with-python/" class="post-row" data-tags="python,http,web-server,web">
+      <span class="post-title">如何写一个web服务器</span>
+      <span class="post-leader"></span>
+      <span class="post-date">2015-11-25</span>
+    </a><a href="/posts/write-a-scheme-interpreter/" class="post-row" data-tags="scheme,python,interpreter" style="display: none;">
+      <span class="post-title">如何写一个Scheme解释器</span>
+      <span class="post-leader"></span>
+      <span class="post-date">2015-11-17</span>
+    </a><a href="/posts/make-realtime-queue-use-faye-and-sidekiq/" class="post-row" data-tags="rails" style="display: none;">
+      <span class="post-title">使用faye &#43; sidekiq制作实时消息队列</span>
+      <span class="post-leader"></span>
+      <span class="post-date">2015-08-17</span>
+    </a><a href="/posts/make-brainfuck-interpreter-with-nim/" class="post-row" data-tags="nim" style="display: none;">
+      <span class="post-title">brainfuck解释器的实现(一)</span>
+      <span class="post-leader"></span>
+      <span class="post-date">2015-03-26</span>
+    </a><a href="/posts/get-real-deploy-with-puma/" class="post-row" data-tags="rails" style="display: none;">
+      <span class="post-title">实现网打算换成puma来跑</span>
+      <span class="post-leader"></span>
+      <span class="post-date">2015-01-20</span>
+    </a><a href="/posts/push-notifications-for-ios-with-houston-and-sidekiq/" class="post-row" data-tags="rails" style="display: none;">
+      <span class="post-title">使用Houston&#43;Sidekiq做ios消息推送</span>
+      <span class="post-leader"></span>
+      <span class="post-date">2015-01-08</span>
+    </a><a href="/posts/metaprogramming-ruby-object/" class="post-row" data-tags="ruby" style="display: none;">
+      <span class="post-title">ruby元编程-对象模型</span>
+      <span class="post-leader"></span>
+      <span class="post-date">2014-12-02</span>
+    </a><a href="/posts/use-markdown-in-rails/" class="post-row" data-tags="rails" style="display: none;">
+      <span class="post-title">在Rails中实现markdown解析</span>
+      <span class="post-leader"></span>
+      <span class="post-date">2014-11-13</span>
+    </a><a href="/posts/java-hash/" class="post-row" data-tags="java" style="display: none;">
+      <span class="post-title">Hash表的实现</span>
+      <span class="post-leader"></span>
+      <span class="post-date">2014-10-11</span>
+    </a><a href="/posts/java-set/" class="post-row" data-tags="java" style="display: none;">
+      <span class="post-title">HashSet的实现</span>
+      <span class="post-leader"></span>
+      <span class="post-date">2014-10-07</span>
+    </a><a href="/posts/golang-sort/" class="post-row" data-tags="算法" style="display: none;">
+      <span class="post-title">经典排序算法的golang实现</span>
+      <span class="post-leader"></span>
+      <span class="post-date">2014-07-29</span>
+    </a>
+  </div>
+</main>
+
+
+    <footer class="site-footer"><span>© 2026 sllt</span>
+  <div style="display: flex; gap: 16px;">
+    <a href="/index.xml">RSS</a>
+    <a href="https://github.com/sllt" target="_blank" rel="noopener">GitHub</a>
+  </div></footer>
+
+  </div>
+  <script src="/js/app.js"></script>
+</body>
+</html>
