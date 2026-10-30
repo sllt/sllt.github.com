@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="cn" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>初识 Erlang 与 Elixir — sllt</title><meta name="description" content="平时工作里写得最多的是 Ruby 和 Rails。平心而论，Ruby 的语法和元编程写起业务代码来是真的舒服，但只要做过一点跟实时推送或者高并发沾边的需求——比如之前在项目里用 Faye &#43; Sidekiq 搞实时消息队列，或者折腾 Puma 多线程配置的时候——就会明显感觉到 MRI Ruby 的力不从心：全局解释器 …" />
+  <script>
+    (function () {
+      var saved = localStorage.getItem('blog_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', saved);
+    })();
+  </script>
+  <link rel="stylesheet" href="/css/styles.css?v=1793330637" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script></head>
+<body><aside class="margin-toc" aria-label="Table of Contents">
+    <div class="margin-toc-title">On this page</div>
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-erlang-到底神在哪里">1. Erlang 到底神在哪里？</a>
+      <ul>
+        <li><a href="#超轻量级进程与消息传递">超轻量级进程与消息传递</a></li>
+        <li><a href="#let-it-crash-与-otp-监督树">“Let It Crash” 与 OTP 监督树</a></li>
+      </ul>
+    </li>
+    <li><a href="#2-既然-erlang-这么强为什么还需要-elixir">2. 既然 Erlang 这么强，为什么还需要 Elixir？</a></li>
+    <li><a href="#3-elixir-最打动我的几个地方">3. Elixir 最打动我的几个地方</a>
+      <ul>
+        <li><a href="#1-模式匹配与变量重绑定">1. 模式匹配与变量重绑定</a></li>
+        <li><a href="#2-爽快到飞起的管道操作符-">2. 爽快到飞起的管道操作符 <code>|&gt;</code></a></li>
+        <li><a href="#3-更清爽的-otp-genserver">3. 更清爽的 OTP <code>GenServer</code></a></li>
+        <li><a href="#4-编译期宏macro与无缝调用-erlang">4. 编译期宏（Macro）与无缝调用 Erlang</a></li>
+      </ul>
+    </li>
+    <li><a href="#4-小结">4. 小结</a></li>
+  </ul>
+</nav>
+  </aside>
+<div class="wrapper">
+    <header class="site-header">
+  <a href="/" class="site-brand">
+    <span class="brand-mark">s</span>
+    <span>sllt</span>
+  </a>
+  <nav class="site-nav">
+    <a href="/" class="active">Posts</a>
+    <a href="/tags/">Tags</a>
+    <a href="/about/">About</a>
+    <button class="theme-btn" data-action="theme" type="button" aria-label="Toggle theme"></button>
+  </nav>
+</header>
+
+    <a href="/" class="back-nav">← All posts</a>
+
+<main>
+  <article>
+    <header class="article-header">
+      <div class="article-meta">
+        <time datetime="2016-08-14">2016-08-14</time>
+        <span>·</span>
+        <span>4 min read</span>
+        <span>·</span>
+        <div class="article-tags">
+          <a href="/tags/#erlang" class="meta-tag">#erlang</a>
+          <a href="/tags/#elixir" class="meta-tag">#elixir</a>
+          <a href="/tags/#beam" class="meta-tag">#beam</a>
+          <a href="/tags/#ruby" class="meta-tag">#ruby</a>
+        </div>
+      </div>
+      <h1 class="article-title">初识 Erlang 与 Elixir</h1>
+    </header>
+    <details class="inline-toc">
+      <summary>目录 · Table of Contents</summary>
+      <nav class="toc-nav">
+  <ul>
+    <li><a href="#1-erlang-到底神在哪里">1. Erlang 到底神在哪里？</a>
+      <ul>
+        <li><a href="#超轻量级进程与消息传递">超轻量级进程与消息传递</a></li>
+        <li><a href="#let-it-crash-与-otp-监督树">“Let It Crash” 与 OTP 监督树</a></li>
+      </ul>
+    </li>
+    <li><a href="#2-既然-erlang-这么强为什么还需要-elixir">2. 既然 Erlang 这么强，为什么还需要 Elixir？</a></li>
+    <li><a href="#3-elixir-最打动我的几个地方">3. Elixir 最打动我的几个地方</a>
+      <ul>
+        <li><a href="#1-模式匹配与变量重绑定">1. 模式匹配与变量重绑定</a></li>
+        <li><a href="#2-爽快到飞起的管道操作符-">2. 爽快到飞起的管道操作符 <code>|&gt;</code></a></li>
+        <li><a href="#3-更清爽的-otp-genserver">3. 更清爽的 OTP <code>GenServer</code></a></li>
+        <li><a href="#4-编译期宏macro与无缝调用-erlang">4. 编译期宏（Macro）与无缝调用 Erlang</a></li>
+      </ul>
+    </li>
+    <li><a href="#4-小结">4. 小结</a></li>
+  </ul>
+</nav>
+    </details>
+
+    <div class="prose"><p>平时工作里写得最多的是 Ruby 和 Rails。平心而论，Ruby 的语法和元编程写起业务代码来是真的舒服，但只要做过一点跟实时推送或者高并发沾边的需求——比如之前在项目里用 Faye + Sidekiq 搞实时消息队列，或者折腾 Puma 多线程配置的时候——就会明显感觉到 MRI Ruby 的力不从心：全局解释器锁（GIL）卡在那里，内存占用也不小，连接数一上去就得靠堆机器和加 Redis 撑着。</p>
+<p>前阵子刚用 Python 写完简单的 Scheme 解释器和 Lambda 演算模拟，对函数式编程正上头，顺便就去翻了翻一直听说但没正经写过的 <strong>Erlang</strong>，然后又顺藤摸瓜看到了前 Rails 核心团队成员 José Valim 搞出来的 <strong>Elixir</strong>。</p>
+<p>花了几周时间把这两门语言摸了一遍之后，最大的感受就是：<strong>原来高并发和容错还可以用这么优雅的方式解决。</strong> 这篇笔记就简单聊聊我对 Erlang 和 Elixir 的一点初印象。</p>
+<h2 id="1-erlang-到底神在哪里">1. Erlang 到底神在哪里？</h2>
+<p>很多人第一次听说 Erlang，多半是因为前两年 WhatsApp 的那个著名战绩：只靠几十个工程师，单台服务器就扛住了 <strong>200 万并发长连接</strong>。</p>
+<p>当时我看到这个数字也很纳闷：同样是一台 Linux 服务器，为什么 C++ 或 Java 调优半天都很容易卡在各种锁竞争和内存开销上，一门上世纪 80 年代末爱立信为了写电话交换机造出来的老语言，反而能这么猛？</p>
+<p>真正去了解了 Erlang 底下的 <strong>BEAM 虚拟机</strong>，才发现它的设计思路跟我们习惯的面向对象语言完全不在一个频道上。</p>
+<h3 id="超轻量级进程与消息传递">超轻量级进程与消息传递</h3>
+<p>在 Java、C++ 或者 Ruby 里，我们谈并发通常指的是操作系统的线程（Thread）。每个线程光栈内存就要占掉几 MB，而且所有线程共享同一块堆内存。只要有共享内存，为了防止数据写乱，你就得加各种锁（Mutex / Semaphore），一旦锁多了，死锁和性能抖动就全来了。</p>
+<p>Erlang 的做法非常干脆：<strong>彻底干掉共享内存，一切皆进程（Process）。</strong></p>
+<p>注意，这里的“进程”跟操作系统的进程没半毛钱关系，它是 BEAM 虚拟机自己实现的用户态轻量级进程（也就是 Actor 模型）：</p>
+<ul>
+<li><strong>小到不可思议</strong>：创建一个 Erlang 进程只需要几百字节的内存，耗时也就几微秒。在一台普通笔记本上同时开几十万个进程就跟玩一样；</li>
+<li><strong>状态完全私有</strong>：每个进程都有自己独立的一小块堆和栈，变量一旦绑定就是不可变的（Immutable），进程之间绝对不共享任何内存；</li>
+<li><strong>只靠发消息沟通</strong>：进程 A 想找进程 B 办事，唯一的方法就是用 <code>!</code> 给 B 的邮箱（Mailbox）塞一条消息，B 自己在循环里用 <code>receive</code> 做模式匹配取出来处理。</li>
+</ul>
+<p>看一段最简单的 Erlang 代码就能明白是怎么回事：</p>
+<div class="code-block" data-lang="erlang">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">ping_pong.erl</span>
+    </div>
+    <div class="code-bar-right"><span class="code-lang">erlang</span><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">-module(ping_pong).</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">-export([loop/0, run/0]).</span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">4</span><span class="lc">loop() -&gt;</span></div>
+    <div class="code-line"><span class="ln">5</span><span class="lc">    receive</span></div>
+    <div class="code-line"><span class="ln">6</span><span class="lc">        {From, ping} -&gt;</span></div>
+    <div class="code-line"><span class="ln">7</span><span class="lc">            From ! {self(), pong},</span></div>
+    <div class="code-line"><span class="ln">8</span><span class="lc">            loop();</span></div>
+    <div class="code-line"><span class="ln">9</span><span class="lc">        stop -&gt;</span></div>
+    <div class="code-line"><span class="ln">10</span><span class="lc">            ok</span></div>
+    <div class="code-line"><span class="ln">11</span><span class="lc">    end.</span></div>
+    <div class="code-line"><span class="ln">12</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">13</span><span class="lc">run() -&gt;</span></div>
+    <div class="code-line"><span class="ln">14</span><span class="lc">    %% 派生（spawn）一个新进程跑 loop/0，拿到它的进程号 Pid</span></div>
+    <div class="code-line"><span class="ln">15</span><span class="lc">    Pid = spawn(fun ping_pong:loop/0),</span></div>
+    <div class="code-line"><span class="ln">16</span><span class="lc">    %% 用 ! 给它发一条包含自己 Pid 的消息</span></div>
+    <div class="code-line"><span class="ln">17</span><span class="lc">    Pid ! {self(), ping},</span></div>
+    <div class="code-line"><span class="ln">18</span><span class="lc">    receive</span></div>
+    <div class="code-line"><span class="ln">19</span><span class="lc">        {Pid, pong} -&gt;</span></div>
+    <div class="code-line"><span class="ln">20</span><span class="lc">            io:format(&#34;Got pong from ~p~n&#34;, [Pid])</span></div>
+    <div class="code-line"><span class="ln">21</span><span class="lc">    end.</span></div>
+  </div>
+</div>
+<p>因为没有共享内存，自然也就不需要锁；因为每个进程只管自己那点小内存，垃圾回收（GC）也是每个进程各扫门前雪，不会像 Java 那样突然来一次全局 Stop-The-World 把所有请求都卡住。</p>
+<h3 id="let-it-crash-与-otp-监督树">“Let It Crash” 与 OTP 监督树</h3>
+<p>Erlang 另一个特别颠覆三观的设计是它的容错哲学：<strong>“Let It Crash（任其崩溃）”</strong>。</p>
+<p>以前我们写代码，总是恨不得在每个地方都包上 <code>try ... catch</code> 或者 <code>begin ... rescue</code>，生怕哪个异常没接住把整个服务搞挂了。但 Erlang 认为，硬件会坏、网络会断、奇葩数据总会来，与其写满屏防御代码把异常硬吞下去（导致内存状态半死不活），不如<strong>一旦遇到预期外的情况，就让当前这个小进程干脆利落地死掉</strong>。</p>
+<p>反正进程之间内存是完全隔离的，死一个进程根本不会影响到其他几万个正在干活的进程。</p>
+<p>那死了之后谁来收拾残局呢？Erlang 标准库里的 <strong>OTP（Open Telecom Platform）</strong> 框架早就替你想好了——用 <strong>监督者（Supervisor）</strong> 把干活的进程（Worker）管起来，拼成一棵 <strong>监督树（Supervision Tree）</strong>。哪个 Worker 进程崩了，它头顶上的 Supervisor 瞬间就会收到退出信号，按照你定好的策略（比如单独重启它一个，或者把关联的几个进程一起重启）在几微秒内拉起一个干干净净的新进程。</p>
+<h2 id="2-既然-erlang-这么强为什么还需要-elixir">2. 既然 Erlang 这么强，为什么还需要 Elixir？</h2>
+<p>看到这你可能会问：既然 BEAM 虚拟机和 OTP 这么厉害，那大家直接去写 Erlang 不就完了吗，为什么还要再造一门 Elixir？</p>
+<p>说实话，当我兴致勃勃地照着《Learn You Some Erlang》写了几天 Erlang 代码之后，我就彻底理解为什么广大程序员对它望而却步了：</p>
+<ol>
+<li><strong>让人抓狂的标点符号语法</strong>：Erlang 早期借鉴了逻辑编程语言 Prolog，所以它的语句结束符不是固定的一种，而是逗号 <code>,</code>、分号 <code>;</code>、句号 <code>.</code> 混着用——函数内部表达式之间用逗号，不同模式匹配分支之间用分号，整个函数定义结束用句号。新手写代码时在后面加个分支，经常得回头把上一行末尾的 <code>.</code> 改成 <code>;</code>，简直反人类；</li>
+<li><strong>痛苦的 <code>State1</code>、<code>State2</code>、<code>State3</code></strong>：在 Erlang 里，同一个作用域内变量名绝对不允许重新绑定。所以如果你要对一个状态连着做三步修改，代码就会变成下面这样，万一中间想插一步，后面的变量编号全得跟着改：</li>
+</ol>
+<div class="code-block" data-lang="erlang">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">erlang</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">State1 = init_state(Raw),</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">State2 = put_user(State1, User),</span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc">State3 = update_timestamp(State2),</span></div>
+    <div class="code-line"><span class="ln">4</span><span class="lc">save_state(State3).</span></div>
+  </div>
+</div>
+<ol start="3">
+<li><strong>别扭的字符串处理</strong>：在 Erlang 里，双引号 <code>&quot;hello&quot;</code> 居然不是真正的二进制字符串，而是一个存着 ASCII 码的整数列表 <code>[104, 101, 108, 108, 111]</code>！一旦碰到中文 UTF-8，打印出来经常是一串数字列表，想用真正的二进制字符串得写成 <code>&lt;&lt;&quot;你好&quot;/utf8&gt;&gt;</code>，写 Web 业务时非常难受。</li>
+</ol>
+<p>而 <strong>Elixir</strong> 做的事情非常聪明：José Valim <strong>一丁点都没有去动底层的 BEAM 虚拟机和 OTP</strong>，而是直接在 BEAM 之上设计了一门拥有现代语法、完善工具链和强大宏系统的语言。Elixir 代码编译之后，生成的直接就是标准的 BEAM 字节码。</p>
+<p>换句话说：<strong>你拿到了 Erlang 三十年积累下来的全部并发与容错内功，同时还能像写 Ruby 一样愉快地写代码。</strong></p>
+<h2 id="3-elixir-最打动我的几个地方">3. Elixir 最打动我的几个地方</h2>
+<h3 id="1-模式匹配与变量重绑定">1. 模式匹配与变量重绑定</h3>
+<p>跟 Erlang 一样，Elixir 里的 <code>=</code> 不是简单的赋值，而是 <strong>模式匹配（Pattern Matching）</strong>。比如我们可以直接在等号左边解构元组、列表或者 Map：</p>
+<div class="code-block" data-lang="elixir">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">elixir</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc"># 匹配成功，status 绑定为 :ok，body 绑定为 &#34;success&#34;</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">{:ok, body} = {:ok, &#34;success&#34;}</span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">4</span><span class="lc"># 如果右边是 {:error, :timeout}，这行会直接触发 MatchError 崩溃</span></div>
+    <div class="code-line"><span class="ln">5</span><span class="lc">{:ok, result} = fetch_remote_data()</span></div>
+  </div>
+</div>
+<p>但比 Erlang 人性化得多的是，Elixir 允许变量名<strong>重新绑定（Rebinding）</strong>（注意底层数据依然是不可变的，只是变量名指向了新数据），如果真的想拿变量已有的值去做匹配，加个插入符 <code>^</code>（Pin 操作符）就行：</p>
+<div class="code-block" data-lang="elixir">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">elixir</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">x = 1</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">x = x &#43; 1  # 合法！不用再写 X1、X2 了</span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc">^x = 2     # 用 ^x 固定当前值 2 进行匹配</span></div>
+  </div>
+</div>
+<h3 id="2-爽快到飞起的管道操作符-">2. 爽快到飞起的管道操作符 <code>|&gt;</code></h3>
+<p>在函数式语言里，由于没有对象方法链（<code>obj.a().b().c()</code>），一连串的数据转换如果写成嵌套调用 <code>c(b(a(data)))</code>，读起来总是得从里往外倒着看。</p>
+<p>Elixir 引入了 F# 风格的管道操作符 <code>|&gt;</code>，它的作用非常简单：<strong>把左边表达式的结果，自动作为第一个参数传给右边的函数。</strong></p>
+<p>比如前面那段让人头疼的 Erlang <code>State1 / State2 / State3</code>，到了 Elixir 里直接写成这样：</p>
+<div class="code-block" data-lang="elixir">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">elixir</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">raw</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">|&gt; init_state()</span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc">|&gt; put_user(user)</span></div>
+    <div class="code-line"><span class="ln">4</span><span class="lc">|&gt; update_timestamp()</span></div>
+    <div class="code-line"><span class="ln">5</span><span class="lc">|&gt; save_state()</span></div>
+  </div>
+</div>
+<p>再比如处理一个字符串列表，过滤掉空串、转成大写再用逗号拼起来：</p>
+<div class="code-block" data-lang="elixir">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">elixir</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">[&#34;elixir&#34;, &#34;&#34;, &#34;erlang&#34;, &#34;beam&#34;]</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">|&gt; Enum.reject(&amp;(&amp;1 == &#34;&#34;))</span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc">|&gt; Enum.map(&amp;String.upcase/1)</span></div>
+    <div class="code-line"><span class="ln">4</span><span class="lc">|&gt; Enum.join(&#34;, &#34;)</span></div>
+    <div class="code-line"><span class="ln">5</span><span class="lc"># =&gt; &#34;ELIXIR, ERLANG, BEAM&#34;</span></div>
+  </div>
+</div>
+<p>数据就像在水管里流动一样，从上往下读，逻辑一目了然。</p>
+<h3 id="3-更清爽的-otp-genserver">3. 更清爽的 OTP <code>GenServer</code></h3>
+<p>在 Erlang 里写一个标准的 <code>gen_server</code> 行为模式，即使你只用到其中两个回调，也得把 <code>handle_call</code>、<code>handle_cast</code>、<code>handle_info</code>、<code>terminate</code>、<code>code_change</code> 全都导出并实现一遍，样板代码不少。</p>
+<p>而在 Elixir 里，通过 <code>use GenServer</code> 宏注入默认实现后，你只需要写你关心的那几个回调函数就行。比如写一个简单的内存队列服务：</p>
+<div class="code-block" data-lang="elixir">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">queue_server.ex</span>
+    </div>
+    <div class="code-bar-right"><span class="code-lang">elixir</span><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc">defmodule QueueServer do</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">  use GenServer</span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">4</span><span class="lc">  # --- 客户端 API ---</span></div>
+    <div class="code-line"><span class="ln">5</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">6</span><span class="lc">  def start_link(initial_queue \\ []) do</span></div>
+    <div class="code-line"><span class="ln">7</span><span class="lc">    GenServer.start_link(__MODULE__, initial_queue, name: __MODULE__)</span></div>
+    <div class="code-line"><span class="ln">8</span><span class="lc">  end</span></div>
+    <div class="code-line"><span class="ln">9</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">10</span><span class="lc">  def push(item) do</span></div>
+    <div class="code-line"><span class="ln">11</span><span class="lc">    GenServer.cast(__MODULE__, {:push, item})</span></div>
+    <div class="code-line"><span class="ln">12</span><span class="lc">  end</span></div>
+    <div class="code-line"><span class="ln">13</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">14</span><span class="lc">  def pop do</span></div>
+    <div class="code-line"><span class="ln">15</span><span class="lc">    GenServer.call(__MODULE__, :pop)</span></div>
+    <div class="code-line"><span class="ln">16</span><span class="lc">  end</span></div>
+    <div class="code-line"><span class="ln">17</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">18</span><span class="lc">  # --- 服务端回调 ---</span></div>
+    <div class="code-line"><span class="ln">19</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">20</span><span class="lc">  def handle_cast({:push, item}, state) do</span></div>
+    <div class="code-line"><span class="ln">21</span><span class="lc">    {:noreply, state &#43;&#43; [item]}</span></div>
+    <div class="code-line"><span class="ln">22</span><span class="lc">  end</span></div>
+    <div class="code-line"><span class="ln">23</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">24</span><span class="lc">  def handle_call(:pop, _from, [head | tail]) do</span></div>
+    <div class="code-line"><span class="ln">25</span><span class="lc">    {:reply, {:ok, head}, tail}</span></div>
+    <div class="code-line"><span class="ln">26</span><span class="lc">  end</span></div>
+    <div class="code-line"><span class="ln">27</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">28</span><span class="lc">  def handle_call(:pop, _from, []) do</span></div>
+    <div class="code-line"><span class="ln">29</span><span class="lc">    {:reply, :empty, []}</span></div>
+    <div class="code-line"><span class="ln">30</span><span class="lc">  end</span></div>
+    <div class="code-line"><span class="ln">31</span><span class="lc">end</span></div>
+  </div>
+</div>
+<p>你看 <code>handle_call(:pop, ...)</code> 的两个定义：通过函数头部的模式匹配，直接把“队列非空 <code>[head | tail]</code>”和“队列为空 <code>[]</code>”拆成了两个干净的分支，连 <code>if ... else</code> 都省了。</p>
+<h3 id="4-编译期宏macro与无缝调用-erlang">4. 编译期宏（Macro）与无缝调用 Erlang</h3>
+<p>之前写 Ruby 的时候，我很喜欢 Ruby 的元编程（比如 <code>define_method</code>、<code>method_missing</code>），但它是在运行时动态修改类和对象模型的，用多了不仅慢，出了 Bug 栈回溯也很难查。</p>
+<p>Elixir 的元编程走的是 Lisp 的路子：所有的 Elixir 代码在编译期都是一棵由三元组构成的抽象语法树（AST）。通过 <code>quote</code> 和 <code>unquote</code>，你可以用 <code>defmacro</code> 在<strong>编译期</strong>生成或改写代码。像 Elixir Web 框架 <strong>Phoenix</strong> 里的路由匹配，就是在编译期通过宏直接展开成几百个平铺的函数头模式匹配，所以路由查找速度几乎是 $O(1)$ 的常数级开销，跑起来比 Rails 快了不止一个数量级。</p>
+<p>更良心的是，Elixir 可以<strong>零成本直接调用任何 Erlang 模块</strong>——在 Elixir 里，Erlang 的模块就是一个普通的原子（<code>:atom</code>）。比如你想用 Erlang 内置的内存表 <code>ets</code> 或者加密库 <code>crypto</code>，连 import 都不用：</p>
+<div class="code-block" data-lang="elixir">
+  <div class="code-bar">
+    <div class="code-bar-left">
+      <span class="code-dots"><i></i><i></i><i></i></span>
+      <span class="code-title">elixir</span>
+    </div>
+    <div class="code-bar-right"><button class="copy-btn" type="button" aria-label="Copy code">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+        <span class="copy-label">Copy</span>
+      </button>
+    </div>
+  </div>
+  <div class="code-scroll">
+    <div class="code-line"><span class="ln">1</span><span class="lc"># 直接调用 Erlang 标准库的 :crypto 和 :ets 模块</span></div>
+    <div class="code-line"><span class="ln">2</span><span class="lc">token = :crypto.strong_rand_bytes(16) |&gt; Base.encode16()</span></div>
+    <div class="code-line"><span class="ln">3</span><span class="lc"></span></div>
+    <div class="code-line"><span class="ln">4</span><span class="lc">table = :ets.new(:my_cache, [:set, :protected])</span></div>
+    <div class="code-line"><span class="ln">5</span><span class="lc">:ets.insert(table, {&#34;user:1&#34;, &#34;sllt&#34;})</span></div>
+  </div>
+</div>
+<p>再加上 Elixir 出厂自带的构建工具 <code>mix</code>（相当于 Ruby 的 <code>rake</code> + <code>bundle</code>）、包管理器 <code>Hex</code> 以及支持代码补全和在线看文档的 <code>iex</code> 终端，整个开发体验甚至比现在的 Rails 还要顺手。</p>
+<h2 id="4-小结">4. 小结</h2>
+<p>如果用一句话来总结这两门语言的关系：</p>
+<blockquote>
+<p><strong>Erlang 和它的 BEAM 虚拟机是那个深藏功与名的扫地僧，早在二三十年前就把高并发、软实时和容错隔离做到了极致；而 Elixir 则是给这位扫地僧换上了一身现代装备，让习惯了 Ruby、Python 的开发者也能毫无门槛地用上这套神功。</strong></p>
+</blockquote>
+<p>最近我也在试着用 Elixir 的 <strong>Phoenix</strong> 框架写一点小东西，尤其是里面的 <code>Phoenix.Channel</code>，单机挂几万个 WebSocket 连接内存才涨百来兆，比起以前在 Rails 里用 Faye + Redis 折腾长连接真是省心太多了。后面有空再单独写一篇聊聊 Phoenix。</p>
+
+    </div>
+    <nav class="post-nav" aria-label="Post navigation">
+      <a href="/posts/lambda-calculus/" class="post-nav-item prev">
+        <span class="post-nav-label">← Older</span>
+        <span class="post-nav-title">使用Python模拟Lambda演算</span>
+      </a>
+      <a href="/posts/an-experience-of-hacked-website/" class="post-nav-item next">
+        <span class="post-nav-label">Newer →</span>
+        <span class="post-nav-title">一次误打误撞的提权经历</span>
+      </a>
+    </nav>
+  </article>
+</main>
+
+    <footer class="site-footer"><a href="/">← Back to all posts</a>
+  <div style="display: flex; gap: 16px;">
+    <a href="/index.xml">RSS</a>
+    <a href="https://github.com/sllt" target="_blank" rel="noopener">GitHub</a>
+  </div></footer>
+
+  </div>
+  <script src="/js/app.js?v=1793330637"></script>
+</body>
+</html>

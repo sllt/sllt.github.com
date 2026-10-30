@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Elixir on sllt的博客</title>
+    <link>https://blog.sllt.me/categories/elixir/</link>
+    <description>Recent content in Elixir on sllt的博客</description>
+    <generator>Hugo</generator>
+    <language>cn</language>
+    <lastBuildDate>Sun, 14 Aug 2016 16:20:00 +0800</lastBuildDate>
+    <atom:link href="https://blog.sllt.me/categories/elixir/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>初识 Erlang 与 Elixir</title>
+      <link>https://blog.sllt.me/posts/intro-to-erlang-and-elixir/</link>
+      <pubDate>Sun, 14 Aug 2016 16:20:00 +0800</pubDate>
+      <guid>https://blog.sllt.me/posts/intro-to-erlang-and-elixir/</guid>
+      <description>平时工作里写得最多的是 Ruby 和 Rails。平心而论，Ruby 的语法和元编程写起业务代码来是真的舒服，但只要做过一点跟实时推送或者高并发沾边的需求——比如之前在项目里用 Faye + Sidekiq 搞实时消息队列，或者折腾 Puma 多线程配置的时候——就会明显感觉到 MRI Ruby 的力不从心：全局解释器锁（GIL）卡在那里，内存占用也不小，连接数一上去就得靠堆机器和加 Redis 撑着。&#xA;前阵子刚用 Python 写完简单的 Scheme 解释器和 Lambda 演算模拟，对函数式编程正上头，顺便就去翻了翻一直听说但没正经写过的 Erlang，然后又顺藤摸瓜看到了前 Rails 核心团队成员 José Valim 搞出来的 Elixir。&#xA;花了几周时间把这两门语言摸了一遍之后，最大的感受就是：原来高并发和容错还可以用这么优雅的方式解决。 这篇笔记就简单聊聊我对 Erlang 和 Elixir 的一点初印象。&#xA;1. Erlang 到底神在哪里？ 很多人第一次听说 Erlang，多半是因为前两年 WhatsApp 的那个著名战绩：只靠几十个工程师，单台服务器就扛住了 200 万并发长连接。&#xA;当时我看到这个数字也很纳闷：同样是一台 Linux 服务器，为什么 C++ 或 Java 调优半天都很容易卡在各种锁竞争和内存开销上，一门上世纪 80 年代末爱立信为了写电话交换机造出来的老语言，反而能这么猛？&#xA;真正去了解了 Erlang 底下的 BEAM 虚拟机，才发现它的设计思路跟我们习惯的面向对象语言完全不在一个频道上。&#xA;超轻量级进程与消息传递 在 Java、C++ 或者 Ruby 里，我们谈并发通常指的是操作系统的线程（Thread）。每个线程光栈内存就要占掉几 MB，而且所有线程共享同一块堆内存。只要有共享内存，为了防止数据写乱，你就得加各种锁（Mutex / Semaphore），一旦锁多了，死锁和性能抖动就全来了。&#xA;Erlang 的做法非常干脆：彻底干掉共享内存，一切皆进程（Process）。</description>
+    </item>
+  </channel>
+</rss>
