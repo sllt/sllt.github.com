@@ -6,8 +6,15 @@
     <description>Recent content in Posts on sllt的博客</description>
     <generator>Hugo</generator>
     <language>cn</language>
-    <lastBuildDate>Tue, 27 Oct 2026 13:00:00 +0800</lastBuildDate>
+    <lastBuildDate>Fri, 30 Oct 2026 10:48:00 +0800</lastBuildDate>
     <atom:link href="https://blog.sllt.me/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>2026 回看 Erlang：当现代基础设施仍在重写四十年前的答案</title>
+      <link>https://blog.sllt.me/posts/looking-back-at-erlang-in-2026/</link>
+      <pubDate>Fri, 30 Oct 2026 10:48:00 +0800</pubDate>
+      <guid>https://blog.sllt.me/posts/looking-back-at-erlang-in-2026/</guid>
+      <description>1986 年，Joe Armstrong、Robert Virding 和 Mike Williams 在瑞典爱立信计算机科学实验室（CSLab）开始鼓捣一门后来被称为 Erlang 的语言时，他们面对的根本不是“如何把单颗 CPU 的算力压榨到极致”，而是一个极其苛刻的工程问题：&#xA;如何用必会写出 Bug 的软件，跑在必会断电或损坏的硬件上，构建出一台永不停机的电话交换机？&#xA;十二年后，爱立信推出了包含近两百万行 Erlang 代码的 AXD301 ATM 交换机，在工业界跑出了著名的 99.9999999%（9 个 9） 可用性——折算下来，系统每年的计划内与计划外总停机时间不超过 31.5 毫秒，而且支持在不中断通话的前提下在线热升级代码。&#xA;然而在此后的二十多年里，主流软件工程走上了一条截然不同的道路：我们先是沉迷于面向对象与共享内存多线程，试图用越来越复杂的锁和并发容器驯服数据竞争；接着又在云计算浪潮中转向了“无状态服务（Stateless Services）+ 外置数据库 + 消息队列 + 容器编排”的架构范式——既然进程管不好状态、也扛不住崩溃，那就把状态全部剥离到进程外部，再靠 Kubernetes 替我们重启容器。&#xA;直到 2026 年——Erlang 诞生整整四十周年的今天，当我们重新审视现代后端与分布式基础设施的演进方向时，会发现一个令人忍俊不禁的事实：无论是 Go 与 Rust 围绕异步运行时的修修补补，还是以 Temporal、Restate 为代表的持久化执行（Durable Execution）引擎，乃至当下最火热的 Multi-Agent 编排系统，所有人都在有意无意地重新拼凑一台“外置版的 BEAM 虚拟机”。&#xA;1. 并发的假象：为什么“协程”不等于“进程” 过去十年，Go 的 Goroutine、Rust 的 tokio 以及 Java 21 引入的虚拟线程（Virtual Threads）彻底普及了“百万级轻量并发”。于是很多人产生了一种直觉：既然主流语言都已经拥有了用户态 M:N 调度器，Erlang 引以为傲的轻量级进程（Process）是不是早就失去护城河了？&#xA;如果你只拿并发原语来跑 wrk 基准测试、比拼空转 HTTP 吞吐量，确实很容易得出这个结论。但在真实的生产系统里，主流语言的协程解决的是 I/O 复用效率，而 Erlang 的进程解决的是 故障隔离与确定性尾延迟（Tail Latency）。这两者在虚拟机底层有着本质的分野。</description>
+    </item>
     <item>
       <title>一次误打误撞的提权经历</title>
       <link>https://blog.sllt.me/posts/an-experience-of-hacked-website/</link>

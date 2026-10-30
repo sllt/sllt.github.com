@@ -2,17 +2,38 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://blog.sllt.me/about/</loc>
-    <lastmod>2026-10-27T00:00:00+08:00</lastmod>
+    <loc>https://blog.sllt.me/posts/looking-back-at-erlang-in-2026/</loc>
+    <lastmod>2026-10-30T10:48:00+08:00</lastmod>
   </url><url>
-    <loc>https://blog.sllt.me/</loc>
-    <lastmod>2026-10-27T13:00:00+08:00</lastmod>
+    <loc>https://blog.sllt.me/tags/actor/</loc>
+    <lastmod>2026-10-30T10:48:00+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.sllt.me/tags/beam/</loc>
+    <lastmod>2026-10-30T10:48:00+08:00</lastmod>
   </url><url>
     <loc>https://blog.sllt.me/categories/</loc>
-    <lastmod>2026-10-27T13:00:00+08:00</lastmod>
+    <lastmod>2026-10-30T10:48:00+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.sllt.me/tags/distributed-systems/</loc>
+    <lastmod>2026-10-30T10:48:00+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.sllt.me/tags/erlang/</loc>
+    <lastmod>2026-10-30T10:48:00+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.sllt.me/categories/erlang/</loc>
+    <lastmod>2026-10-30T10:48:00+08:00</lastmod>
   </url><url>
     <loc>https://blog.sllt.me/posts/</loc>
-    <lastmod>2026-10-27T13:00:00+08:00</lastmod>
+    <lastmod>2026-10-30T10:48:00+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.sllt.me/</loc>
+    <lastmod>2026-10-30T10:48:00+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.sllt.me/tags/</loc>
+    <lastmod>2026-10-30T10:48:00+08:00</lastmod>
+  </url><url>
+    <loc>https://blog.sllt.me/about/</loc>
+    <lastmod>2026-10-27T00:00:00+08:00</lastmod>
   </url><url>
     <loc>https://blog.sllt.me/categories/webshell/</loc>
     <lastmod>2016-11-09T15:02:21+08:00</lastmod>
@@ -33,9 +54,6 @@
     <lastmod>2026-10-27T13:00:00+08:00</lastmod>
   </url><url>
     <loc>https://blog.sllt.me/categories/python/</loc>
-    <lastmod>2026-10-27T13:00:00+08:00</lastmod>
-  </url><url>
-    <loc>https://blog.sllt.me/tags/</loc>
     <lastmod>2026-10-27T13:00:00+08:00</lastmod>
   </url><url>
     <loc>https://blog.sllt.me/posts/lambda-calculus/</loc>

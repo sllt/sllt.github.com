@@ -1018,10 +1018,25 @@ details.inline-toc a:hover {
   box-shadow: var(--shadow-card);
 }
 
+.prose > table {
+  display: block;
+  width: 100%;
+  margin: 1.75em 0;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  box-shadow: var(--shadow-card);
+  border-collapse: collapse;
+  font-size: 0.86rem;
+  line-height: 1.6;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   line-height: 1.6;
 }
 
