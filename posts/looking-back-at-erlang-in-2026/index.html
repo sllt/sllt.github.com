@@ -11,7 +11,7 @@
       document.documentElement.setAttribute('data-theme', saved);
     })();
   </script>
-  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/styles.css?v=1793329938" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
@@ -121,8 +121,7 @@
 </nav>
     </details>
 
-    <div class="prose">
-      <p>1986 年，Joe Armstrong、Robert Virding 和 Mike Williams 在瑞典爱立信计算机科学实验室（CSLab）开始鼓捣一门后来被称为 <strong>Erlang</strong> 的语言时，他们面对的根本不是“如何把单颗 CPU 的算力压榨到极致”，而是一个极其苛刻的工程问题：</p>
+    <div class="prose"><p>1986 年，Joe Armstrong、Robert Virding 和 Mike Williams 在瑞典爱立信计算机科学实验室（CSLab）开始鼓捣一门后来被称为 <strong>Erlang</strong> 的语言时，他们面对的根本不是“如何把单颗 CPU 的算力压榨到极致”，而是一个极其苛刻的工程问题：</p>
 <blockquote>
 <p><strong>如何用必会写出 Bug 的软件，跑在必会断电或损坏的硬件上，构建出一台永不停机的电话交换机？</strong></p>
 </blockquote>
@@ -159,48 +158,48 @@
 <li>每个进程每次被调度器选中执行时，只会被授予 <strong>4000 个 Reductions</strong> 的预算；</li>
 <li>一旦 4000 次归约耗尽（通常不到 1 毫秒），或者进程主动阻塞在 <code>receive</code> / I/O 上，BEAM 调度器会<strong>无条件强行挂起该进程</strong>，将其放回运行队列尾部，切换下一个进程。</li>
 </ul>
-<table>
+<div class="table-card"><table>
 <thead>
 <tr>
 <th style="text-align:left">维度</th>
-<th style="text-align:left">操作系统线程 (OS Thread)</th>
-<th style="text-align:left">现代语言协程 (Goroutine / Tokio Task)</th>
-<th style="text-align:left">BEAM 进程 (Erlang Process)</th>
+<th style="text-align:left">OS 线程</th>
+<th style="text-align:left">现代协程 (Go / Tokio)</th>
+<th style="text-align:left">BEAM 进程 (Erlang)</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left"><strong>初始内存开销</strong></td>
-<td style="text-align:left"><code>1 MB ~ 8 MB</code> 栈</td>
-<td style="text-align:left"><code>2 KB</code> (Go) / 数百字节 (Rust 状态机)</td>
-<td style="text-align:left"><code>309 Words (~2.4 KB)</code>（含 PCB + 私有堆栈）</td>
+<td style="text-align:left"><strong>初始内存</strong></td>
+<td style="text-align:left"><code>1~8 MB</code> 栈</td>
+<td style="text-align:left"><code>2 KB</code> (Go) / 状态机 (Rust)</td>
+<td style="text-align:left"><code>309 Words (~2.4 KB)</code></td>
 </tr>
 <tr>
-<td style="text-align:left"><strong>内存隔离模型</strong></td>
+<td style="text-align:left"><strong>内存隔离</strong></td>
 <td style="text-align:left">全局共享堆，依赖锁/原子操作</td>
-<td style="text-align:left">全局共享堆，可变状态可跨协程逃逸</td>
-<td style="text-align:left"><strong>Share-Nothing 私有堆</strong>，不可变数据</td>
+<td style="text-align:left">全局共享堆，可变状态可逃逸</td>
+<td style="text-align:left"><strong>Share-Nothing 私有堆</strong></td>
 </tr>
 <tr>
-<td style="text-align:left"><strong>垃圾回收范围</strong></td>
+<td style="text-align:left"><strong>GC 范围</strong></td>
 <td style="text-align:left">全局 STW / 全局并发标记</td>
-<td style="text-align:left">全局堆统一 GC（或编译期所有权）</td>
-<td style="text-align:left"><strong>进程级独立 GC</strong>，短命进程退出即释放</td>
+<td style="text-align:left">全局堆统一 GC</td>
+<td style="text-align:left"><strong>进程级独立 GC</strong>，退出即释放</td>
 </tr>
 <tr>
-<td style="text-align:left"><strong>调度抢占机制</strong></td>
-<td style="text-align:left">OS 内核时间片硬中断（上下文切换重）</td>
-<td style="text-align:left">I/O 挂起或安全点半抢占，易受纯计算干扰</td>
-<td style="text-align:left"><strong>4000 Reductions 预算硬抢占</strong>，软实时公平</td>
+<td style="text-align:left"><strong>抢占机制</strong></td>
+<td style="text-align:left">内核时间片中断（上下文切换重）</td>
+<td style="text-align:left">I/O 挂起或安全点协作抢占</td>
+<td style="text-align:left"><strong>4000 Reductions 硬抢占</strong></td>
 </tr>
 <tr>
-<td style="text-align:left"><strong>未捕获异常影响</strong></td>
+<td style="text-align:left"><strong>崩溃半径</strong></td>
 <td style="text-align:left">整个 OS 进程崩溃（Core Dump）</td>
-<td style="text-align:left">整个 OS 进程崩溃（<code>panic</code> / <code>abort</code>）</td>
-<td style="text-align:left"><strong>仅当前微秒级进程退出</strong>，向关联进程发信号</td>
+<td style="text-align:left">整个 OS 进程崩溃（<code>panic</code>）</td>
+<td style="text-align:left"><strong>仅当前微秒级进程退出</strong></td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <p>这种架构带来的真实体感是：当你把一台跑着 Go 或 Java 服务的机器 CPU 压到 95% 时，接口超时和毛刺往往呈指数级恶化；而当你把一台 BEAM 节点的 CPU 压到 99% 时，所有请求只是均匀地慢了一点点，SSH 远程连进 Erlang Shell 依然丝滑跟手。</p>
 <hr>
 <h2 id="2-let-it-crash-不是摆烂而是状态重置的数学最优解">2. “Let It Crash” 不是摆烂，而是状态重置的数学最优解</h2>
@@ -322,54 +321,54 @@
 </div>
 
 <p>不妨把今天一套“标准生产级云原生技术栈”与一个开箱即用的 Erlang/OTP 节点放在一起做个对照：</p>
-<table>
+<div class="table-card"><table>
 <thead>
 <tr>
-<th style="text-align:left">系统工程需求</th>
-<th style="text-align:left">现代云原生拼装方案 (Cloud-Native Stack)</th>
-<th style="text-align:left">Erlang / OTP 原生内置原语</th>
+<th style="text-align:left">工程需求</th>
+<th style="text-align:left">云原生拼装方案</th>
+<th style="text-align:left">Erlang / OTP 内置原语</th>
 <th style="text-align:left">量级与代价对比</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left"><strong>故障自愈与生命周期</strong></td>
-<td style="text-align:left">Kubernetes <code>Deployment</code> + <code>LivenessProbe</code> + Containerd</td>
+<td style="text-align:left"><strong>故障自愈</strong></td>
+<td style="text-align:left">K8s <code>Deployment</code> + <code>LivenessProbe</code></td>
 <td style="text-align:left">OTP <code>supervisor</code> 监督树</td>
-<td style="text-align:left">K8s 重启的是数百 MB 的容器（秒级）；OTP 重启的是 2.4KB 进程（微秒级）</td>
+<td style="text-align:left">K8s 重启数百 MB 容器（秒级）；OTP 重启 2.4KB 进程（微秒级）</td>
 </tr>
 <tr>
-<td style="text-align:left"><strong>服务发现与远程调用</strong></td>
-<td style="text-align:left">Consul / Etcd + Envoy Service Mesh + gRPC</td>
-<td style="text-align:left">语言级位置透明性（<code>{Name, Node} ! Msg</code>）+ <code>pg</code> 进程组</td>
-<td style="text-align:left">无需 IDL 编译与 Sidecar，本地发消息与跨机房发消息语法完全一致</td>
+<td style="text-align:left"><strong>服务发现</strong></td>
+<td style="text-align:left">Consul / Envoy Mesh + gRPC</td>
+<td style="text-align:left">位置透明通信 <code>{Name, Node} ! Msg</code> + <code>pg</code></td>
+<td style="text-align:left">无需 IDL 与 Sidecar，本地与跨节点发消息语法一致</td>
 </tr>
 <tr>
-<td style="text-align:left"><strong>进程内高速并发 KV</strong></td>
-<td style="text-align:left">外挂 Redis 集群 + 本地缓存失效广播</td>
-<td style="text-align:left"><strong>ETS (Erlang Term Storage)</strong> / <code>persistent_term</code></td>
-<td style="text-align:left">ETS 直接常驻 BEAM 堆外内存，支持无锁并发读，零网络 RTT</td>
+<td style="text-align:left"><strong>高速 KV</strong></td>
+<td style="text-align:left">外挂 Redis 集群 + 本地缓存同步</td>
+<td style="text-align:left"><strong>ETS</strong> / <code>persistent_term</code></td>
+<td style="text-align:left">常驻 BEAM 堆外内存，支持无锁并发读，零网络 RTT</td>
 </tr>
 <tr>
-<td style="text-align:left"><strong>分布式事务存储</strong></td>
-<td style="text-align:left">外置分布式数据库 / 分布式锁服务</td>
-<td style="text-align:left"><strong>Mnesia</strong>（内置多副本分布式数据库）</td>
-<td style="text-align:left">与语言数据结构（Record/Term）零阻抗匹配，无 ORM 转换层</td>
+<td style="text-align:left"><strong>分布式存储</strong></td>
+<td style="text-align:left">外置分布式数据库 / 分布式锁</td>
+<td style="text-align:left"><strong>Mnesia</strong> 内置多副本数据库</td>
+<td style="text-align:left">与语言数据结构零阻抗匹配，无 ORM 转换层</td>
 </tr>
 <tr>
-<td style="text-align:left"><strong>异步削峰与发布订阅</strong></td>
-<td style="text-align:left">Kafka / RabbitMQ（注：RabbitMQ 本身即 Erlang 编写）</td>
-<td style="text-align:left">进程邮箱（Mailbox）+ <code>gen_stage</code> / <code>Phoenix.PubSub</code></td>
-<td style="text-align:left">百万级邮箱原生内置，无需额外部署和运维独立 MQ 集群</td>
+<td style="text-align:left"><strong>异步削峰</strong></td>
+<td style="text-align:left">Kafka / RabbitMQ</td>
+<td style="text-align:left">进程邮箱（Mailbox）+ <code>gen_stage</code></td>
+<td style="text-align:left">百万级邮箱原生内置，无需额外运维独立 MQ</td>
 </tr>
 <tr>
-<td style="text-align:left"><strong>生产环境动态观测</strong></td>
-<td style="text-align:left">Prometheus + OpenTelemetry + eBPF + 埋点重新发版</td>
-<td style="text-align:left"><code>observer</code> / <code>recon</code> / BEAM 内置动态 Trace</td>
-<td style="text-align:left"><strong>无需提前打日志、无需重编译</strong>，线上直接挂载任意进程追踪入参、返回值与消息流</td>
+<td style="text-align:left"><strong>动态观测</strong></td>
+<td style="text-align:left">Prometheus + OTel + 埋点发版</td>
+<td style="text-align:left"><code>observer</code> / <code>recon</code> / 动态 Trace</td>
+<td style="text-align:left"><strong>无需提前埋点或重编译</strong>，线上直接挂载任意进程追踪消息流</td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <p>这并不是说 Kubernetes 或 Redis 没有价值——在多语言异构团队和超大规模集群中，基础设施层的标准化自有其意义。但不可否认的是，<strong>绝大多数中大型系统根本没有享受到微服务拆分的收益，反而过早地背上了分布式系统的全部复杂度</strong>。</p>
 <p>而在 BEAM 的世界里，WhatsApp 曾仅凭寥寥数十名工程师，在单台 BEAM 节点上承载超过 200 万并发长连接；Discord 依靠 Elixir（运行于 BEAM）管理着数百万个同时在线的实时语音与文字 Guild 房间。每一个房间、每一个会话，都只不过是虚拟机里的一个普通进程（GenServer）而已。</p>
 <hr>
@@ -415,11 +414,11 @@
 <p>这是一把锋利的双刃剑：如果上游生产消息的速度持续高于下游进程的消费速度，下游进程的邮箱队列就会无限增长。当邮箱积压到数十万条消息时：</p>
 <ol>
 <li>内存占用会急剧飙升，最终触发整个节点的 OOM；</li>
-<li>更隐蔽的是，如果代码中使用了<strong>选择性接收（Selective Receive）</strong>（即模式匹配特定消息），BEAM 每次都需要遍历邮箱里积压的旧消息，导致该进程的 CPU 消耗退化为 $O(N)$，进一步加剧雪崩。</li>
+<li>更隐蔽的是，如果代码中使用了 <strong>选择性接收（Selective Receive）</strong>（即模式匹配特定消息），BEAM 每次都需要遍历邮箱里积压的旧消息，导致该进程的 CPU 消耗退化为 $O(N)$，进一步加剧雪崩。</li>
 </ol>
 <p>因此，在生产级 Erlang/Elixir 系统中，工程师必须克制滥用裸异步消息（<code>!</code> / <code>cast</code>）的冲动，在关键路径上使用带超时的同步调用（<code>gen_server:call</code>）形成天然反压（Backpressure），或者使用基于需求拉取（Demand-driven）的 <code>gen_stage</code> 流控模型。</p>
 <h3 id="53-原生分布式集群的规模边界">5.3 原生分布式集群的规模边界</h3>
-<p>Erlang 语言内置的分布式集群（Distributed Erlang）采用的是**全互联网格（Full-Mesh）**拓扑，节点之间通过周期性心跳（<code>net_ticktime</code>）维护连接与全局名称注册。</p>
+<p>Erlang 语言内置的分布式集群（Distributed Erlang）采用的是 <strong>全互联网格（Full-Mesh）</strong> 拓扑，节点之间通过周期性心跳（<code>net_ticktime</code>）维护连接与全局名称注册。</p>
 <p>这套机制在 10 到 50 个同机房节点的规模下堪称魔法；但当集群规模扩大到数百个节点，或者跨公网弱连接部署时，全网格心跳的通信开销以及网络分区（Net Split / 脑裂）后的状态合并，依然需要开发者引入像 <code>Partisan</code> 这样的可扩展网络层或基于 CRDT / Raft（如 <code>ra</code> 库）的共识机制来接管。</p>
 <hr>
 <h2 id="6-结语阿姆斯特朗定律">6. 结语：阿姆斯特朗定律</h2>
@@ -427,7 +426,7 @@
 <blockquote>
 <p><em>“任何足够复杂的 C 或 Fortran 程序，都包含一个临时拼凑、只有一半功能、漏洞百出且运行缓慢的 Common Lisp 实现。”</em></p>
 </blockquote>
-<p>站在 2026 年，回望这四十年来后端架构、云原生基础设施与分布式运行时的演进轨迹，我们或许也可以为仙逝的 Joe Armstrong 总结出一条同样深刻的**“阿姆斯特朗定律”（Armstrong&rsquo;s Law）**：</p>
+<p>站在 2026 年，回望这四十年来后端架构、云原生基础设施与分布式运行时的演进轨迹，我们或许也可以为仙逝的 Joe Armstrong 总结出一条同样深刻的 <strong>“阿姆斯特朗定律”（Armstrong&rsquo;s Law）</strong>：</p>
 <blockquote>
 <p><strong>“任何足够复杂的分布式或高并发后端系统，最终都会在业务代码或基础设施层，临时拼凑出一套只有一半功能、配置繁琐且脆弱不堪的 Erlang/OTP 实现。”</strong></p>
 </blockquote>
@@ -450,6 +449,6 @@
   </div></footer>
 
   </div>
-  <script src="/js/app.js"></script>
+  <script src="/js/app.js?v=1793329938"></script>
 </body>
 </html>

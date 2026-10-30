@@ -12,7 +12,7 @@
       document.documentElement.setAttribute('data-theme', saved);
     })();
   </script>
-  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/styles.css?v=1793329938" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
@@ -79,8 +79,7 @@
 </nav>
     </details>
 
-    <div class="prose">
-      <p>我们将用 Python 从零实现一个可扩展的 Web 服务器，并一步步为它加上动态页面渲染、静态文件托管、目录列表、CGI 脚本执行，以及基于责任链模式的架构重构。</p>
+    <div class="prose"><p>我们将用 Python 从零实现一个可扩展的 Web 服务器，并一步步为它加上动态页面渲染、静态文件托管、目录列表、CGI 脚本执行，以及基于责任链模式的架构重构。</p>
 <p>完整代码可以在文末查看，也可以直接下载 <a href="/code/web_server.py"><code>web_server.py</code></a>。</p>
 <hr>
 <h2 id="1-hello-web">1. Hello, Web</h2>
@@ -260,7 +259,7 @@
   </div>
 </div>
 <p>启动代码完全不需要改动。如果现在用浏览器访问 <code>http://localhost:8080/something.html</code>，会看到如下表格：</p>
-<table>
+<div class="table-card"><table>
 <thead>
 <tr>
 <th>Header</th>
@@ -289,7 +288,7 @@
 <td><code>/something.html</code></td>
 </tr>
 </tbody>
-</table>
+</table></div>
 <p>注意，此时磁盘上根本没有 <code>something.html</code> 这个文件，但服务器依然返回了 <code>200 OK</code> 而不是 <code>404</code>——因为 HTTP 服务器本质上只是一个接收请求并返回字节流的程序，至于返回什么完全由我们的代码决定。</p>
 <hr>
 <h2 id="3-托管静态文件与错误处理">3. 托管静态文件与错误处理</h2>
@@ -1128,6 +1127,6 @@
   </div></footer>
 
   </div>
-  <script src="/js/app.js"></script>
+  <script src="/js/app.js?v=1793329938"></script>
 </body>
 </html>

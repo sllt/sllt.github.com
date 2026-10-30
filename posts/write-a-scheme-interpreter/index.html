@@ -12,7 +12,7 @@
       document.documentElement.setAttribute('data-theme', saved);
     })();
   </script>
-  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="stylesheet" href="/css/styles.css?v=1793329938" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" />
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"
@@ -106,12 +106,11 @@
 </nav>
     </details>
 
-    <div class="prose">
-      <p>本文假设你会使用 Python。</p>
+    <div class="prose"><p>本文假设你会使用 Python。</p>
 <p>我们会分两步来构建这个解释器：</p>
 <ol>
 <li><strong>先实现一个 Scheme 语法式的简单计算器</strong>：只支持加、减、乘、除，但麻雀虽小五脏俱全——借它跑通解释器最核心的四个环节：<strong>表达式树（<code>Pair</code>）、语法解析（Read）、递归求值（Eval）与交互循环（REPL）</strong>；</li>
-<li><strong>再逐步把计算器升级为完整的 Scheme 解释器</strong>：在计算器的骨架上依次加入<strong>环境与变量（<code>define</code>）</strong>、<strong>特殊形式（<code>quote</code>、<code>if</code>、<code>cond</code>、<code>let</code> 等）<strong>以及</strong>自定义函数与闭包（<code>lambda</code>）</strong>。</li>
+<li><strong>再逐步把计算器升级为完整的 Scheme 解释器</strong>：在计算器的骨架上依次加入 <strong>环境与变量（<code>define</code>）</strong>、<strong>特殊形式（<code>quote</code>、<code>if</code>、<code>cond</code>、<code>let</code> 等）</strong> 以及 <strong>自定义函数与闭包（<code>lambda</code>）</strong>。</li>
 </ol>
 <p>关于 Scheme 语言本身的更多背景，可以参考维基百科的 <a href="https://zh.wikipedia.org/wiki/Scheme">Scheme 词条</a>。完整代码可以在文末查看，也可以直接下载 <a href="/code/scheme.py"><code>scheme.py</code></a>。</p>
 <hr>
@@ -225,7 +224,7 @@
 </div>
 <h3 id="12-表达式树pair-与-nil">1.2 表达式树：<code>Pair</code> 与 <code>nil</code></h3>
 <p>观察上面的 Scheme 表达式会发现：每一个括号表达式本质上都是一个<strong>列表</strong>，列表的第一个元素是操作符（函数名），后面的元素是传给它的参数；如果某个参数本身又是括号表达式，那它就是一个嵌套的子列表。</p>
-<p>在 Lisp/Scheme 家族中，列表是由**点对（<code>Pair</code>）<strong>和</strong>空表（<code>nil</code>）**串起来的单向链表：</p>
+<p>在 Lisp/Scheme 家族中，列表是由 <strong>点对（<code>Pair</code>）</strong> 和 <strong>空表（<code>nil</code>）</strong> 串起来的单向链表：</p>
 <ul>
 <li>每个 <code>Pair(first, second)</code> 节点包含两部分：<code>first</code>（即 <code>car</code>，存放当前元素）和 <code>second</code>（即 <code>cdr</code>，指向剩余链表）；</li>
 <li>链表的末尾以单例对象 <code>nil</code>（即空表 <code>()</code>）结束。</li>
@@ -366,7 +365,7 @@
   </div>
 </div>
 <h3 id="13-解析表达式词法分析与语法分析">1.3 解析表达式（词法分析与语法分析）</h3>
-<p>手写 <code>Pair('+', Pair(Pair('*', ...)))</code> 显然太繁琐了。解析器（Reader）的任务，就是把用户输入的字符串 <code>'(+ 1 (* 2.3 45))'</code> 自动转换成上面的 <code>Pair</code> 树。这个过程分为两步：<strong>词法分析（Tokenize）<strong>和</strong>语法分析（Read）</strong>。</p>
+<p>手写 <code>Pair('+', Pair(Pair('*', ...)))</code> 显然太繁琐了。解析器（Reader）的任务，就是把用户输入的字符串 <code>'(+ 1 (* 2.3 45))'</code> 自动转换成上面的 <code>Pair</code> 树。这个过程分为两步：<strong>词法分析（Tokenize）</strong> 和 <strong>语法分析（Read）</strong>。</p>
 <h4 id="第一步词法分析-tokenize">第一步：词法分析 <code>tokenize</code></h4>
 <p>词法分析负责把源码字符串拆成一个个最小的语法单元（token）。</p>
 <ul>
@@ -497,7 +496,7 @@
 <p>仅仅二十几行代码，任意多层嵌套的括号表达式就已经变成规整的 <code>Pair</code> 树了。</p>
 <h3 id="14-计算器的求值与-repl">1.4 计算器的求值与 REPL</h3>
 <p>有了 <code>Pair</code> 表达式树，怎么算出它的结果呢？</p>
-<p>整个求值器由两个相互配合的函数组成：**<code>calc_eval</code>（求值表达式）**和 <strong><code>calc_apply</code>（执行操作符）</strong>。</p>
+<p>整个求值器由两个相互配合的函数组成：<strong><code>calc_eval</code>（求值表达式）</strong> 和 <strong><code>calc_apply</code>（执行操作符）</strong>。</p>
 <p><code>calc_eval(exp)</code> 的逻辑只有两种情况：</p>
 <ol>
 <li>如果 <code>exp</code> 是数字（<code>int</code> 或 <code>float</code>），它就是自求值的，直接返回它自己；</li>
@@ -662,8 +661,8 @@
 <li><strong>函数与闭包（Procedures &amp; Closures）</strong>：支持用 <code>lambda</code> 创建自定义函数，并实现词法作用域（Lexical Scoping）。</li>
 </ol>
 <h3 id="21-环境与变量查找env">2.1 环境与变量查找（<code>Env</code>）</h3>
-<p>在计算器里，操作符 <code>+</code>、<code>-</code> 是用 <code>if op == '+'</code> 硬编码在 <code>calc_apply</code> 里的；而在真正的 Scheme 中，<code>+</code>、<code>*</code>、<code>car</code>、<code>cons</code> 和用户自己用 <code>define</code> 定义的变量没有任何区别——它们都是绑定在**环境（Environment）**中的名字。</p>
-<p>为了支持函数调用时的局部作用域，环境不能只是一个全局字典，而应该是一条由多个**环境帧（Frame）**串起来的链表：</p>
+<p>在计算器里，操作符 <code>+</code>、<code>-</code> 是用 <code>if op == '+'</code> 硬编码在 <code>calc_apply</code> 里的；而在真正的 Scheme 中，<code>+</code>、<code>*</code>、<code>car</code>、<code>cons</code> 和用户自己用 <code>define</code> 定义的变量没有任何区别——它们都是绑定在 <strong>环境（Environment）</strong> 中的名字。</p>
+<p>为了支持函数调用时的局部作用域，环境不能只是一个全局字典，而应该是一条由多个 <strong>环境帧（Frame）</strong> 串起来的链表：</p>
 <ul>
 <li>每个 <code>Env</code> 本身继承自 Python 的 <code>dict</code>，保存当前作用域的变量名和值；</li>
 <li>同时它持有一个指向外层环境的指针 <code>self.outer</code>（全局环境的 <code>outer</code> 为 <code>None</code>）；</li>
@@ -1808,6 +1807,6 @@
   </div></footer>
 
   </div>
-  <script src="/js/app.js"></script>
+  <script src="/js/app.js?v=1793329938"></script>
 </body>
 </html>

@@ -13,7 +13,7 @@
       <link>https://blog.sllt.me/posts/write-a-scheme-interpreter/</link>
       <pubDate>Tue, 17 Nov 2015 14:02:14 +0800</pubDate>
       <guid>https://blog.sllt.me/posts/write-a-scheme-interpreter/</guid>
-      <description>本文假设你会使用 Python。&#xA;我们会分两步来构建这个解释器：&#xA;先实现一个 Scheme 语法式的简单计算器：只支持加、减、乘、除，但麻雀虽小五脏俱全——借它跑通解释器最核心的四个环节：表达式树（Pair）、语法解析（Read）、递归求值（Eval）与交互循环（REPL）； 再逐步把计算器升级为完整的 Scheme 解释器：在计算器的骨架上依次加入环境与变量（define）、特殊形式（quote、if、cond、let 等）以及自定义函数与闭包（lambda）。 关于 Scheme 语言本身的更多背景，可以参考维基百科的 Scheme 词条。完整代码可以在文末查看，也可以直接下载 scheme.py。&#xA;1. Scheme 语法式的计算器 1.1 计算器的语法与求值规则 我们先从最简单的前缀表达式计算器开始。这个简化版计算器只包含加（+）、减（-）、乘（*）、除（/）四种运算。&#xA;在 Scheme 中，所有的运算都写成 (操作符 参数1 参数2 ...) 的前缀形式。加法和乘法可以接收任意数量的参数：&#xA;scheme Copy 1scm&amp;gt; (&amp;#43; 1 2 3 4) 210 3scm&amp;gt; (&amp;#43;) 40 5scm&amp;gt; (* 1 2 3 4) 624 7scm&amp;gt; (*) 81 减法（-）有两种情况：只传入 1 个参数时，求这个数的相反数；传入 2 个及以上参数时，用第一个数依次减去后面的数，例如 (- 10 1 2 3) 等同于 10 - 1 - 2 - 3。除法（/）也是类似的规则（单参数求倒数，多参数依次相除）：</description>
+      <description>本文假设你会使用 Python。&#xA;我们会分两步来构建这个解释器：&#xA;先实现一个 Scheme 语法式的简单计算器：只支持加、减、乘、除，但麻雀虽小五脏俱全——借它跑通解释器最核心的四个环节：表达式树（Pair）、语法解析（Read）、递归求值（Eval）与交互循环（REPL）； 再逐步把计算器升级为完整的 Scheme 解释器：在计算器的骨架上依次加入 环境与变量（define）、特殊形式（quote、if、cond、let 等） 以及 自定义函数与闭包（lambda）。 关于 Scheme 语言本身的更多背景，可以参考维基百科的 Scheme 词条。完整代码可以在文末查看，也可以直接下载 scheme.py。&#xA;1. Scheme 语法式的计算器 1.1 计算器的语法与求值规则 我们先从最简单的前缀表达式计算器开始。这个简化版计算器只包含加（+）、减（-）、乘（*）、除（/）四种运算。&#xA;在 Scheme 中，所有的运算都写成 (操作符 参数1 参数2 ...) 的前缀形式。加法和乘法可以接收任意数量的参数：&#xA;scheme Copy 1scm&amp;gt; (&amp;#43; 1 2 3 4) 210 3scm&amp;gt; (&amp;#43;) 40 5scm&amp;gt; (* 1 2 3 4) 624 7scm&amp;gt; (*) 81 减法（-）有两种情况：只传入 1 个参数时，求这个数的相反数；传入 2 个及以上参数时，用第一个数依次减去后面的数，例如 (- 10 1 2 3) 等同于 10 - 1 - 2 - 3。除法（/）也是类似的规则（单参数求倒数，多参数依次相除）：</description>
     </item>
   </channel>
 </rss>
