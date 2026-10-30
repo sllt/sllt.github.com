@@ -13,16 +13,19 @@
   --bg-subtle: #f2f0e8;
   --bg-hover: rgba(20, 20, 19, 0.04);
   --bg-code: #f5f4ef;
-  --bg-code-bar: #edece5;
+  --bg-code-bar: #edece4;
+  --bg-code-inline: #eae8df;
 
-  --text: #161615;
-  --text-secondary: #4e4d49;
+  --text: #111110;
+  --text-body: #2b2b28;
+  --text-secondary: #52514c;
   --text-muted: #82817a;
-  --text-faint: #b3b2aa;
+  --text-faint: #b0afa7;
+  --text-code-inline: #1f2937;
 
-  --border: #e4e2d9;
-  --border-subtle: #eceae2;
-  --border-strong: #cbc8bc;
+  --border: #e2dfd5;
+  --border-subtle: #eceae1;
+  --border-strong: #c8c4b7;
 
   --accent: #2563eb;
   --accent-soft: rgba(37, 99, 235, 0.08);
@@ -45,7 +48,7 @@
   --font-serif: 'Newsreader', Georgia, "Songti SC", "Noto Serif CJK SC", serif;
   --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, Monaco, Consolas, monospace;
 
-  --max-w: 690px;
+  --max-w: 740px;
   --radius-sm: 6px;
   --radius-md: 10px;
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.03);
@@ -56,19 +59,22 @@
   /* Dark Mode — Deep Matte Obsidian */
   --bg: #0c0c0e;
   --bg-surface: #131316;
-  --bg-subtle: #19191d;
+  --bg-subtle: #18181c;
   --bg-hover: rgba(255, 255, 255, 0.045);
   --bg-code: #111114;
   --bg-code-bar: #17171b;
+  --bg-code-inline: #1f1f25;
 
-  --text: #ededec;
-  --text-secondary: #a6a6a1;
+  --text: #f3f3f1;
+  --text-body: #d4d4cf;
+  --text-secondary: #a1a19b;
   --text-muted: #70706b;
-  --text-faint: #464642;
+  --text-faint: #484844;
+  --text-code-inline: #e2e8f0;
 
-  --border: #232328;
-  --border-subtle: #1a1a1f;
-  --border-strong: #36363e;
+  --border: #242429;
+  --border-subtle: #1b1b20;
+  --border-strong: #383840;
 
   --accent: #60a5fa;
   --accent-soft: rgba(96, 165, 250, 0.12);
@@ -111,7 +117,7 @@ html {
 body {
   font-family: var(--font-sans);
   background-color: var(--bg);
-  color: var(--text);
+  color: var(--text-body);
   line-height: 1.8;
   padding: 0 24px;
   transition: background-color 0.2s ease, color 0.2s ease;
@@ -128,7 +134,7 @@ body {
 .wrapper {
   max-width: var(--max-w);
   margin: 0 auto;
-  padding: 56px 0 96px;
+  padding: 52px 0 96px;
   position: relative;
 }
 
@@ -139,9 +145,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 56px;
+  margin-bottom: 52px;
   padding-bottom: 18px;
-  border-bottom: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border);
 }
 
 .site-brand {
@@ -371,7 +377,7 @@ body {
   font-size: 0.78rem;
   color: var(--text-muted);
   text-decoration: none;
-  margin-bottom: 24px;
+  margin-bottom: 22px;
   padding: 4px 8px;
   margin-left: -8px;
   border-radius: var(--radius-sm);
@@ -385,8 +391,8 @@ body {
 }
 
 .article-header {
-  margin-bottom: 36px;
-  padding-bottom: 26px;
+  margin-bottom: 40px;
+  padding-bottom: 28px;
   border-bottom: 1px solid var(--border);
 }
 
@@ -398,7 +404,7 @@ body {
   align-items: center;
   flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
   font-variant-numeric: tabular-nums;
 }
 
@@ -411,34 +417,33 @@ body {
 .meta-tag {
   color: var(--text-secondary);
   background: var(--bg-subtle);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border);
   padding: 1px 7px;
   border-radius: 5px;
   text-decoration: none;
-  font-size: 0.74rem;
+  font-size: 0.73rem;
   transition: all 0.15s ease;
 }
 
 .meta-tag:hover {
   color: var(--text);
   border-color: var(--border-strong);
-  background: var(--border-subtle);
 }
 
 .article-title {
-  font-size: 1.9rem;
-  font-weight: 650;
-  line-height: 1.32;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.3;
   letter-spacing: -0.025em;
   color: var(--text);
   margin-bottom: 0;
 }
 
 .article-lead {
-  font-size: 1.02rem;
-  line-height: 1.65;
+  font-size: 1.04rem;
+  line-height: 1.72;
   color: var(--text-secondary);
-  margin-top: 12px;
+  margin-top: 16px;
   margin-bottom: 0;
 }
 
@@ -448,13 +453,13 @@ body {
 .margin-toc {
   position: fixed;
   top: 128px;
-  left: max(20px, calc(50% - 585px));
-  width: 205px;
+  left: max(24px, calc((100vw - var(--max-w)) / 2 - 250px));
+  width: 210px;
   max-height: calc(100vh - 170px);
   overflow-y: auto;
   scrollbar-width: none;
   font-size: 0.78rem;
-  line-height: 1.45;
+  line-height: 1.42;
 }
 
 .margin-toc::-webkit-scrollbar {
@@ -468,7 +473,7 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--text-faint);
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .margin-toc ul {
@@ -478,8 +483,9 @@ body {
   border-left: 1px solid var(--border);
 }
 
+/* Keep the floating side TOC clean by showing only top-level h2 sections */
 .margin-toc ul ul {
-  border-left: none;
+  display: none;
 }
 
 .margin-toc li {
@@ -488,26 +494,18 @@ body {
 
 .margin-toc a {
   display: block;
-  padding: 4.5px 0 4.5px 12px;
+  padding: 6px 0 6px 14px;
   color: var(--text-muted);
   text-decoration: none;
   border-left: 2px solid transparent;
   margin-left: -1px;
+  line-height: 1.42;
   transition: color 0.15s ease, border-color 0.15s ease;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.margin-toc ul ul a {
-  padding-left: 22px;
-  font-size: 0.74rem;
-  color: var(--text-faint);
 }
 
 .margin-toc a code {
   font-family: var(--font-mono);
-  font-size: 0.92em;
+  font-size: 0.9em;
   background: transparent;
   border: none;
   padding: 0;
@@ -598,9 +596,9 @@ details.inline-toc a:hover {
    Prose — High-Craft Markdown, LaTeX, Code & Diagrams
    ========================================================================== */
 .prose {
-  font-size: 16.25px;
-  line-height: 1.84;
-  color: var(--text);
+  font-size: 16.5px;
+  line-height: 1.85;
+  color: var(--text-body);
   overflow-wrap: break-word;
 }
 
@@ -615,6 +613,7 @@ details.inline-toc a:hover {
 
 .prose a:not(.fn-ref):not(.fn-back):not(.footnote-ref):not(.footnote-backref) {
   color: var(--text);
+  font-weight: 500;
   text-decoration: underline;
   text-decoration-color: var(--border-strong);
   text-underline-offset: 3.5px;
@@ -628,14 +627,15 @@ details.inline-toc a:hover {
 
 .prose h1,
 .prose h2 {
-  font-size: 1.32rem;
+  font-size: 1.46rem;
   font-weight: 650;
-  line-height: 1.4;
+  line-height: 1.36;
   letter-spacing: -0.02em;
-  margin-top: 2.5em;
-  margin-bottom: 0.85em;
-  padding-bottom: 0.35em;
-  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text);
+  margin-top: 2.7em;
+  margin-bottom: 0.9em;
+  padding-bottom: 0.42em;
+  border-bottom: 1px solid var(--border);
   scroll-margin-top: 32px;
 }
 
@@ -645,21 +645,25 @@ details.inline-toc a:hover {
 }
 
 .prose h3 {
-  font-size: 1.08rem;
+  font-size: 1.18rem;
   font-weight: 600;
-  line-height: 1.45;
-  letter-spacing: -0.01em;
-  margin-top: 2em;
-  margin-bottom: 0.65em;
+  line-height: 1.42;
+  letter-spacing: -0.015em;
+  color: var(--text);
+  margin-top: 2.15em;
+  margin-bottom: 0.7em;
+  padding-left: 11px;
+  border-left: 3px solid var(--border-strong);
   scroll-margin-top: 32px;
 }
 
 .prose h4,
 .prose h5,
 .prose h6 {
-  font-size: 0.96rem;
+  font-size: 1rem;
   font-weight: 600;
-  margin-top: 1.5em;
+  color: var(--text);
+  margin-top: 1.6em;
   margin-bottom: 0.5em;
 }
 
@@ -673,16 +677,28 @@ details.inline-toc a:hover {
 
 .prose ul,
 .prose ol {
-  padding-left: 1.4rem;
-  margin-bottom: 1.4em;
+  padding-left: 1.5rem;
+  margin-bottom: 1.45em;
 }
 
 .prose li {
-  margin-bottom: 0.45em;
+  margin-bottom: 0.55em;
+  padding-left: 0.2rem;
+}
+
+.prose li::marker {
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.prose ol > li::marker {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  font-weight: 500;
 }
 
 .prose li > p {
-  margin-bottom: 0.6em;
+  margin-bottom: 0.55em;
 }
 
 .prose li > .code-block {
@@ -697,7 +713,7 @@ details.inline-toc a:hover {
 
 /* Hide redundant <hr> when immediately followed by an h2 (which already has a bottom divider) */
 .prose hr + h2 {
-  margin-top: 0;
+  margin-top: 2.4em;
 }
 .prose hr:has(+ h2) {
   display: none;
@@ -710,7 +726,7 @@ details.inline-toc a:hover {
   border-radius: var(--radius-md);
   border: 1px solid var(--border);
   box-shadow: var(--shadow-card);
-  margin: 1.4em auto;
+  margin: 1.5em auto;
 }
 
 /* Collapsible Details Block inside Prose */
@@ -768,37 +784,36 @@ details.inline-toc a:hover {
   box-shadow: none;
 }
 
-/* Inline Code */
+/* Inline Code — Soft borderless pill so mixed Chinese/English prose reads cleanly */
 :not(pre) > code {
   font-family: var(--font-mono);
-  font-size: 0.84em;
-  padding: 2px 6px;
+  font-size: 0.83em;
+  padding: 2.5px 6px;
   border-radius: 5px;
-  background: var(--bg-subtle);
-  border: 1px solid var(--border);
-  color: var(--text);
+  background: var(--bg-code-inline);
+  color: var(--text-code-inline);
   word-break: break-word;
 }
 
 .prose h1 code,
 .prose h2 code,
 .prose h3 code {
-  font-size: 0.86em;
+  font-size: 0.85em;
   padding: 2px 7px;
-  vertical-align: middle;
+  vertical-align: baseline;
 }
 
 /* Callout Box */
 .callout {
-  margin: 1.75em 0;
-  padding: 15px 18px;
+  margin: 1.85em 0;
+  padding: 16px 20px;
   border-radius: var(--radius-md);
   background: var(--bg-surface);
   border: 1px solid var(--border);
-  border-left: 3px solid var(--accent);
+  border-left: 3.5px solid var(--accent);
   box-shadow: var(--shadow-card);
-  font-size: 0.92rem;
-  line-height: 1.72;
+  font-size: 0.94rem;
+  line-height: 1.75;
 }
 
 .callout-head {
@@ -806,9 +821,9 @@ details.inline-toc a:hover {
   font-size: 0.74rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   color: var(--accent);
-  margin-bottom: 5px;
+  margin-bottom: 6px;
 }
 
 .callout p:last-child {
@@ -847,7 +862,7 @@ details.inline-toc a:hover {
 
 /* Code Block */
 .code-block {
-  margin: 1.65em 0;
+  margin: 1.7em 0;
   border-radius: var(--radius-md);
   border: 1px solid var(--border);
   background: var(--bg-code);
@@ -888,7 +903,7 @@ details.inline-toc a:hover {
 }
 
 .code-title {
-  font-size: 0.72rem;
+  font-size: 0.73rem;
   font-weight: 500;
   color: var(--text-secondary);
   letter-spacing: 0.02em;
@@ -936,15 +951,15 @@ details.inline-toc a:hover {
 .code-scroll {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  padding: 13px 0;
+  padding: 14px 0;
 }
 
 .code-line {
   display: flex;
   padding: 0 16px;
   font-family: var(--font-mono);
-  font-size: 0.82rem;
-  line-height: 1.68;
+  font-size: 0.825rem;
+  line-height: 1.7;
   min-width: max-content;
 }
 
@@ -991,7 +1006,7 @@ details.inline-toc a:hover {
 .tok-fn { color: var(--syn-fn); }
 .tok-str { color: var(--syn-str); }
 .tok-num { color: var(--syn-num); }
-.tok-cmt { color: var(--syn-cmt); font-style: italic; }
+.tok-cmt { color: var(--syn-cmt); }
 .tok-typ { color: var(--syn-typ); }
 
 /* Fallback for plain <pre><code> blocks */
@@ -1007,58 +1022,57 @@ details.inline-toc a:hover {
   line-height: 1.68;
 }
 
-/* Data Table */
+/* Data Table — Full-width balanced layout without right-edge clipping */
 .table-card {
-  margin: 1.75em 0;
+  margin: 1.85em 0;
   border-radius: var(--radius-md);
   border: 1px solid var(--border);
   background: var(--bg-surface);
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   box-shadow: var(--shadow-card);
-}
-
-.prose > table {
-  display: block;
-  width: 100%;
-  margin: 1.75em 0;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-  background: var(--bg-surface);
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  box-shadow: var(--shadow-card);
-  border-collapse: collapse;
-  font-size: 0.86rem;
-  line-height: 1.6;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.86rem;
-  line-height: 1.6;
+  font-size: 0.85rem;
+  line-height: 1.62;
+}
+
+.prose > table {
+  margin: 1.85em 0;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
 }
 
 th, td {
-  padding: 11px 15px;
+  padding: 11px 14px;
   border-bottom: 1px solid var(--border-subtle);
   text-align: left;
   vertical-align: top;
 }
 
+th + th,
+td + td {
+  border-left: 1px solid var(--border-subtle);
+}
+
 th {
   background: var(--bg-subtle);
-  font-family: var(--font-mono);
-  font-size: 0.74rem;
   font-weight: 600;
-  letter-spacing: 0.03em;
-  color: var(--text-secondary);
-  white-space: nowrap;
+  font-size: 0.8rem;
+  color: var(--text);
+  line-height: 1.45;
 }
 
 td:first-child {
-  white-space: nowrap;
+  font-weight: 500;
+  color: var(--text);
+  min-width: 108px;
 }
 
 tbody tr:hover {
@@ -1076,14 +1090,14 @@ td.num {
 
 /* Blockquote */
 blockquote {
-  margin: 1.75em 0;
-  padding: 12px 18px;
-  border-left: 3px solid var(--border-strong);
-  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  margin: 1.8em 0;
+  padding: 14px 20px;
+  border-left: 3.5px solid var(--text);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
   background: var(--bg-subtle);
-  font-size: 0.95rem;
-  line-height: 1.75;
-  color: var(--text-secondary);
+  font-size: 0.96rem;
+  line-height: 1.78;
+  color: var(--text-body);
 }
 
 blockquote p:last-child {
@@ -1226,7 +1240,7 @@ blockquote cite {
 /* ==========================================================================
    Responsive Design (Tablet & Mobile)
    ========================================================================== */
-@media (max-width: 1180px) {
+@media (max-width: 1280px) {
   .margin-toc {
     display: none;
   }
@@ -1269,7 +1283,7 @@ blockquote cite {
   }
 
   .article-title {
-    font-size: 1.52rem;
+    font-size: 1.56rem;
   }
 
   .post-nav {

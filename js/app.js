@@ -218,6 +218,14 @@
 
     highlightCodeBlocks();
 
+    // Wrap bare Markdown tables in .table-card for clean border radius & mobile scroll
+    document.querySelectorAll('.prose > table').forEach((tbl) => {
+      const wrap = document.createElement('div');
+      wrap.className = 'table-card';
+      tbl.parentNode.insertBefore(wrap, tbl);
+      wrap.appendChild(tbl);
+    });
+
     // Copy Code
     document.querySelectorAll('.copy-btn').forEach((btn) => {
       btn.addEventListener('click', () => {
@@ -245,8 +253,11 @@
       });
     });
 
-    // Margin TOC Scroll-Spy (supports h2 & h3)
-    const headings = Array.from(document.querySelectorAll('.prose h2[id], .prose h3[id]'));
+    // Margin TOC Scroll-Spy
+    let headings = Array.from(document.querySelectorAll('.prose h2[id]'));
+    if (!headings.length) {
+      headings = Array.from(document.querySelectorAll('.prose h3[id]'));
+    }
     const tocLinks = Array.from(document.querySelectorAll('.margin-toc a'));
     if (headings.length && tocLinks.length) {
       function onScroll() {
